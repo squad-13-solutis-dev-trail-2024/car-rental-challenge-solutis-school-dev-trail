@@ -1,18 +1,18 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.DescricaoAcessorio;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity(name = "Acessorio")
 @Table(
         name = "tb_acessorio",
@@ -30,7 +30,8 @@ public class Acessorio {
 
     @ManyToMany(mappedBy = "acessorios")
     @Column(nullable = true)
-    private Set<Carro> carros;
+    @Setter(AccessLevel.NONE)
+    private Set<Carro> carros = new HashSet<>();
 
     @Override
     public String toString() {

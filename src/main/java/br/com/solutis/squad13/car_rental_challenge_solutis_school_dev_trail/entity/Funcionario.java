@@ -24,7 +24,7 @@ import java.util.Objects;
                 @UniqueConstraint(name = "uk_funcionario_matricula", columnNames = "matricula")
         }
 )
-@PrimaryKeyJoinColumn(name = "pessoa_id") // Substitua "pessoa_id" pelo nome da coluna correspondente à chave primária da entidade "Pessoa"
+@PrimaryKeyJoinColumn(name = "pessoa_id")
 public class Funcionario extends Pessoa {
     private String matricula;
 

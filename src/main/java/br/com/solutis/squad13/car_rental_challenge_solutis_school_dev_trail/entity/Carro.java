@@ -1,9 +1,8 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SoftDelete;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
@@ -13,6 +12,7 @@ import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 @Getter
 @Entity(name = "Carro")
 @Table(
@@ -34,7 +34,7 @@ public class Carro {
     @Column(nullable = false, length = 50)
     private String cor;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isDisponivelParaAluguel;
 
     @Column(precision = 10, scale = 2)
@@ -47,15 +47,20 @@ public class Carro {
             inverseJoinColumns = @JoinColumn(name = "id_acessorio")
     )
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private List<Acessorio> acessorios;
 
     @ManyToOne
     @JoinColumn(name = "modelo_carro_id", nullable = false)
     private ModeloCarro modeloCarro;
 
-    @OneToMany(mappedBy = "carro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "carro",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Setter(AccessLevel.NONE)
     private List<Aluguel> alugueis = new ArrayList<>();
-
 
     public void disponibilizarAluguel() {
         this.isDisponivelParaAluguel = true;

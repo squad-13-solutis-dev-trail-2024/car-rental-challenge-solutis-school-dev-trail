@@ -28,13 +28,13 @@ public class ApoliceSeguro {
     @Column(precision = 10, scale = 2)
     private BigDecimal valorFranquia;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean protecaoTerceiro;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean protecaoCausasNaturais;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean protecaoRoubo;
 
     @OneToOne(mappedBy = "apoliceSeguro")

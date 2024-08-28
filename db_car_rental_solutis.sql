@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS tb_pessoa
     PRIMARY KEY (id)
 );
 
--- ou tb_motorista
 CREATE TABLE IF NOT EXISTS tb_motorista
 (
     id  BIGINT UNSIGNED,

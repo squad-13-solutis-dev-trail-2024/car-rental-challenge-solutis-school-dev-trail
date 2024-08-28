@@ -1,12 +1,11 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.validator.constraints.br.CPF;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -30,7 +29,7 @@ public abstract class Pessoa {
     private Long id;
     private String nome;
     private String email;
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
     private String cpf;
 
     @Enumerated(EnumType.STRING)

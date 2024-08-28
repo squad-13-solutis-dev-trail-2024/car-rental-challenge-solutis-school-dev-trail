@@ -10,6 +10,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.serv
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -22,7 +23,9 @@ public class AluguelServiceImpl implements AluguelService {
     private final MotoristaRepository motoristaRepository;
     private final CarroRepository carroRepository;
 
-    public AluguelServiceImpl(AluguelRepository aluguelRepository, MotoristaRepository motoristaRepository, CarroRepository carroRepository) {
+    public AluguelServiceImpl(AluguelRepository aluguelRepository,
+                              MotoristaRepository motoristaRepository,
+                              CarroRepository carroRepository) {
         this.aluguelRepository = aluguelRepository;
         this.motoristaRepository = motoristaRepository;
         this.carroRepository = carroRepository;
