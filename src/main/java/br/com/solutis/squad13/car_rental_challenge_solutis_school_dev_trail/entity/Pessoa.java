@@ -8,6 +8,18 @@ import org.hibernate.proxy.HibernateProxy;
 import java.time.LocalDate;
 import java.util.Objects;
 
+
+/**
+ * Classe que representa um Motorista no sistema de aluguel de carros.
+ * <p>
+ * A classe herda os atributos comuns de {@link Pessoa} e inclui campos específicos do motorista,
+ * como número da CNH, status de atividade, data de criação e última atualização.
+ * É mapeada para a tabela 'tb_motorista' no banco de dados.
+ * </p>
+ *
+ * @see Pessoa
+ * @see Funcionario
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

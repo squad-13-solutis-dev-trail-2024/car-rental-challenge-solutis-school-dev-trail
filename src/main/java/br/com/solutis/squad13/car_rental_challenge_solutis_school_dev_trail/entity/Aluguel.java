@@ -37,14 +37,46 @@ public class Aluguel {
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal valor;
 
+    /**
+     * Motorista que realizou este aluguel.
+     * <p>
+     * Representa o lado "muitos" no relacionamento um-para-muitos com a entidade {@link Motorista}.
+     * Cada {@link Aluguel} está associado a um único {@link Motorista}.
+     * O atributo `motorista_id` na tabela `tb_aluguel` atua como chave estrangeira, referenciando
+     * a tabela `tb_motorista`.
+     * </p>
+     *
+     * @see Motorista
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
     private Motorista motorista;
 
+    /**
+     * Carro associado a este aluguel.
+     * <p>
+     * Representa o lado "muitos" no relacionamento um-para-muitos com a entidade {@link Carro}.
+     * Cada {@link Aluguel} está obrigatoriamente associado a um único {@link Carro}.
+     * O atributo `carro_id` na tabela `tb_aluguel` atua como chave estrangeira, referenciando
+     * a tabela `tb_carro`.
+     * </p>
+     *
+     * @see Carro
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
     private Carro carro;
 
+    /**
+     * Apólice de seguro associada ao aluguel.
+     * <p>
+     * Este campo estabelece uma relação um-para-um com a {@link ApoliceSeguro}. Cada aluguel deve
+     * ter uma apólice de seguro associada, e a apólice é obrigatória. A anotação {@code @JoinColumn}
+     * define a coluna de junção na tabela 'tb_aluguel' que referencia a apólice de seguro.
+     * </p>
+     *
+     * @see ApoliceSeguro
+     */
     @OneToOne
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     private ApoliceSeguro apoliceSeguro;

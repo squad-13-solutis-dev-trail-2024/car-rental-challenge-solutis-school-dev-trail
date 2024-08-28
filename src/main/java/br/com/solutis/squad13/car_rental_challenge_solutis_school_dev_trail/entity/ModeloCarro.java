@@ -25,6 +25,15 @@ public class ModeloCarro {
     private Long id;
     private String descricao;
 
+    /**
+     * Fabricante ao qual este modelo de carro pertence.
+     * <p>
+     * A relação entre {@link ModeloCarro} e {@link Fabricante} é representada aqui,
+     * onde cada modelo de carro está associado a um único fabricante. A anotação
+     * {@code @ManyToOne} indica que vários modelos podem referenciar o mesmo fabricante,
+     * mas cada modelo tem um único fabricante.
+     * </p>
+     */
     @ManyToOne
     @JoinColumn(name = "fabricante_id", nullable = false)
     private Fabricante fabricante;
@@ -32,7 +41,19 @@ public class ModeloCarro {
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "modeloCarro", cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Lista de carros específicos que são deste modelo.
+     * <p>
+     * A relação entre {@link ModeloCarro} e {@link Carro} é representada aqui,
+     * onde um modelo pode estar associado a vários carros específicos. A anotação
+     * {@code @OneToMany} indica que a lista de carros é gerenciada pelo modelo.
+     * A cascade {@code CascadeType.ALL} garante que todas as operações em {@link ModeloCarro}
+     * (inserção, atualização, remoção) sejam refletidas nos seus carros associados.
+     * O atributo {@code orphanRemoval = true} assegura que os carros sem modelo
+     * sejam removidos do banco de dados.
+     * </p>
+     */
+    @OneToMany(mappedBy = "modelo", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<Carro> carros = new ArrayList<>();
 

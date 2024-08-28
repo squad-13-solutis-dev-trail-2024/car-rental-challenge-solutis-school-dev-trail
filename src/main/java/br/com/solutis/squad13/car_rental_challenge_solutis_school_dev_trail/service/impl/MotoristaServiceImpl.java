@@ -33,6 +33,8 @@ public class MotoristaServiceImpl implements MotoristaService {
         if (motoristaRepository.existsByEmail(dadosCadastroMotorista.email()))
             throw new DuplicateEntryException("Já existe um motorista cadastrado com esse e-mail");
 
+        //todo validacao para aceitar somente maiores de idade
+
         Motorista motorista = new Motorista(dadosCadastroMotorista);
         motoristaRepository.save(motorista);
 

@@ -2,14 +2,28 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 
 public record DadosDetalhamentoMotorista(
         Long id,
         String nome,
+
+        @Email
         String email,
+
+        @CPF(message = "CPF inválido")
         String cpf,
+
+        @JsonFormat(
+                pattern = "\\d{11}",
+                shape = JsonFormat.Shape.STRING,
+                locale = "pt-BR",
+                timezone = "Brazil/East",
+                with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
+        )
         String numeroCNH,
 
         @JsonFormat(

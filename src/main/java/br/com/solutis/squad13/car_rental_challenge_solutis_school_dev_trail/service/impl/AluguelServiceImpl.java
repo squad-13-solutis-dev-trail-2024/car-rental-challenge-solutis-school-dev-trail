@@ -7,8 +7,10 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repo
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
 
 
 import java.time.Instant;
@@ -41,20 +43,24 @@ public class AluguelServiceImpl implements AluguelService {
     }
 
     @Override
+    @Transactional
     public Aluguel alugar(Aluguel aluguel, String emailMotorista, Long idCarro){
-        Motorista motorista = motoristaRepository.findByEmail(emailMotorista);
-
-        Carro carro = carroRepository.findById(idCarro)
-                .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + idCarro));
-        if(carro.isDisponivelParaAluguel()){
-            carro.bloquearAluguel();
-            carroRepository.save(carro);
-            aluguel.setMotorista(motorista);
-            aluguel.setCarro(carro);
-            aluguel.setDataPedido(LocalDate.from(Instant.now()));
-            return aluguelRepository.save(aluguel);
-        } else{
-            throw new RuntimeException("Carro indisponivel para aluguel");
+        if(motoristaRepository.existsByEmail(emailMotorista)){
+            Motorista motorista = motoristaRepository.findByEmail(emailMotorista);
+            Carro carro = carroRepository.findById(idCarro)
+                    .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + idCarro));
+            if(carro.isDisponivelParaAluguel()){
+                carro.bloquearAluguel();
+                carroRepository.save(carro);
+                aluguel.setMotorista(motorista);
+                aluguel.setCarro(carro);
+                aluguel.setDataPedido(LocalDate.from(Instant.now()));
+                return aluguelRepository.save(aluguel);
+            } else{
+                throw new RuntimeException("Carro indisponivel para aluguel");
+            }
+        }else {
+            throw new RuntimeException("Email invalido ou inexistente");
         }
     }
 }

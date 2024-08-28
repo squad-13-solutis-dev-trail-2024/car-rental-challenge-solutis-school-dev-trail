@@ -37,6 +37,16 @@ public class ApoliceSeguro {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean protecaoRoubo;
 
+    /**
+     * Aluguel associado à apólice de seguro.
+     * <p>
+     * Este campo estabelece uma relação um-para-um com a {@link Aluguel}. A anotação {@code @OneToOne}
+     * com {@code mappedBy = "apoliceSeguro"} define que a apólice de seguro é o lado inverso da relação,
+     * e a coluna de junção é gerenciada pela classe {@link Aluguel}.
+     * </p>
+     *
+     * @see Aluguel
+     */
     @OneToOne(mappedBy = "apoliceSeguro")
     @JoinColumn(nullable = false)
     private Aluguel aluguel;

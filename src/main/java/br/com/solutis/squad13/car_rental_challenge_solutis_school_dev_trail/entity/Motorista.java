@@ -13,6 +13,40 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * Classe que representa um Motorista no sistema de aluguel de carros.
+ * <p>
+ * Esta classe herda os atributos comuns de {@link Pessoa}, adicionando campos específicos
+ * que identificam o motorista, como o número da CNH, status de atividade, data de criação
+ * e última atualização. A classe é mapeada para a tabela 'tb_motorista' no banco de dados,
+ * com a chave primária herdada da classe {@link Pessoa}.
+ * </p>
+ *
+ * <p>
+ * A relação entre {@link Motorista} e {@link Aluguel} é definida como:
+ * <ul>
+ *     <li>Um {@link Motorista} pode ter vários {@link Aluguel} associados a ele.</li>
+ *     <li>Cada {@link Aluguel} é obrigatoriamente associado a um único {@link Motorista}.</li>
+ * </ul>
+ * Esta relação é mapeada utilizando a anotação {@code @OneToMany} no lado de {@link Motorista},
+ * indicando que o campo `alugueis` contém a lista de todos os aluguéis associados ao motorista.
+ * </p>
+ *
+ * <p>
+ * A classe inclui campos para:
+ * <ul>
+ *     <li>{@code numeroCNH} - O número da Carteira Nacional de Habilitação (CNH) do motorista.</li>
+ *     <li>{@code ativo} - Um campo booleano que indica se o motorista está ativo no sistema.</li>
+ *     <li>{@code dataCreated} - A data e hora em que o registro do motorista foi criado.</li>
+ *     <li>{@code lastUpdated} - A data e hora da última atualização do registro do motorista.</li>
+ * </ul>
+ * </p>
+ *
+ * @see Pessoa
+ * @see Aluguel
+ * @see Funcionario
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -27,12 +61,22 @@ public class Motorista extends Pessoa {
 
     private String numeroCNH;
 
-    @OneToMany(mappedBy = "motorista")
+    /**
+     * Lista de aluguéis realizados por este motorista.
+     * <p>
+     * Representa o lado "um" no relacionamento um-para-muitos com a entidade {@link Aluguel}.
+     * Cada {@link Motorista} pode estar associado a múltiplos {@link Aluguel}es.
+     * A lista é carregada de forma "lazy", ou seja, somente quando for acessada.
+     * </p>
+     *
+     * @see Aluguel
+     */
+    @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
     @Setter(AccessLevel.NONE)
     @Column(nullable = false)
     private List<Aluguel> alugueis;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean ativo;
 
     @CreationTimestamp
@@ -56,9 +100,9 @@ public class Motorista extends Pessoa {
     public void atualizarInformacoes(@Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
         this.setNome(dadosAtualizacaoMotorista.nome());
         this.setDataNascimento(dadosAtualizacaoMotorista.dataNascimento());
-        this.setCpf(dadosAtualizacaoMotorista.cpf());
+        //this.setCpf(dadosAtualizacaoMotorista.cpf());
         this.setEmail(dadosAtualizacaoMotorista.email());
-        this.setSexo(dadosAtualizacaoMotorista.sexo());
+        //this.setSexo(dadosAtualizacaoMotorista.sexo());
         this.numeroCNH = dadosAtualizacaoMotorista.numeroCNH();
         this.lastUpdated = LocalDateTime.now();
     }

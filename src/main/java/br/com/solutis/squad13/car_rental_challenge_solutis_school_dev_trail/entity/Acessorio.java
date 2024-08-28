@@ -28,6 +28,33 @@ public class Acessorio {
     @Column(nullable = false)
     private DescricaoAcessorio descricao;
 
+    /**
+     * Conjunto de carros que possuem este acessório.
+     * <p>
+     * Representa o lado "muitos" no relacionamento muitos-para-muitos com a entidade {@link Carro}.
+     * Um acessório pode estar presente em vários carros, e a lista de carros é mapeada através da tabela
+     * de junção `tb_carro_acessorio`.
+     * </p>
+     * <p>
+     * A anotação `@ManyToMany(mappedBy = "acessorios")` indica que a relação é gerenciada pela
+     * entidade `Carro`, através do atributo `acessorios` na classe `Carro`.
+     * </p>
+     * <p>
+     * A anotação `@Column(nullable = true)` indica que a lista de carros pode ser nula, ou seja,
+     * um acessório pode não estar presente em nenhum carro.
+     * </p>
+     * <p>
+     * A anotação `@Setter(AccessLevel.NONE)` impede a modificação direta do conjunto de carros.
+     * A manipulação do conjunto deve ser feita por meio de métodos específicos na classe `Acessorio`,
+     * garantindo a consistência dos dados.
+     * </p>
+     * <p>
+     * A utilização de `Set` ao invés de `List` garante que não haja carros duplicados na lista,
+     * já que um carro não pode ter o mesmo acessório mais de uma vez. Além disso, `Set` não garante
+     * a ordem de inserção dos carros, o que é adequado nesse contexto, pois a ordem dos carros
+     * que possuem um acessório não é relevante.
+     * </p>
+     */
     @ManyToMany(mappedBy = "acessorios")
     @Column(nullable = true)
     @Setter(AccessLevel.NONE)

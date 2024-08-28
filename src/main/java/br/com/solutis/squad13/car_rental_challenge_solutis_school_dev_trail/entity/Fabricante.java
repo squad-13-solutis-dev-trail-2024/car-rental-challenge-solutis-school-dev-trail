@@ -24,11 +24,22 @@ public class Fabricante {
     private Long id;
     private String nome;
 
+    /**
+     * Lista de modelos de carros fabricados por este fabricante.
+     * <p>
+     * A relação entre {@link Fabricante} e {@link ModeloCarro} é representada aqui,
+     * onde um fabricante pode estar associado a vários modelos de carros. A anotação
+     * {@code @OneToMany} indica que a lista de modelos é gerenciada pelo fabricante.
+     * A cascade {@code CascadeType.ALL} garante que todas as operações em {@link Fabricante}
+     * (inserção, atualização, remoção) sejam refletidas nos seus modelos associados.
+     * O atributo {@code orphanRemoval = true} assegura que os modelos sem fabricante
+     * sejam removidos do banco de dados.
+     * </p>
+     */
     @OneToMany(mappedBy = "fabricante",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @Setter(AccessLevel.NONE)
-    @Column(nullable = true)
     private List<ModeloCarro> modelos = new ArrayList<>();
 
     @Override

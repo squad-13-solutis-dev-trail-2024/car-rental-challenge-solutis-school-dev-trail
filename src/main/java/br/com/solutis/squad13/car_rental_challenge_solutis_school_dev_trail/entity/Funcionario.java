@@ -12,6 +12,17 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
+/**
+ * Classe que representa um Funcionário no sistema de aluguel de carros.
+ * <p>
+ * A classe herda os atributos comuns de {@link Pessoa} e inclui campos específicos do funcionário,
+ * como a matrícula do funcionário.
+ * É mapeada para a tabela 'tb_funcionario' no banco de dados.
+ * </p>
+ *
+ * @see Pessoa
+ * @see Motorista
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
