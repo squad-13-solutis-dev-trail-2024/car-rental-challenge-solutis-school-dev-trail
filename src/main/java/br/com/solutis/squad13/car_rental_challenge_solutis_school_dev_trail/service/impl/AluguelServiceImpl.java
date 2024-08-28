@@ -6,8 +6,8 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,15 +16,19 @@ import java.util.Optional;
 
 @Service
 @Log4j2
-public class AluguelService {
+public class AluguelServiceImpl implements AluguelService {
 
-    @Autowired
-    private AluguelRepository aluguelRepository;
-    @Autowired
-    private MotoristaRepository motoristaRepository;
-    @Autowired
-    private CarroRepository carroRepository;
+    private final AluguelRepository aluguelRepository;
+    private final MotoristaRepository motoristaRepository;
+    private final CarroRepository carroRepository;
 
+    public AluguelServiceImpl(AluguelRepository aluguelRepository, MotoristaRepository motoristaRepository, CarroRepository carroRepository) {
+        this.aluguelRepository = aluguelRepository;
+        this.motoristaRepository = motoristaRepository;
+        this.carroRepository = carroRepository;
+    }
+
+    @Override
     public Aluguel findByid(Long id){
         Optional<Aluguel> aluguel = aluguelRepository.findById(id);
         if(aluguel.isEmpty()){
@@ -32,7 +36,9 @@ public class AluguelService {
         }
         return aluguel.orElse(null);
     }
-    public Aluguel alugar(Aluguel aluguel, String emailMotorista,Long idCarro){
+
+    @Override
+    public Aluguel alugar(Aluguel aluguel, String emailMotorista, Long idCarro){
         Motorista motorista = motoristaRepository.findByEmail(emailMotorista);
 
         Carro carro = carroRepository.findById(idCarro)
@@ -42,13 +48,10 @@ public class AluguelService {
             carroRepository.save(carro);
             aluguel.setMotorista(motorista);
             aluguel.setCarro(carro);
-            aluguel.setDataEntrega(Instant.now());
+            aluguel.setDataPedido(LocalDate.from(Instant.now()));
             return aluguelRepository.save(aluguel);
         } else{
             throw new RuntimeException("Carro indisponivel para aluguel");
         }
-
-
-
     }
 }

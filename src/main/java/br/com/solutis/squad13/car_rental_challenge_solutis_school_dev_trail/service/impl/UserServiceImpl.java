@@ -5,13 +5,13 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @Log4j2
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
     private final MotoristaRepository motoristaRepository;
 
@@ -19,25 +19,28 @@ public class UserServiceImpl {
         this.motoristaRepository = motoristaRepository;
     }
 
-    public Motorista findByEmail(String email){
+    @Override
+    public Motorista findByEmail(String email) {
         Motorista motorista = motoristaRepository.findByEmail(email);
-        if(motorista == null){
+        if (motorista == null) {
             log.warn("Motorista não encontrado");
         }
         return motorista;
     }
-    public Motorista create(Motorista motorista){
+
+    @Override
+    public Motorista create(Motorista motorista) {
         Motorista existMotorista = motoristaRepository.findByEmail(motorista.getEmail());
-        if(existMotorista == null){
+        if (existMotorista == null) {
             return motoristaRepository.save(motorista);
-        }else {
+        } else {
             throw new RuntimeException("Email já cadastrado.");
         }
     }
 
+    @Override
     public MotoristaDTO convertToDTO(Motorista motorista) {
-        // Implementação para converter Motorista para MotoristaDTO
-        return new MotoristaDTO(motorista.getId(),motorista.getNome(), motorista.getEmail(),motorista.getDataNascimento(),
-                motorista.getCpf(), motorista.getSexo(),motorista.getNumeroCNH(),(Aluguel) motorista.getAlugueis());
+        return new MotoristaDTO(motorista.getId(), motorista.getNome(), motorista.getEmail(), motorista.getDataNascimento(),
+                motorista.getCpf(), motorista.getSexo(), motorista.getNumeroCNH(), (Aluguel) motorista.getAlugueis());
     }
 }

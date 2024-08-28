@@ -1,14 +1,14 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Objects;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -22,29 +22,51 @@ public class Aluguel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Long id;
 
-    @Temporal(TemporalType.DATE)
-    private Date dataPedido;
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDate dataPedido;
 
-    @Temporal(TemporalType.DATE)
-    private Instant dataEntrega;
+    @Column(nullable = false)
+    private LocalDate dataEntrega;
 
-    @Temporal(TemporalType.DATE)
-    private Date dataDevolucao;
+    @Column(nullable = true)
+    private LocalDate dataDevolucao;
 
-    private BigDecimal valorTotal;
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal valor;
 
-    @ManyToOne
-    @JoinColumn(name = "motorista_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "motorista_id", nullable = false)
     private Motorista motorista;
 
-    @ManyToOne
-    @JoinColumn(name = "carro_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "carro_id", nullable = false)
     private Carro carro;
 
-    @ManyToOne
-    @JoinColumn(name = "apolice_seguro_id")
+    @OneToOne
+    @JoinColumn(name = "apolice_seguro_id", nullable = false)
     private ApoliceSeguro apoliceSeguro;
+
+    @Override
+    public String toString() {
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucao + ", valor=" + valor + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Aluguel aluguel = (Aluguel) o;
+        return getId() != null && Objects.equals(getId(), aluguel.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }

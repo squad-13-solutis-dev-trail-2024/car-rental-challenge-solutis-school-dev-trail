@@ -2,28 +2,25 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.con
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.MotoristaDTO;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl.UserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("api/v1/cliente")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ClienteController {
 
-    @Autowired
-    private UserServiceImpl userService;
+    private final UserService userService;
 
-    @GetMapping(name = "/{email}")
+    public ClienteController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping(name = "{email}")
     public ResponseEntity<MotoristaDTO> findByEmail(@PathVariable String email ){
         Motorista motorista = userService.findByEmail(email);
         MotoristaDTO motoristaDTO = userService.convertToDTO(motorista);
         return ResponseEntity.ok().body(motoristaDTO);
     }
-
-
-
 }
