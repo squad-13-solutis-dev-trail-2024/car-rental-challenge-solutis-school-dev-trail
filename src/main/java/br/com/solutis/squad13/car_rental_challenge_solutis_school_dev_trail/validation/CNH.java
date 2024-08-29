@@ -26,9 +26,6 @@ public @interface CNH {
 
 class CNHValidator implements ConstraintValidator<CNH, String> {
 
-    public CNHValidator() {
-    }
-
     @Override
     public void initialize(CNH constraintAnnotation) {
     }
@@ -37,7 +34,7 @@ class CNHValidator implements ConstraintValidator<CNH, String> {
     public boolean isValid(String cnh, ConstraintValidatorContext context) {
 
         // Caso em que está havendo atualização de um motorista e o campo CNH está vazio
-        if (cnh == null) return true; //
+        if (cnh == null) return true;
 
         // Passo 1: Calcular o primeiro dígito verificador
         int soma1 = 0;
@@ -45,7 +42,6 @@ class CNHValidator implements ConstraintValidator<CNH, String> {
             soma1 += Character.getNumericValue(cnh.charAt(i)) * (9 - i);
         int primeiroDigito = soma1 % 11;
         if (primeiroDigito == 10) primeiroDigito = 0;
-
 
         // Passo 2: Calcular o segundo dígito verificador
         int soma2 = 0;
