@@ -1,4 +1,4 @@
-package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.script;
+package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.test;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosDetalhamentoMotorista;
 import jakarta.validation.ConstraintViolation;
@@ -6,6 +6,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class TesteDadosDetalhamentoMotorista {
                 "joao.silva@example.com",
                 "123.456.789-00",
                 "12345678900", // Número da CNH
-                "1990-01-01", // Data de Nascimento
+                LocalDate.of(1990, 1, 1), // Data de Nascimento
                 "MASCULINO", // Sexo
                 LocalDateTime.now(), // Data de Criação
                 LocalDateTime.now() // Data da Última Atualização
@@ -44,7 +45,7 @@ public class TesteDadosDetalhamentoMotorista {
                 "maria.souza@example.com",
                 "987.654.321-99",
                 "98765432199", // Número da CNH
-                "1985-05-10", // Data de Nascimento
+                LocalDate.of(1990, 1, 1), // Data de Nascimento
                 "FEMININO", // Sexo
                 LocalDateTime.now(), // Data de Criação
                 LocalDateTime.now() // Data da Última Atualização

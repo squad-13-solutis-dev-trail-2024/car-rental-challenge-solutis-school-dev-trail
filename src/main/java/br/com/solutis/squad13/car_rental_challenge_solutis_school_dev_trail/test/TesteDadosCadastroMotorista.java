@@ -1,4 +1,4 @@
-package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.script;
+package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.test;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
@@ -8,6 +8,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class TesteDadosCadastroMotorista {
@@ -20,7 +21,9 @@ public class TesteDadosCadastroMotorista {
                 "Pedrão69",
                 "@example.com",
                 "12345678900",
-                Sexo.MASCULINO
+                Sexo.MASCULINO,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
         // Criar um validador

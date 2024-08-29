@@ -10,18 +10,19 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.serv
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
-@Log4j2
 @Service
 public class MotoristaServiceImpl implements MotoristaService {
+
+    private static final Logger log = LoggerFactory.getLogger(MotoristaServiceImpl.class);
 
     private final MotoristaRepository motoristaRepository;
 
@@ -33,29 +34,7 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Transactional
     public Motorista cadastrarMotorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         log.info("Iniciando cadastro do motorista: {}", dadosCadastroMotorista);
-
-        if (motoristaRepository.existsByCpf(dadosCadastroMotorista.cpf())) {
-            log.warn("Tentativa de cadastro com CPF duplicado: {}", dadosCadastroMotorista.cpf());
-            throw new DuplicateEntryException("Já existe um motorista cadastrado com esse CPF");
-        }
-
-        if (motoristaRepository.existsByEmail(dadosCadastroMotorista.email())) {
-            log.warn("Tentativa de cadastro com e-mail duplicado: {}", dadosCadastroMotorista.email());
-            throw new DuplicateEntryException("Já existe um motorista cadastrado com esse e-mail");
-        }
-
-        // Validate age (must be 18 or older)
-        LocalDate birthDate = dadosCadastroMotorista.dataNascimento().atStartOfDay()
-                .atZone(ZoneId.systemDefault()) // Specify time zone
-                .toLocalDate();
-
-        LocalDate currentDate = LocalDate.now();
-        int age = Period.between(birthDate, currentDate).getYears();
-
-        if (age < 18) {
-            log.warn("Tentativa de cadastro de motorista menor de idade: {}", dadosCadastroMotorista);
-            throw new IllegalArgumentException("O motorista deve ter pelo menos 18 anos de idade.");
-        }
+        validarCamposDuplicados(dadosCadastroMotorista);
 
         Motorista motorista = new Motorista(dadosCadastroMotorista);
         motoristaRepository.save(motorista);
@@ -86,6 +65,20 @@ public class MotoristaServiceImpl implements MotoristaService {
                     return new EntityNotFoundException("Motorista não encontrado");
                 });
 
+
+        if (dadosAtualizacaoMotorista.cpf() != null ||
+                dadosAtualizacaoMotorista.email() != null ||
+                dadosAtualizacaoMotorista.numeroCNH() != null) {
+
+            DadosCadastroMotorista dadosParaValidacao = new DadosCadastroMotorista(
+                    motorista.getCpf(),
+                    motorista.getEmail(),
+                    motorista.getNumeroCNH()
+            );
+
+            validarCamposDuplicados(dadosParaValidacao); // Valide os campos duplicados
+        }
+
         motorista.atualizarInformacoes(dadosAtualizacaoMotorista);
         motoristaRepository.save(motorista);
         log.info("Motorista atualizado com sucesso: {}", motorista);
@@ -101,7 +94,7 @@ public class MotoristaServiceImpl implements MotoristaService {
             log.info("Motorista deletado com sucesso: {}", id);
         } else {
             log.warn("Tentativa de deletar motorista não existente: {}", id);
-            throw new IllegalArgumentException("Motorista não encontrado");
+            throw new EntityNotFoundException("Motorista não encontrado com o ID: " + id);
         }
     }
 
@@ -111,5 +104,29 @@ public class MotoristaServiceImpl implements MotoristaService {
         Page<Motorista> motoristas = motoristaRepository.findAllByAtivoTrue(paginacao);
         log.info("Motoristas listados com sucesso: {}", motoristas);
         return motoristas.map(DadosListagemMotorista::new);
+    }
+
+    private void validarCamposDuplicados(DadosCadastroMotorista dados) {
+        List<String> errosDuplicados = new ArrayList<>();
+
+        if (motoristaRepository.existsByCpf(dados.cpf())) {
+            log.warn("Tentativa de cadastro com CPF duplicado: {}", dados.cpf());
+            errosDuplicados.add("Já existe um motorista cadastrado com esse CPF");
+        }
+
+        if (motoristaRepository.existsByEmail(dados.email())) {
+            log.warn("Tentativa de cadastro com e-mail duplicado: {}", dados.email());
+            errosDuplicados.add("Já existe um motorista cadastrado com esse e-mail");
+        }
+
+        if (motoristaRepository.existsByNumeroCNH(dados.numeroCNH())) {
+            log.warn("Tentativa de cadastro com número da CNH duplicado: {}", dados.numeroCNH());
+            errosDuplicados.add("Já existe um motorista cadastrado com esse número da CNH");
+        }
+
+        if (!errosDuplicados.isEmpty()) {
+            String mensagemErro = String.join("\n", errosDuplicados); // Junta as mensagens de erro com quebra de linha
+            throw new DuplicateEntryException(mensagemErro);
+        }
     }
 }

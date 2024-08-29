@@ -22,7 +22,7 @@ public record DadosListagemCarro(
                 carro.getId(),
                 carro.getNome(),
                 carro.getModelo(),
-                carro.isDisponivelParaAluguel(),
+                carro.isAtivo(),
                 carro.getValorDiaria(),
                 carro.getModelo().getFabricante(),
                 carro.getModelo().getCategoria()

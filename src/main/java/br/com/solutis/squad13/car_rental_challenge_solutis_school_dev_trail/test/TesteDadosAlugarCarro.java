@@ -1,4 +1,4 @@
-package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.script;
+package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.test;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAlugarCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;

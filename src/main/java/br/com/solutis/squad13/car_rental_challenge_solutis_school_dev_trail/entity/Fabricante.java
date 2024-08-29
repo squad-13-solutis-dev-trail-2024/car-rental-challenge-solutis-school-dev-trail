@@ -36,7 +36,8 @@ public class Fabricante {
      * sejam removidos do banco de dados.
      * </p>
      */
-    @OneToMany(mappedBy = "fabricante",
+    @OneToMany(
+            mappedBy = "fabricante",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER

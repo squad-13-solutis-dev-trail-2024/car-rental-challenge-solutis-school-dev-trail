@@ -5,16 +5,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record DadosDetalhamentoMotorista(
+
         Long id,
         String nome,
-
-        @Email
         String email,
-
-        @CPF(message = "CPF inválido")
         String cpf,
 
         @JsonFormat(
@@ -33,7 +31,7 @@ public record DadosDetalhamentoMotorista(
                 timezone = "Brazil/East",
                 with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
         )
-        String dataNascimento,
+        LocalDate dataNascimento,
         String sexo,
 
         @JsonFormat(
@@ -61,7 +59,7 @@ public record DadosDetalhamentoMotorista(
                 motorista.getEmail(),
                 motorista.getCpf(),
                 motorista.getNumeroCNH(),
-                motorista.getDataNascimento().toString(),
+                motorista.getDataNascimento(),
                 motorista.getSexo().name(),
                 motorista.getDataCreated(),
                 motorista.getLastUpdated()

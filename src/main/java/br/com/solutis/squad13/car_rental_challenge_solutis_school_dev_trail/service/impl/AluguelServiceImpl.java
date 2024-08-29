@@ -13,8 +13,6 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -36,35 +34,35 @@ public class AluguelServiceImpl implements AluguelService {
     }
 
     @Override
-    public Aluguel findByid(Long id){
+    public Aluguel findByid(Long id) {
         Optional<Aluguel> aluguel = aluguelRepository.findById(id);
-        if(aluguel.isEmpty()) log.warn("Informações do aluguel não encontrado!");
+        if (aluguel.isEmpty()) log.warn("Informações do aluguel não encontrado!");
         return aluguel.orElse(null);
     }
 
     @Override
     @Transactional
-    public Aluguel alugar(@Valid DadosAlugarCarro alugar){
+    public Aluguel alugar(@Valid DadosAlugarCarro alugar) {
 
         Aluguel aluguel = new Aluguel();
 
-        if(motoristaRepository.existsByEmail(alugar.emailMotorista())){
+        if (motoristaRepository.existsByEmail(alugar.emailMotorista())) {
             Motorista motorista = motoristaRepository.findByEmail(alugar.emailMotorista());
             Carro carro = carroRepository.findById(alugar.idCarro())
                     .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + alugar.idCarro()));
-            if(carro.isDisponivelParaAluguel()){
+            if (carro.isAtivo()) {
                 carro.bloquearAluguel();
                 carroRepository.save(carro);
                 aluguel.setMotorista(motorista);
                 aluguel.setCarro(carro);
                 aluguel.setDataEntrega(alugar.dataEntrega());
-                aluguel.setDataDevolucao(alugar.dataDevolucao());
+                aluguel.setDataDevolucaoPrevista(alugar.dataDevolucao());
                 aluguel.setDataPedido(LocalDate.from(Instant.now()));
                 return aluguelRepository.save(aluguel);
-            } else{
+            } else {
                 throw new RuntimeException("Carro indisponivel para aluguel");
             }
-        }else {
+        } else {
             throw new RuntimeException("Email invalido ou inexistente");
         }
     }

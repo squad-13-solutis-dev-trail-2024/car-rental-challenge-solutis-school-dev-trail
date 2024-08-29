@@ -56,7 +56,6 @@ public class Acessorio {
      * </p>
      */
     @ManyToMany(mappedBy = "acessorios")
-    @Column(nullable = true)
     @Setter(AccessLevel.NONE)
     private Set<Carro> carros = new HashSet<>();
 

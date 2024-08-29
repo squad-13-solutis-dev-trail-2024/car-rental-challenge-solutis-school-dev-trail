@@ -3,9 +3,12 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -36,6 +39,18 @@ public abstract class Pessoa {
 
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean ativo;
+
+    @CreationTimestamp
+    @Setter(AccessLevel.NONE)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    private LocalDateTime dataCreated;
+
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    private LocalDateTime lastUpdated;
 
     @Override
     public String toString() {

@@ -48,7 +48,6 @@ public class ApoliceSeguro {
      * @see Aluguel
      */
     @OneToOne(mappedBy = "apoliceSeguro")
-    @JoinColumn(nullable = false)
     private Aluguel aluguel;
 
     @Override

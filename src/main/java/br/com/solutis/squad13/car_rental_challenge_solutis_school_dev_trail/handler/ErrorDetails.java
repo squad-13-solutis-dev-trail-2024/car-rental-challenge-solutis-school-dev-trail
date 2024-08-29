@@ -1,9 +1,14 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.handler;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 /**
- * Record que encapsula os detalhes de um erro ocorrido durante o processamento
+ * Classe que encapsula os detalhes de um erro ocorrido durante o processamento
  * de uma requisição na aplicação.
  * <p>
  * Esta classe é utilizada para padronizar as informações retornadas ao cliente
@@ -14,9 +19,11 @@ import java.time.LocalDateTime;
  * <p>Os detalhes do erro incluem:</p>
  * <ul>
  *     <li>{@link #timestamp} - A data e hora em que o erro ocorreu.</li>
- *     <li>{@link #field} - O campo específico ou a parte da requisição onde o erro foi detectado.</li>
- *     <li>{@link #details} - Detalhes adicionais sobre o erro, como a descrição da exceção.</li>
- *     <li>{@link #error} - O código ou tipo do erro ocorrido, facilitando a categorização do problema.</li>
+ *     <li>{@link #message} - A mensagem de erro que descreve o problema ocorrido.</li>
+ *     <li>{@link #details} - Detalhes adicionais sobre o erro, como a URI da requisição
+ *     ou a descrição da exceção.</li>
+ *     <li>{@link #errorCode} - O código ou tipo do erro ocorrido, facilitando a
+ *     categorização do problema.</li>
  * </ul>
  *
  * <p>Exemplo de uso:</p>
@@ -24,22 +31,22 @@ import java.time.LocalDateTime;
  *     {@code
  *     ErrorDetails errorDetails = new ErrorDetails(
  *         LocalDateTime.now(),
- *         "campo_invalido",
  *         "O valor fornecido para o campo 'email' já está em uso.",
+ *         "uri=/usuarios",
  *         "DUPLICATE_ENTRY"
  *     );
  *     }
  * </pre>
  *
- * @param timestamp A data e hora exata em que o erro ocorreu.
- * @param field     O campo específico ou a parte da requisição onde o erro foi identificado.
- * @param details   Informações adicionais que descrevem o erro ocorrido.
- * @param error     O código ou tipo do erro, utilizado para categorização e tratamento.
+ * @see ValidationErrorDetails
  */
-public record ErrorDetails(
-        LocalDateTime timestamp,
-        String field,
-        String details,
-        String error
-) {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class ErrorDetails {
+    private LocalDateTime timestamp;
+    private String message;
+    private String details;
+    private String errorCode;
 }

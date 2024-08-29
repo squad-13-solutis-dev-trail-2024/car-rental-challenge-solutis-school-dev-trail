@@ -31,8 +31,10 @@ public class Aluguel {
     @Column(nullable = false)
     private LocalDate dataEntrega;
 
-    @Column(nullable = true)
-    private LocalDate dataDevolucao;
+    @Column(nullable = false)
+    private LocalDate dataDevolucaoPrevista;
+
+    private LocalDate dataDevolucaoEfetiva;
 
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal valor;
@@ -83,7 +85,7 @@ public class Aluguel {
 
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucao + ", valor=" + valor + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucaoPrevista + ", valor=" + valor + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
     }
 
     @Override

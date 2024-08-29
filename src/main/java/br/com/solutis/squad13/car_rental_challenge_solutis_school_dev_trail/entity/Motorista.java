@@ -4,14 +4,20 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 
 /**
@@ -72,18 +78,9 @@ public class Motorista extends Pessoa {
      * @see Aluguel
      */
     @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
-    @Setter(AccessLevel.NONE)
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private List<Aluguel> alugueis;
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private Boolean ativo;
-
-    @CreationTimestamp
-    private LocalDateTime dataCreated;
-
-    @UpdateTimestamp
-    private LocalDateTime lastUpdated;
 
     public Motorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         this.setNome(dadosCadastroMotorista.nome());
@@ -91,20 +88,20 @@ public class Motorista extends Pessoa {
         this.setCpf(dadosCadastroMotorista.cpf());
         this.setEmail(dadosCadastroMotorista.email());
         this.setSexo(dadosCadastroMotorista.sexo());
-        this.ativo = true;
+        this.setLastUpdated(LocalDateTime.now());
+        this.setAtivo(true);
         this.numeroCNH = dadosCadastroMotorista.numeroCNH();
-        this.dataCreated = LocalDateTime.now();
-        this.lastUpdated = LocalDateTime.now();
+
     }
 
     public void atualizarInformacoes(@Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
-        this.setNome(dadosAtualizacaoMotorista.nome());
-        this.setDataNascimento(dadosAtualizacaoMotorista.dataNascimento());
-        //this.setCpf(dadosAtualizacaoMotorista.cpf());
-        this.setEmail(dadosAtualizacaoMotorista.email());
-        //this.setSexo(dadosAtualizacaoMotorista.sexo());
-        this.numeroCNH = dadosAtualizacaoMotorista.numeroCNH();
-        this.lastUpdated = LocalDateTime.now();
+        ofNullable(dadosAtualizacaoMotorista.nome()).ifPresent(this::setNome);
+        ofNullable(dadosAtualizacaoMotorista.dataNascimento()).ifPresent(this::setDataNascimento);
+        ofNullable(dadosAtualizacaoMotorista.email()).ifPresent(this::setEmail);
+        ofNullable(dadosAtualizacaoMotorista.sexo()).ifPresent(this::setSexo);
+        ofNullable(dadosAtualizacaoMotorista.numeroCNH()).ifPresent(value -> this.numeroCNH = value);
+        ofNullable(dadosAtualizacaoMotorista.cpf()).ifPresent(this::setCpf);
+        this.setLastUpdated(LocalDateTime.now());
     }
 
     @Override

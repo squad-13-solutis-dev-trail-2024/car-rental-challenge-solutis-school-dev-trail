@@ -2,14 +2,16 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.han
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,30 +32,44 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     /**
-     * Manipula a exceção {@link DuplicateEntryException}, que é lançada quando há uma tentativa
-     * de inserir uma entrada duplicada em uma entidade que deve ter valores únicos.
+     * Manipula a exceção {@link MethodArgumentNotValidException}, que é lançada quando ocorre um erro de validação
+     * dos dados de entrada de um metodo de um controlador.
      * <p>
-     * Esta exceção pode ser lançada, por exemplo, quando se tenta cadastrar um CPF ou CNPJ já existente
-     * no sistema. O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma
-     * resposta com status HTTP 409 (Conflict), indicando que a requisição conflita com o estado atual
-     * do recurso.
+     * Esta exceção é comum em operações onde os dados fornecidos pelo cliente, através do corpo da requisição
+     * ou parâmetros de URL,  não atendem aos requisitos de validação definidos pelas anotações do Bean Validation,
+     * como `@NotNull`, `@NotBlank`, `@Size`, etc.
+     * </p>
+     * <p>
+     * O metodo captura a exceção, extrai os detalhes dos erros de validação e os encapsula em uma lista de
+     * objetos {@link ValidationErrorDetails}. Cada objeto `ValidationErrorDetails` contém informações específicas
+     * sobre um erro de validação, como o campo que causou o erro, a mensagem de erro e o código de erro.
+     * </p>
+     * <p>
+     * Em seguida, o metodo retorna uma resposta HTTP com o status 400 (Bad Request) e a lista de erros de
+     * validação no corpo da resposta, no formato JSON. Essa resposta informa ao cliente quais campos da requisição
+     * são inválidos e quais são as mensagens de erro correspondentes, permitindo que o cliente corrija os erros e
+     * reenvie a requisição.
      * </p>
      *
-     * @param exception  A exceção de entrada duplicada, que contém a mensagem de erro a ser retornada ao cliente.
-     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
-     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
-     *         e o status HTTP 409 (Conflict).
+     * @param exception A exceção {@link MethodArgumentNotValidException} que contém os detalhes dos erros de validação.
+     * @param request   O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista de {@link ValidationErrorDetails} e o status HTTP 400 (Bad Request).
+     * @see ValidationErrorDetails
      */
-    @ExceptionHandler(DuplicateEntryException.class)
-    public ResponseEntity<List<ErrorDetails>> handleDuplicateEntryException(DuplicateEntryException exception,
-                                                                            WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                exception.getMessage(),
-                webRequest.getDescription(false),
-                "DUPLICATE_ENTRY"
-        );
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(List.of(errorDetails));
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<ValidationErrorDetails>> handleValidationException(MethodArgumentNotValidException exception,
+                                                                                  WebRequest request) {
+        List<ValidationErrorDetails> errors = new ArrayList<>();
+        for (FieldError error : exception.getBindingResult().getFieldErrors()) {
+            errors.add(new ValidationErrorDetails(
+                    LocalDateTime.now(),
+                    error.getDefaultMessage(), // Mensagem mais amigável do Bean Validation
+                    request.getDescription(false),
+                    "VALIDATION_ERROR",
+                    error.getField() // Nome do campo com erro
+            ));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     /**
@@ -69,7 +85,7 @@ public class GlobalExceptionHandler {
      * @param exception  A exceção de entidade não encontrada, que contém a mensagem de erro a ser retornada ao cliente.
      * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
      * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
-     *         e o status HTTP 404 (Not Found).
+     * e o status HTTP 404 (Not Found).
      */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<List<ErrorDetails>> handleResourceNotFoundException(EntityNotFoundException exception,
@@ -86,29 +102,36 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Manipula a exceção {@link BadRequestException}, que é lançada quando a requisição do cliente
-     * é inválida ou malformada.
+     * Manipula a exceção {@link DuplicateEntryException}, que é lançada quando há uma tentativa
+     * de inserir uma entrada duplicada em uma entidade que deve ter valores únicos.
      * <p>
-     * Esta exceção é comum em operações onde os parâmetros fornecidos são incorretos ou não estão no formato
-     * esperado. O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta
-     * com status HTTP 400 (Bad Request), indicando que o servidor não pôde processar a requisição devido a um erro
-     * do cliente.
+     * Esta exceção pode ser lançada, por exemplo, quando se tenta cadastrar um CPF ou CNPJ já existente
+     * no sistema. O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma
+     * resposta com status HTTP 409 (Conflict), indicando que a requisição conflita com o estado atual
+     * do recurso.
      * </p>
      *
-     * @param exception  A exceção de requisição inválida, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param exception  A exceção de entrada duplicada, que contém a mensagem de erro a ser retornada ao cliente.
      * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
      * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
-     *         e o status HTTP 400 (Bad Request).
+     * e o status HTTP 409 (Conflict).
      */
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<List<ErrorDetails>> handleBadRequestException(BadRequestException exception,
-                                                                        WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                exception.getMessage(),
-                webRequest.getDescription(false),
-                "BAD_REQUEST"
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List.of(errorDetails));
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ResponseEntity<List<ErrorDetails>> handleDuplicateEntryException(DuplicateEntryException exception,
+                                                                            WebRequest webRequest) {
+        List<ErrorDetails> errors = new ArrayList<>();
+        String[] mensagens = exception.getMessage().split("\\n");
+
+        // Cria um ErrorDetails para cada mensagem de erro
+        for (String mensagem : mensagens) {
+            errors.add(new ErrorDetails(
+                    LocalDateTime.now(),
+                    mensagem.trim(), // Remove espaços em branco no início e no final da mensagem
+                    webRequest.getDescription(false),
+                    "DUPLICATE_ENTRY"
+            ));
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
     }
 }
