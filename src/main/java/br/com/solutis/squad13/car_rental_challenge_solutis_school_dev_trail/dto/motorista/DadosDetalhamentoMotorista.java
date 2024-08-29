@@ -60,6 +60,7 @@ public record DadosDetalhamentoMotorista(
                 with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
         )
         LocalDateTime lastUpdated,
+
         boolean ativo,
 
         List<DadosListagemAluguel> alugueis

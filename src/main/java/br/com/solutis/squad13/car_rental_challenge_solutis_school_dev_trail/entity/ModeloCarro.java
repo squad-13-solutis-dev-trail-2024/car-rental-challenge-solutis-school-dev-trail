@@ -39,6 +39,7 @@ public class ModeloCarro {
     private Fabricante fabricante;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Categoria categoria;
 
     /**

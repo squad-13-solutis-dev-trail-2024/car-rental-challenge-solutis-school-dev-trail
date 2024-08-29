@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface AluguelRepository extends JpaRepository<Aluguel,Long> {
      List<Aluguel> findByMotoristaId(Long motoristaId);
-
      boolean existsByMotoristaId(Long id);
 }

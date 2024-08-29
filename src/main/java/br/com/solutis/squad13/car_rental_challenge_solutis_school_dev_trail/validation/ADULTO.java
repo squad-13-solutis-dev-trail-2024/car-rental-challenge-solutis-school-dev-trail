@@ -23,6 +23,9 @@ public @interface ADULTO {
 
 class AdultoValidator implements ConstraintValidator<ADULTO, LocalDate> {
 
+    public AdultoValidator() {
+    }
+
     @Override
     public void initialize(ADULTO constraintAnnotation) {
     }

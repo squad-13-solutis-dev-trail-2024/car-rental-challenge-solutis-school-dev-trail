@@ -26,6 +26,9 @@ public @interface CNH {
 
 class CNHValidator implements ConstraintValidator<CNH, String> {
 
+    public CNHValidator() {
+    }
+
     @Override
     public void initialize(CNH constraintAnnotation) {
     }

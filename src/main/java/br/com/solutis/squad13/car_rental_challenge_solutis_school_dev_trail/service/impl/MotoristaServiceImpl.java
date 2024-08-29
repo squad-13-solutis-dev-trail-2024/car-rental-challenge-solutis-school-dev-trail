@@ -3,19 +3,14 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ser
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.MotoristaService;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,10 +18,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 public class MotoristaServiceImpl implements MotoristaService {
 
-    private static final Logger log = LoggerFactory.getLogger(MotoristaServiceImpl.class);
+    private static final Logger log = getLogger(MotoristaServiceImpl.class);
 
     private final MotoristaRepository motoristaRepository;
 
@@ -51,7 +48,6 @@ public class MotoristaServiceImpl implements MotoristaService {
     public Motorista buscarPorId(Long id) {
         log.info("Buscando motorista por ID: {}", id);
 
-        // Primeiro, verifique se o motorista existe
         Motorista motorista = motoristaRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Motorista não encontrado para ID: {}", id);
@@ -72,11 +68,13 @@ public class MotoristaServiceImpl implements MotoristaService {
                     return new EntityNotFoundException("Motorista não encontrado");
                 });
 
-
+        log.info("Motorista encontrado para atualização: {}", motorista);
+        log.info("Verificando se há campos para atualização que não permitem duplicação");
         if (dadosAtualizacaoMotorista.cpf() != null ||
                 dadosAtualizacaoMotorista.email() != null ||
                 dadosAtualizacaoMotorista.numeroCNH() != null) {
 
+            log.info("Se chegou aqui é pq o usuário decidiu atualizar ou CPF, ou EMAIL ou numeroCNH");
             DadosCadastroMotorista dadosParaValidacao = new DadosCadastroMotorista(
                     motorista.getCpf(),
                     motorista.getEmail(),

@@ -1,8 +1,8 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.config.BigDecimalCurrencySerializer;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosApoliceSeguro;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCarroAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosListagemApoliceSeguro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosListagemCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -35,11 +35,10 @@ public record DadosListagemAluguel(
                 with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
         )
         LocalDate dataDevolucaoPrevista,
-
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         BigDecimal valor,
-        DadosCarroAluguel carro,
-        DadosApoliceSeguro apolice
+        DadosListagemCarro carro,
+        DadosListagemApoliceSeguro apolice
 ) {
 
     public DadosListagemAluguel(Aluguel aluguel) {
@@ -47,9 +46,9 @@ public record DadosListagemAluguel(
                 aluguel.getDataPedido(),
                 aluguel.getDataEntrega(),
                 aluguel.getDataDevolucaoPrevista(),
-                aluguel.getValor(), // BigDecimal valor agora está na posição correta
-                new DadosCarroAluguel(aluguel.getCarro()),
-                new DadosApoliceSeguro(aluguel.getApoliceSeguro())
+                aluguel.getValor(),
+                new DadosListagemCarro(aluguel.getCarro()),
+                new DadosListagemApoliceSeguro(aluguel.getApoliceSeguro())
         );
     }
 }

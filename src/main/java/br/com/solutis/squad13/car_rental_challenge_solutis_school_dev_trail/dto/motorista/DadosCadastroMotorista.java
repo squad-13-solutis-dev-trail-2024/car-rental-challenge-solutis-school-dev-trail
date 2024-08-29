@@ -35,8 +35,8 @@ public record DadosCadastroMotorista(
         @CPF(message = "CPF inválido")
         String cpf,
 
-        @Email(message = "O email é inválido")
         @NotBlank(message = "O email não pode ser nulo")
+        @Email(message = "O email é inválido")
         @Column(unique = true)
         String email,
 
@@ -57,7 +57,6 @@ public record DadosCadastroMotorista(
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
         LocalDateTime lastUpdated
 ) {
-
     // Construtor para validar eventuais dados duplicados no cadastro e na atualização
     public DadosCadastroMotorista(String cpf, String email, String numeroCNH) {
         this(null, null, cpf, email, numeroCNH, null, null, null);

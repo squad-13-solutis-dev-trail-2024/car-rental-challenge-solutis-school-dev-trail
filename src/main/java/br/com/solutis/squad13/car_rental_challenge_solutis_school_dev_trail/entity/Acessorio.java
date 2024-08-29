@@ -59,6 +59,24 @@ public class Acessorio {
     @Setter(AccessLevel.NONE)
     private Set<Carro> carros = new HashSet<>();
 
+    public void adicionarCarro(Carro carro) {
+        carros.add(carro);
+        carro.getAcessorios().add(this);
+    }
+
+    public void removerCarro(Carro carro) {
+        carros.remove(carro);
+        carro.getAcessorios().remove(this);
+    }
+
+    public void adicionarCarros(Set<Carro> carros) {
+        carros.forEach(this::adicionarCarro);
+    }
+
+    public void removerCarros(Set<Carro> carros) {
+        carros.forEach(this::removerCarro);
+    }
+
     @Override
     public String toString() {
         return "Acessorio{id=" + id + ", descricao=" + descricao + '}';

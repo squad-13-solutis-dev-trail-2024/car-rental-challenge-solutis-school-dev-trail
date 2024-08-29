@@ -67,6 +67,7 @@ public class Aluguel {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
+    @JsonIgnore
     private Carro carro;
 
     /**
@@ -81,6 +82,7 @@ public class Aluguel {
      */
     @OneToOne
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
+    @JsonIgnore
     private ApoliceSeguro apoliceSeguro;
 
     @Override

@@ -4,18 +4,13 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
@@ -57,6 +52,7 @@ import static java.util.Optional.ofNullable;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity(name = "Motorista")
 @Table(
         name = "tb_motorista",
@@ -65,6 +61,7 @@ import static java.util.Optional.ofNullable;
 @PrimaryKeyJoinColumn(name = "pessoa_id")
 public class Motorista extends Pessoa {
 
+    @Column(nullable = false)
     private String numeroCNH;
 
     /**
@@ -78,9 +75,8 @@ public class Motorista extends Pessoa {
      * @see Aluguel
      */
     @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
-    @Column(nullable = false)
     @Setter(AccessLevel.NONE)
-    private List<Aluguel> alugueis;
+    private List<Aluguel> alugueis = new ArrayList<>();
 
     public Motorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         this.setNome(dadosCadastroMotorista.nome());
@@ -91,7 +87,6 @@ public class Motorista extends Pessoa {
         this.setLastUpdated(LocalDateTime.now());
         this.setAtivo(true);
         this.numeroCNH = dadosCadastroMotorista.numeroCNH();
-
     }
 
     public void atualizarInformacoes(@Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
@@ -103,8 +98,6 @@ public class Motorista extends Pessoa {
         ofNullable(dadosAtualizacaoMotorista.cpf()).ifPresent(this::setCpf);
         this.setLastUpdated(LocalDateTime.now());
     }
-
-    // Criar um metodo para adicionar alugueis
 
     public void adicionarAluguel(Aluguel aluguel) {
         this.alugueis.add(aluguel);

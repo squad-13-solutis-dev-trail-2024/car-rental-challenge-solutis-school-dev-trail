@@ -3,13 +3,14 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.tes
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import static jakarta.validation.Validation.buildDefaultValidatorFactory;
 
 public class TesteDadosCadastroMotorista {
 
@@ -27,7 +28,7 @@ public class TesteDadosCadastroMotorista {
         );
 
         // Criar um validador
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        ValidatorFactory factory = buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
         // Validar o DTO

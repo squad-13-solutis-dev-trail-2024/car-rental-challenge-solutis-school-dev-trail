@@ -1,9 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +24,8 @@ import java.util.Objects;
 )
 @PrimaryKeyJoinColumn(name = "pessoa_id")
 public class Funcionario extends Pessoa {
+
+    @Column(nullable = false)
     private String matricula;
 
     @Override

@@ -1,31 +1,27 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.acessorios.DadosListagemAcessorios;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Fabricante;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ModeloCarro;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record DadosListagemCarro(
-        Long id,
         String nome,
-        ModeloCarro modelo,
-        boolean isDisponivel,
-        BigDecimal valorDiario,
-        Fabricante fabricante,
-        Categoria categoria
+        String placa,
+        String modeloCarro,
+        List<String> acessorios
 ) {
-    //salvei vc rsrs
     public DadosListagemCarro(Carro carro) {
         this(
-                carro.getId(),
                 carro.getNome(),
-                carro.getModelo(),
-                carro.isAtivo(),
-                carro.getValorDiaria(),
-                carro.getModelo().getFabricante(),
-                carro.getModelo().getCategoria()
+                carro.getPlaca(),
+                carro.getModelo().getDescricao(),
+                carro.getAcessorios()
+                        .stream()
+                        .map(DadosListagemAcessorios::new)
+                        .map(DadosListagemAcessorios::nome)
+                        .collect(Collectors.toList())
         );
     }
 }
