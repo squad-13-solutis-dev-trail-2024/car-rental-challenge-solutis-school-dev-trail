@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAlugarCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
@@ -8,6 +9,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repo
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -36,24 +38,27 @@ public class AluguelServiceImpl implements AluguelService {
     @Override
     public Aluguel findByid(Long id){
         Optional<Aluguel> aluguel = aluguelRepository.findById(id);
-        if(aluguel.isEmpty()){
-            log.warn("Informações do aluguel não encontrado!");
-        }
+        if(aluguel.isEmpty()) log.warn("Informações do aluguel não encontrado!");
         return aluguel.orElse(null);
     }
 
     @Override
     @Transactional
-    public Aluguel alugar(Aluguel aluguel, String emailMotorista, Long idCarro){
-        if(motoristaRepository.existsByEmail(emailMotorista)){
-            Motorista motorista = motoristaRepository.findByEmail(emailMotorista);
-            Carro carro = carroRepository.findById(idCarro)
-                    .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + idCarro));
+    public Aluguel alugar(@Valid DadosAlugarCarro alugar){
+
+        Aluguel aluguel = new Aluguel();
+
+        if(motoristaRepository.existsByEmail(alugar.emailMotorista())){
+            Motorista motorista = motoristaRepository.findByEmail(alugar.emailMotorista());
+            Carro carro = carroRepository.findById(alugar.idCarro())
+                    .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + alugar.idCarro()));
             if(carro.isDisponivelParaAluguel()){
                 carro.bloquearAluguel();
                 carroRepository.save(carro);
                 aluguel.setMotorista(motorista);
                 aluguel.setCarro(carro);
+                aluguel.setDataEntrega(alugar.dataEntrega());
+                aluguel.setDataDevolucao(alugar.dataDevolucao());
                 aluguel.setDataPedido(LocalDate.from(Instant.now()));
                 return aluguelRepository.save(aluguel);
             } else{

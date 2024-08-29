@@ -1,4 +1,4 @@
-package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto;
+package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
 import jakarta.persistence.Column;
@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.time.LocalDate;
 
 public record DadosAtualizacaoMotorista(
+
         @NotNull(message = "ID é obrigatório")
         Long id,
 

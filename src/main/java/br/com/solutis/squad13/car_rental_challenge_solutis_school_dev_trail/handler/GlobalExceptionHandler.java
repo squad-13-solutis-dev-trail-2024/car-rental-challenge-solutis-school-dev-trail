@@ -2,6 +2,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.han
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,15 +47,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateEntryException.class)
     public ResponseEntity<List<ErrorDetails>> handleDuplicateEntryException(DuplicateEntryException exception,
                                                                             WebRequest webRequest) {
-        // Cria um objeto ErrorDetails com a data/hora atual, mensagem da exceção, detalhes da requisição e o código de erro.
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 "DUPLICATE_ENTRY"
         );
-
-        // Retorna uma ResponseEntity contendo a lista de ErrorDetails e o status HTTP 409 (Conflict).
         return ResponseEntity.status(HttpStatus.CONFLICT).body(List.of(errorDetails));
     }
 
@@ -77,7 +75,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<List<ErrorDetails>> handleResourceNotFoundException(EntityNotFoundException exception,
                                                                               WebRequest webRequest) {
 
-        // Cria um objeto ErrorDetails com a data/hora atual, mensagem da exceção, detalhes da requisição e o código de erro.
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 exception.getMessage(),
@@ -85,7 +82,33 @@ public class GlobalExceptionHandler {
                 "RESOURCE_NOT_FOUND"
         );
 
-        // Retorna uma ResponseEntity contendo a lista de ErrorDetails e o status HTTP 404 (Not Found).
         return new ResponseEntity<>(List.of(errorDetails), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Manipula a exceção {@link BadRequestException}, que é lançada quando a requisição do cliente
+     * é inválida ou malformada.
+     * <p>
+     * Esta exceção é comum em operações onde os parâmetros fornecidos são incorretos ou não estão no formato
+     * esperado. O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta
+     * com status HTTP 400 (Bad Request), indicando que o servidor não pôde processar a requisição devido a um erro
+     * do cliente.
+     * </p>
+     *
+     * @param exception  A exceção de requisição inválida, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     *         e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<List<ErrorDetails>> handleBadRequestException(BadRequestException exception,
+                                                                        WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "BAD_REQUEST"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List.of(errorDetails));
     }
 }

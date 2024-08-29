@@ -24,13 +24,16 @@ public class Carro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 7)
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false)
     private String placa;
 
-    @Column(nullable = false, length = 17)
+    @Column(nullable = false)
     private String chassi;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String cor;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
@@ -62,7 +65,7 @@ public class Carro {
      * </ul>
      * <p>
      * A anotação `@Column(nullable = false)` indica que a lista de acessórios não pode ser nula,
-     * ou seja, todo carro deve ter pelo menos um acessório associado.
+     * ou seja, todos carro deve ter pelo menos um acessório associado.
      * </p>
      * <p>
      * A anotação `@Setter(AccessLevel.NONE)` impede a modificação direta da lista de acessórios.

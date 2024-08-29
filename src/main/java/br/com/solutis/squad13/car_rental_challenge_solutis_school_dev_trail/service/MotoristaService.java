@@ -1,16 +1,13 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.DadosAtualizacaoMotorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.DadosCadastroMotorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.DadosListagemMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
 
 
 /*

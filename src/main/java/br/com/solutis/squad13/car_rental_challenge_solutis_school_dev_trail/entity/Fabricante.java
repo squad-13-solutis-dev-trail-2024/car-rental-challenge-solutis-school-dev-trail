@@ -38,7 +38,9 @@ public class Fabricante {
      */
     @OneToMany(mappedBy = "fabricante",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
     @Setter(AccessLevel.NONE)
     private List<ModeloCarro> modelos = new ArrayList<>();
 

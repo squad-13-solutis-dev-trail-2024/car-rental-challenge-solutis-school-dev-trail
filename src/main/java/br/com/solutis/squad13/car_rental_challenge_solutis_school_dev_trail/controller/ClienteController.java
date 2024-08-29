@@ -1,6 +1,9 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.controller;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.*;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosDetalhamentoMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.MotoristaService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

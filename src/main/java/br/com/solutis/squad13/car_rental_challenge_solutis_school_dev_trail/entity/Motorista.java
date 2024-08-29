@@ -1,7 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.DadosAtualizacaoMotorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.DadosCadastroMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
