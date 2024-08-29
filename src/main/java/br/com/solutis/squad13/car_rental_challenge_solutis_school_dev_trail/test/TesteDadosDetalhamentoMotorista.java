@@ -36,7 +36,9 @@ public class TesteDadosDetalhamentoMotorista {
                 LocalDate.of(1990, 1, 1), // Data de Nascimento
                 "MASCULINO", // Sexo
                 LocalDateTime.now(), // Data de Criação
-                LocalDateTime.now() // Data da Última Atualização
+                LocalDateTime.now(), // Data da Última Atualização,
+                true,
+                null
         );
 
         DadosDetalhamentoMotorista motorista2 = new DadosDetalhamentoMotorista(
@@ -48,7 +50,9 @@ public class TesteDadosDetalhamentoMotorista {
                 LocalDate.of(1990, 1, 1), // Data de Nascimento
                 "FEMININO", // Sexo
                 LocalDateTime.now(), // Data de Criação
-                LocalDateTime.now() // Data da Última Atualização
+                LocalDateTime.now(),
+                true,
+                null
         );
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

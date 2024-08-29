@@ -1,8 +1,8 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
@@ -25,7 +25,6 @@ public class Aluguel {
     private Long id;
 
     @Column(nullable = false)
-    @CreationTimestamp
     private LocalDate dataPedido;
 
     @Column(nullable = false)
@@ -52,6 +51,7 @@ public class Aluguel {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
+    @JsonIgnore
     private Motorista motorista;
 
     /**

@@ -54,13 +54,13 @@ public class ClienteController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoMotorista> cadastrar(
+    public ResponseEntity<DadosListagemMotorista> cadastrar(
             @RequestBody @Valid DadosCadastroMotorista dadosCadastroMotorista,
             UriComponentsBuilder uriBuilder
     ) {
         var motorista = motoristaService.cadastrarMotorista(dadosCadastroMotorista);
         var uri = uriBuilder.path("/api/v1/clientes/{id}").buildAndExpand(motorista.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoMotorista(motorista));
+        return ResponseEntity.created(uri).body(new DadosListagemMotorista(motorista));
     }
 
     @GetMapping
@@ -70,16 +70,22 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhamentoMotorista> detalhar(@PathVariable Long id) {
+    public ResponseEntity<DadosListagemMotorista> detalhar(@PathVariable Long id) {
+        var motorista = motoristaService.buscarPorId(id);
+        return ResponseEntity.ok(new DadosListagemMotorista(motorista));
+    }
+
+    @GetMapping("/detalhar-completo/{id}")
+    public ResponseEntity<DadosDetalhamentoMotorista> detalharCompleto(@PathVariable Long id) {
         var motorista = motoristaService.buscarPorId(id);
         return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
     }
 
     @Transactional
     @PutMapping
-    public ResponseEntity<DadosDetalhamentoMotorista> atualizar(@RequestBody @Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
+    public ResponseEntity<DadosListagemMotorista> atualizar(@RequestBody @Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
         var motorista = motoristaService.atualizarMotorista(dadosAtualizacaoMotorista);
-        return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
+        return ResponseEntity.ok(new DadosListagemMotorista(motorista));
     }
 
     @Transactional

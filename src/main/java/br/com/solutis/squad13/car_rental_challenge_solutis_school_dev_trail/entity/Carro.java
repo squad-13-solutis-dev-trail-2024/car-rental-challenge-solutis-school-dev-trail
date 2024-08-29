@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -81,6 +82,7 @@ public class Carro {
     )
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private List<Acessorio> acessorios;
 
     /**

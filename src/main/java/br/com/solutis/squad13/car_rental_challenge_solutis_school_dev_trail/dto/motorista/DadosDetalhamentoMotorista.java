@@ -1,18 +1,27 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Email;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record DadosDetalhamentoMotorista(
 
         Long id,
         String nome,
         String email,
+
+        @JsonFormat(
+                pattern = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}",
+                shape = JsonFormat.Shape.STRING,
+                locale = "pt-BR",
+                timezone = "Brazil/East",
+                with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
+        )
         String cpf,
 
         @JsonFormat(
@@ -50,7 +59,10 @@ public record DadosDetalhamentoMotorista(
                 timezone = "Brazil/East",
                 with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY
         )
-        LocalDateTime lastUpdated
+        LocalDateTime lastUpdated,
+        boolean ativo,
+
+        List<DadosListagemAluguel> alugueis
 ) {
     public DadosDetalhamentoMotorista(Motorista motorista) {
         this(
@@ -62,7 +74,12 @@ public record DadosDetalhamentoMotorista(
                 motorista.getDataNascimento(),
                 motorista.getSexo().name(),
                 motorista.getDataCreated(),
-                motorista.getLastUpdated()
+                motorista.getLastUpdated(),
+                motorista.getAtivo(),
+                motorista.getAlugueis()
+                        .stream()
+                        .map(DadosListagemAluguel::new)
+                        .collect(Collectors.toList())
         );
     }
 }

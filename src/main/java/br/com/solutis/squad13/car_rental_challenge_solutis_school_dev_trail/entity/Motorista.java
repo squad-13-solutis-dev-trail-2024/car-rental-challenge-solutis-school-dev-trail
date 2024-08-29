@@ -104,6 +104,16 @@ public class Motorista extends Pessoa {
         this.setLastUpdated(LocalDateTime.now());
     }
 
+    // Criar um metodo para adicionar alugueis
+
+    public void adicionarAluguel(Aluguel aluguel) {
+        this.alugueis.add(aluguel);
+    }
+
+    public void adicionarListaAlugueis(List<Aluguel> alugueis) {
+        this.alugueis.addAll(alugueis);
+    }
+
     @Override
     public String toString() {
         return "Motorista{id=" + getId() + ", numeroCNH=" + numeroCNH + ", alugueis=" + alugueis + '}';

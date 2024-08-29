@@ -3,11 +3,15 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ser
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.MotoristaService;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -46,11 +50,14 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Override
     public Motorista buscarPorId(Long id) {
         log.info("Buscando motorista por ID: {}", id);
+
+        // Primeiro, verifique se o motorista existe
         Motorista motorista = motoristaRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Motorista não encontrado para o ID: {}", id);
+                    log.warn("Motorista não encontrado para ID: {}", id);
                     return new EntityNotFoundException("Motorista não encontrado");
                 });
+
         log.info("Motorista encontrado: {}", motorista);
         return motorista;
     }
