@@ -128,7 +128,7 @@ public class CarroServiceImpl implements CarroService {
     @Override
     public Page<DadosListagemCarro> listar(Pageable paginacao) {
         log.info("Listando carros com paginação: {}", paginacao);
-        Page<Carro> carros = carroRepository.findAllByAtivoTrue(paginacao);
+        Page<Carro> carros = carroRepository.findAllByDisponivelTrue(paginacao);
         log.info("Carros encontrados: {}", carros);
         return carros.map(DadosListagemCarro::new);
     }

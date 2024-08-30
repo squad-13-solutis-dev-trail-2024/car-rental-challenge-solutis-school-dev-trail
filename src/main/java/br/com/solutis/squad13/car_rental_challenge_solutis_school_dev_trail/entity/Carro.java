@@ -42,8 +42,8 @@ public class Carro {
     @Column(nullable = false)
     private String cor;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean ativo;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean disponivel;
 
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal valorDiaria;
@@ -144,11 +144,11 @@ public class Carro {
     private List<Aluguel> alugueis = new ArrayList<>();
 
     public void disponibilizarAluguel() {
-        this.ativo = true;
+        this.disponivel = true;
     }
 
     public void bloquearAluguel() {
-        this.ativo = false;
+        this.disponivel = false;
     }
 
     public Carro(DadosCadastroCarro dadosCadastroCarro) {
@@ -159,7 +159,7 @@ public class Carro {
         this.valorDiaria = dadosCadastroCarro.valorDiario();
         this.acessorios = dadosCadastroCarro.acessorio();
         this.modelo = dadosCadastroCarro.modelo();
-        this.ativo = true;
+        this.disponivel = true;
     }
 
     public void atualizar(@Valid DadosAtualizarCarro dadosAtualizarCarro) {
@@ -207,7 +207,7 @@ public class Carro {
 
     @Override
     public String toString() {
-        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + ativo + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modelo + ", alugueis=" + alugueis + '}';
+        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + disponivel + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modelo + ", alugueis=" + alugueis + '}';
     }
 
     @Override

@@ -16,7 +16,10 @@ import java.util.Set;
 @Entity(name = "Acessorio")
 @Table(
         name = "tb_acessorio",
-        schema = "db_car_rental_solutis"
+        schema = "db_car_rental_solutis",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_acessorio_descricao", columnNames = "descricao")
+        }
 )
 public class Acessorio {
 

@@ -107,7 +107,7 @@ public class AluguelServiceImpl implements AluguelService {
             Motorista motorista = motoristaRepository.findByEmail(alugar.emailMotorista());
             Carro carro = carroRepository.findById(alugar.idCarro())
                     .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + alugar.idCarro()));
-            if (carro.isAtivo()) {
+            if (carro.isDisponivel()) {
                 carro.bloquearAluguel();
                 carroRepository.save(carro);
                 aluguel.setMotorista(motorista);

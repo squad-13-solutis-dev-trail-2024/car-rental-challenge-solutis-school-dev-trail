@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static java.math.BigDecimal.valueOf;
+import static java.time.temporal.ChronoUnit.DAYS;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -35,8 +38,12 @@ public class Aluguel {
 
     private LocalDate dataDevolucaoEfetiva;
 
-    @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal valor;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal valorTotalInicial;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal valorTotalFinal;
+
 
     /**
      * Motorista que realizou este aluguel.
@@ -85,9 +92,29 @@ public class Aluguel {
     @JsonIgnore
     private ApoliceSeguro apoliceSeguro;
 
+    @PostLoad
+    private void calcularValores() {
+        this.valorTotalInicial = calcularValorTotalInicial();
+        this.valorTotalFinal = calcularValorTotalFinal();
+    }
+
+    public BigDecimal calcularValorTotalInicial() {
+        long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoPrevista);
+        return carro.getValorDiaria().multiply(valueOf(quantidadeDias));
+    }
+
+    public BigDecimal calcularValorTotalFinal() {
+        if (dataDevolucaoEfetiva != null) {
+            long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoEfetiva);
+            return carro.getValorDiaria().multiply(valueOf(quantidadeDias));
+        } else {
+            return valorTotalInicial;
+        }
+    }
+
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucaoPrevista + ", valor=" + valor + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
     }
 
     @Override
