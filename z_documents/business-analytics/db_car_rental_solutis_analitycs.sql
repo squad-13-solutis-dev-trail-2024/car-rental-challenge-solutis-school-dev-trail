@@ -1,5 +1,16 @@
 USE db_car_rental_solutis;
 
+SELECT * FROM tb_acessorio;
+SELECT * FROM tb_aluguel;
+SELECT * FROM tb_apolice_seguro;
+SELECT * FROM tb_carro;
+SELECT * FROM tb_fabricante;
+SELECT * FROM tb_funcionario;
+SELECT * FROM tb_modelo_carro;
+SELECT * FROM tb_motorista;
+SELECT * FROM tb_pessoa;
+
+
 -- Lista de todos os carros
 SELECT id,
        chassi,
