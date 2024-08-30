@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +43,17 @@ public class Carro {
 
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal valorDiaria;
+
+    public Carro(DadosCadastroCarro dadosCadastroCarro) {
+        this.nome = dadosCadastroCarro.nome();
+        this.placa = dadosCadastroCarro.placa();
+        this.chassi = dadosCadastroCarro.chassi();
+        this.cor = dadosCadastroCarro.cor();
+        this.valorDiaria = dadosCadastroCarro.valorDiario();
+        this.acessorios = dadosCadastroCarro.acessorio();
+        this.modelo = dadosCadastroCarro.modelo();
+        this.ativo = true;
+    }
 
     /**
      * Lista de acessórios associados a este carro.

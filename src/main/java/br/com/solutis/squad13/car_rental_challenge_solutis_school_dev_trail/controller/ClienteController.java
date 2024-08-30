@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-/*
+/**
     História de Usuário: Cadastro de Cliente
 
     Como um cliente em potencial,
