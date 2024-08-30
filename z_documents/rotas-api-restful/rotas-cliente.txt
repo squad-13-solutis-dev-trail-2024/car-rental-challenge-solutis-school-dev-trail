@@ -1,0 +1,59 @@
+###
+POST http://localhost:8080/api/v1/clientes
+Content-Type: application/json
+
+{
+  "nome": "",
+  "dataNascimento": "",
+  "cpf": "",
+  "email": "",
+  "numeroCNH": "",
+  "sexo": "MASCULINO",
+  "dataCreated": "", -- não precisa colocar
+  "lastUpdated": "" -- não precisa colocar
+}
+
+###
+GET http://localhost:8080/api/v1/clientes/{{id}}
+
+
+###
+GET http://localhost:8080/api/v1/clientes
+Content-Type: application/json
+
+{
+  "nome": "",
+  "dataNascimento": "",
+  "cpf": "",
+  "email": "",
+  "numeroCNH": "",
+  "sexo": "MASCULINO",
+  "dataCreated": "",
+  "lastUpdated": ""
+}
+
+###
+GET http://localhost:8080/api/v1/clientes/detalhar-completo/{{id}}
+
+###
+PATCH http://localhost:8080/api/v1/clientes
+Content-Type: application/json
+
+{
+  "id": 0,
+  "nome": "",
+  "dataNascimento": "",
+  "cpf": "",
+  "email": "",
+  "numeroCNH": "",
+  "sexo": "MASCULINO",
+  "lastUpdated": ""
+}
+
+
+###
+PATCH http://localhost:8080/api/v1/clientes/{{id}}
+Content-Type: application/x-www-form-urlencoded
+
+###
+DELETE http://localhost:8080/api/v1/clientes/{{id}}

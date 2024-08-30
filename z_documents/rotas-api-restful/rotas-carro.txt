@@ -1,0 +1,45 @@
+###
+POST http://localhost:8080/api/v1/carros
+Content-Type: application/json
+
+{
+  "id": 0,
+  "nome": "",
+  "placa": "",
+  "chassi": "",
+  "cor": "",
+  "valorDiario": {},
+  "acessorio": [],
+  "modelo": {}
+}
+
+###
+GET http://localhost:8080/api/v1/carros
+
+
+###
+GET http://localhost:8080/api/v1/carros/{{id}}
+
+###
+GET http://localhost:8080/api/v1/carros/detalhar-completo/{{id}}
+
+###
+PATCH http://localhost:8080/api/v1/carros
+Content-Type: application/json
+
+{
+  "id": 0,
+  "nome": "",
+  "placa": "",
+  "chassi": "",
+  "cor": "",
+  "valorDiario": {},
+  "acessorio": [],
+  "modelo": {}
+}
+
+###
+PATCH http://localhost:8080/api/v1/carros/{{id}}
+
+###
+DELETE http://localhost:8080/api/v1/carros/{{id}}
