@@ -7,6 +7,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.MotoristaService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
+@Schema(description = "Serviço que implementa as operações relacionadas a motoristas.")
 public class MotoristaServiceImpl implements MotoristaService {
 
     private static final Logger log = getLogger(MotoristaServiceImpl.class);

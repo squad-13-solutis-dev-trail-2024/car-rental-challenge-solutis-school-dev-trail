@@ -1,22 +1,20 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
+import java.lang.annotation.*;
 
 @Documented
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CNHValidator.class)
+@Schema(description = "Valida se um número de CNH é válido de acordo com o algoritmo de verificação brasileiro.")
 public @interface CNH {
+
     String message() default "CNH inválida";
 
     Class<?>[] groups() default {};
@@ -24,6 +22,7 @@ public @interface CNH {
     Class<? extends Payload>[] payload() default {};
 }
 
+@Schema(description = "Validador que verifica a validade de um número de CNH.")
 class CNHValidator implements ConstraintValidator<CNH, String> {
 
     @Override
@@ -32,9 +31,7 @@ class CNHValidator implements ConstraintValidator<CNH, String> {
 
     @Override
     public boolean isValid(String cnh, ConstraintValidatorContext context) {
-
-        // Caso em que está havendo atualização de um motorista e o campo CNH está vazio
-        if (cnh == null) return true;
+        if (cnh == null) return true; // Permite CNH nula (caso de atualização, por exemplo)
 
         // Passo 1: Calcular o primeiro dígito verificador
         int soma1 = 0;

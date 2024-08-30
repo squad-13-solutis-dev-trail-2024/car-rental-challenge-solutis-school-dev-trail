@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -21,6 +22,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
         name = "tb_aluguel",
         schema = "db_car_rental_solutis"
 )
+@Schema(description = "Representa um aluguel de carro.")
 public class Aluguel {
 
     @Id
@@ -28,22 +30,27 @@ public class Aluguel {
     private Long id;
 
     @Column(nullable = false)
+    @Schema(description = "Data em que o aluguel foi solicitado.", example = "2024-08-01")
     private LocalDate dataPedido;
 
     @Column(nullable = false)
+    @Schema(description = "Data em que o carro foi entregue ao motorista.", example = "2024-08-11")
     private LocalDate dataEntrega;
 
     @Column(nullable = false)
+    @Schema(description = "Data prevista para a devolução do carro.", example = "2024-08-21")
     private LocalDate dataDevolucaoPrevista;
 
+    @Schema(description = "Data efetiva da devolução do carro (pode ser nula).", example = "2024-08-19")
     private LocalDate dataDevolucaoEfetiva;
 
     @Column(precision = 10, scale = 2)
+    @Schema(description = "Valor total inicial do aluguel, calculado com base na data de devolução prevista.", example = "1500.00")
     private BigDecimal valorTotalInicial;
 
     @Column(precision = 10, scale = 2)
+    @Schema(description = "Valor total final do aluguel, calculado com base na data de devolução efetiva (se disponível).", example = "1350.00")
     private BigDecimal valorTotalFinal;
-
 
     /**
      * Motorista que realizou este aluguel.
@@ -59,6 +66,7 @@ public class Aluguel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
     @JsonIgnore
+    @Schema(description = "Motorista que realizou o aluguel.")
     private Motorista motorista;
 
     /**
@@ -75,6 +83,7 @@ public class Aluguel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
     @JsonIgnore
+    @Schema(description = "Carro alugado.")
     private Carro carro;
 
     /**
@@ -90,6 +99,7 @@ public class Aluguel {
     @OneToOne
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     @JsonIgnore
+    @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro;
 
     @PostLoad
@@ -98,11 +108,13 @@ public class Aluguel {
         this.valorTotalFinal = calcularValorTotalFinal();
     }
 
+    @Schema(description = "Calcula o valor total inicial do aluguel (com base na data de devolução prevista).")
     public BigDecimal calcularValorTotalInicial() {
         long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoPrevista);
         return carro.getValorDiaria().multiply(valueOf(quantidadeDias));
     }
 
+    @Schema(description = "Calcula o valor total final do aluguel (com base na data de devolução efetiva, se disponível).")
     public BigDecimal calcularValorTotalFinal() {
         if (dataDevolucaoEfetiva != null) {
             long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoEfetiva);

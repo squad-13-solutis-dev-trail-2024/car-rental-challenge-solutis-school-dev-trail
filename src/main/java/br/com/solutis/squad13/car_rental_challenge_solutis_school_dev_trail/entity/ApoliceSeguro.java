@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.util.Objects;
         name = "tb_apolice_seguro",
         schema = "db_car_rental_solutis"
 )
+@Schema(description = "Entidade que representa uma apólice de seguro.")
 public class ApoliceSeguro {
 
     @Id
@@ -26,15 +28,19 @@ public class ApoliceSeguro {
     private Long id;
 
     @Column(precision = 10, scale = 2, nullable = false)
+    @Schema(description = "Valor da franquia da apólice.", example = "500.00")
     private BigDecimal valorFranquia;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Schema(description = "Indica se a apólice cobre danos a terceiros.", example = "true")
     private Boolean protecaoTerceiro;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Schema(description = "Indica se a apólice cobre danos por causas naturais.", example = "false")
     private Boolean protecaoCausasNaturais;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Schema(description = "Indica se a apólice cobre roubo do veículo.", example = "true")
     private Boolean protecaoRoubo;
 
     /**
@@ -48,6 +54,7 @@ public class ApoliceSeguro {
      * @see Aluguel
      */
     @OneToOne(mappedBy = "apoliceSeguro")
+    @Schema(description = "Aluguel associado a esta apólice de seguro.")
     private Aluguel aluguel;
 
     @Override

@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @see ResponseStatus
  */
 @ResponseStatus(HttpStatus.CONFLICT)
+@Schema(description = "Exceção lançada quando uma entrada duplicada é detectada.")
 public class DuplicateEntryException extends RuntimeException {
 
     /**

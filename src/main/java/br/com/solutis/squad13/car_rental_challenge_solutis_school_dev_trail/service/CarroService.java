@@ -4,11 +4,13 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosListagemCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+@Schema(description = "Interface que define os serviços relacionados a carros.")
 public interface CarroService {
 
     @Transactional

@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -9,11 +10,14 @@ import java.lang.annotation.*;
 import java.time.LocalDate;
 import java.time.Period;
 
+
 @Documented
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AdultoValidator.class)
+@Schema(description = "Valida se a data de nascimento indica que a pessoa é maior de idade.")
 public @interface ADULTO {
+
     String message() default "A data de nascimento informada não corresponde a uma pessoa maior de idade.";
 
     Class<?>[] groups() default {};
@@ -21,6 +25,7 @@ public @interface ADULTO {
     Class<? extends Payload>[] payload() default {};
 }
 
+@Schema(description = "Validador que verifica se a data de nascimento corresponde a uma pessoa maior de idade.")
 class AdultoValidator implements ConstraintValidator<ADULTO, LocalDate> {
 
     public AdultoValidator() {
@@ -36,7 +41,6 @@ class AdultoValidator implements ConstraintValidator<ADULTO, LocalDate> {
         return isMaiorDeIdade(dataNascimento);
     }
 
-    // Metodo para verificar se a data de nascimento corresponde a uma pessoa maior de idade
     private boolean isMaiorDeIdade(LocalDate dataNascimento) {
         LocalDate dataAtual = LocalDate.now();
         Period periodo = Period.between(dataNascimento, dataAtual);

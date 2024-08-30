@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.handler;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import java.util.List;
  * @see ExceptionHandler
  */
 @RestControllerAdvice
+@Schema(description = "Classe responsável por tratar exceções globalmente na aplicação.")
 public class GlobalExceptionHandler {
 
     /**
@@ -57,6 +59,7 @@ public class GlobalExceptionHandler {
      * @see ValidationErrorDetails
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @Schema(description = "Manipula a exceção MethodArgumentNotValidException, lançada em caso de erros de validação.")
     public ResponseEntity<List<ValidationErrorDetails>> handleValidationException(MethodArgumentNotValidException exception,
                                                                                   WebRequest request) {
         List<ValidationErrorDetails> errors = new ArrayList<>();
@@ -88,6 +91,7 @@ public class GlobalExceptionHandler {
      * e o status HTTP 404 (Not Found).
      */
     @ExceptionHandler(EntityNotFoundException.class)
+    @Schema(description = "Manipula a exceção EntityNotFoundException, lançada quando uma entidade não é encontrada.")
     public ResponseEntity<List<ErrorDetails>> handleResourceNotFoundException(EntityNotFoundException exception,
                                                                               WebRequest webRequest) {
 
@@ -117,6 +121,7 @@ public class GlobalExceptionHandler {
      * e o status HTTP 409 (Conflict).
      */
     @ExceptionHandler(DuplicateEntryException.class)
+    @Schema(description = "Manipula a exceção DuplicateEntryException, lançada quando há uma tentativa de inserir uma entrada duplicada.")
     public ResponseEntity<List<ErrorDetails>> handleDuplicateEntryException(DuplicateEntryException exception,
                                                                             WebRequest webRequest) {
         List<ErrorDetails> errors = new ArrayList<>();

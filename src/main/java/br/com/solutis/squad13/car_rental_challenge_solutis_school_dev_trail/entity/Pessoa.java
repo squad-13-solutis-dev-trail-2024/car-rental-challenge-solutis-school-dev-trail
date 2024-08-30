@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,6 +29,7 @@ import static java.time.LocalDateTime.now;
         }
 )
 @Inheritance(strategy = InheritanceType.JOINED)
+@Schema(description = "Entidade abstrata que representa uma pessoa, servindo como base para outras entidades.")
 public abstract class Pessoa {
 
     @Id
@@ -35,30 +37,38 @@ public abstract class Pessoa {
     private Long id;
 
     @Column(nullable = false)
+    @Schema(description = "Nome completo da pessoa.", example = "João Silva")
     private String nome;
 
     @Column(nullable = false)
+    @Schema(description = "Endereço de email da pessoa.", example = "joao.silva@example.com")
     private String email;
 
     @Column(nullable = false)
+    @Schema(description = "Data de nascimento da pessoa.", example = "1990-05-10")
     private LocalDate dataNascimento;
 
     @Column(nullable = false)
+    @Schema(description = "CPF da pessoa.", example = "123.456.789-00")
     private String cpf;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "Sexo da pessoa.", example = "MASCULINO")
     private Sexo sexo;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Schema(description = "Indica se a pessoa está ativa (true) ou inativa (false).", example = "true")
     private Boolean ativo;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    @Schema(description = "Data e hora de criação do registro.", example = "2024-08-30T15:40:05.522-03:00", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    @Schema(description = "Data e hora da última atualização do registro.", example = "2024-08-30T15:40:05.522-03:00")
     private LocalDateTime lastUpdated;
 
     public void desativar() {

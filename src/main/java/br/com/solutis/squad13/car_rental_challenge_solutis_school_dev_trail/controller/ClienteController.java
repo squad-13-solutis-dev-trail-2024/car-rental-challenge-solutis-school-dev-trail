@@ -5,6 +5,10 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosDetalhamentoMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.MotoristaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -14,36 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-/*
- * História de Usuário: Cadastro de Cliente
- * <p>
- * Como um cliente em potencial,
- * Eu quero poder me cadastrar na locadora de automóveis
- * Para ter acesso aos serviços e alugar veículos.
- * <p>
- * Critérios de Aceitação:
- * - Deve haver um formulário de cadastro na página inicial.
- * - O formulário deve solicitar as informações básicas do cliente: nome completo, data de nascimento, cpf, número da CNH.
- * - O cliente deve receber uma confirmação na tela após o cadastro bem-sucedido.
- * - O sistema deve verificar a validade do endereço de e-mail para evitar registros duplicados.
- * - Após o cadastro, o cliente deve ser redirecionado para a página inicial, onde pode acessar serviços da locadora.
- * <p>
- * Notas adicionais:
- * Esta história de usuário aborda a necessidade de um cliente se cadastrar na locadora de
- * automóveis para obter acesso aos serviços de aluguel de veículos. Os critérios de aceitação
- * definem os requisitos específicos que devem ser atendidos para que a história seja
- * considerada completa. Isso inclui aspectos técnicos, como validação de dados, bem como
- * aspectos funcionais, como a confirmação por e-mail e a concordância com os termos e
- * condições.
- * <p>
- * Lembrando que os detalhes exatos podem variar com base nas necessidades do projeto e
- * da equipe, mas esse exemplo oferece uma estrutura sólida para capturar os requisitos
- * essenciais do cadastro de cliente em uma locadora de automóveis.
- */
-
 @RestController
 @RequestMapping("/api/v1/clientes")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Tag(name = "Cliente Controller", description = "Controller para gerenciamento de clientes (motoristas)")
 public class ClienteController {
 
     private final MotoristaService motoristaService;
@@ -54,6 +32,11 @@ public class ClienteController {
 
     @PostMapping
     @Transactional
+    @Operation(summary = "Cadastrar um novo cliente", description = "Cria um novo cliente com os dados fornecidos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de cadastro inválidos.")
+    })
     public ResponseEntity<DadosListagemMotorista> cadastrar(
             @RequestBody @Valid DadosCadastroMotorista dadosCadastroMotorista,
             UriComponentsBuilder uriBuilder
@@ -64,18 +47,30 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Detalhar um cliente", description = "Retorna os detalhes de um cliente específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
     public ResponseEntity<DadosListagemMotorista> detalhar(@PathVariable Long id) {
         var motorista = motoristaService.buscarPorId(id);
         return ResponseEntity.ok(new DadosListagemMotorista(motorista));
     }
 
     @GetMapping
+    @Operation(summary = "Listar clientes", description = "Retorna uma lista paginada de clientes.")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes.")
     public ResponseEntity<Page<DadosListagemMotorista>> listar(@PageableDefault(size = 20, sort = {"nome"}) Pageable paginacao) {
         var motoristas = motoristaService.listar(paginacao);
         return ResponseEntity.ok(motoristas);
     }
 
     @GetMapping("/detalhar-completo/{id}")
+    @Operation(summary = "Detalhar um cliente completo", description = "Retorna os detalhes completos de um cliente específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
     public ResponseEntity<DadosDetalhamentoMotorista> detalharCompleto(@PathVariable Long id) {
         var motorista = motoristaService.buscarPorId(id);
         return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
@@ -83,6 +78,12 @@ public class ClienteController {
 
     @Transactional
     @PatchMapping
+    @Operation(summary = "Atualizar alguns dados do cliente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de atualização inválidos."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
     public ResponseEntity<DadosListagemMotorista> atualizar(@RequestBody @Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
         var motorista = motoristaService.atualizarMotorista(dadosAtualizacaoMotorista);
         return ResponseEntity.ok(new DadosListagemMotorista(motorista));
@@ -90,6 +91,11 @@ public class ClienteController {
 
     @Transactional
     @PatchMapping("/{id}")
+    @Operation(summary = "Desativar um cliente, impedindo-o de realizar novos aluguéis")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cliente desativado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         motoristaService.desativarMotorista(id);
         return ResponseEntity.noContent().build();
@@ -97,6 +103,11 @@ public class ClienteController {
 
     @Transactional
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar um cliente da base de dados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cliente deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         motoristaService.deletarMotorista(id);
         return ResponseEntity.noContent().build();

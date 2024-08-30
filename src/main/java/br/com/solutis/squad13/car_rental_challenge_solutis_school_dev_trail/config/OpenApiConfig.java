@@ -3,26 +3,30 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.con
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import org.springdoc.core.models.GroupedOpenApi;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
 
+    @Value("${api.version}")
+    private String apiVersion;
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Car Rental API")
-                        .version("1.0.0")
-                        .description("API para gerenciamento de carros, alugueis e motoristas")
+                        .title("API para Gerenciamento de Aluguel de Veículos")
+                        .description("Solutis School Dev Trail - Nivelamento - 2024")
+                        .version(apiVersion) // Lê a versão da API do arquivo de propriedades
+                        .summary("Alguma descrição relevante e chamativa")
+                        .license(new License().name("Licença").url("https://github.com/squad-13-solutis-dev-trail-2024/car-rental-challenge-solutis-school-dev-trail/blob/main/LICENSE"))
                         .contact(new Contact()
-                                .name("Solutis")
-                                .email("solutis@gmail.com.br")
-                                .url("https://github.com/squad-13-solutis-dev-trail-2024"))
-                );
+                                .name("Mmebros do SQUAD 13")
+                                .url("https://github.com/orgs/squad-13-solutis-dev-trail-2024/people")));
     }
 
     @Bean
@@ -30,7 +34,6 @@ public class OpenApiConfig {
         return GroupedOpenApi.builder()
                 .group("public")
                 .pathsToMatch("/api/**")
-                .packagesToScan("br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.controller")
                 .build();
     }
 }

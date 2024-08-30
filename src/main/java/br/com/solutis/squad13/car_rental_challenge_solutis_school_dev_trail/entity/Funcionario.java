@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +24,11 @@ import java.util.Objects;
         }
 )
 @PrimaryKeyJoinColumn(name = "pessoa_id")
+@Schema(description = "Entidade que representa um funcionário da locadora.")
 public class Funcionario extends Pessoa {
 
     @Column(nullable = false)
+    @Schema(description = "Matrícula única do funcionário.", example = "F00123")
     private String matricula;
 
     @Override

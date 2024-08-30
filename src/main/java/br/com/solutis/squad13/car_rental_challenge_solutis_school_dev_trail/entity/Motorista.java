@@ -2,6 +2,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosAtualizacaoMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -59,9 +60,11 @@ import static java.util.Optional.ofNullable;
         schema = "db_car_rental_solutis"
 )
 @PrimaryKeyJoinColumn(name = "pessoa_id")
+@Schema(description = "Entidade que representa um motorista.")
 public class Motorista extends Pessoa {
 
     @Column(nullable = false)
+    @Schema(description = "Número da Carteira Nacional de Habilitação (CNH) do motorista.", example = "12345678901")
     private String numeroCNH;
 
     /**
@@ -76,7 +79,8 @@ public class Motorista extends Pessoa {
      */
     @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
     @Setter(AccessLevel.NONE)
-    private List<Aluguel> alugueis = new ArrayList<>();
+    @Schema(description = "Lista de aluguéis realizados pelo motorista.")
+    private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um motorista pode não ter aluguéis associados
 
     public Motorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         this.setNome(dadosCadastroMotorista.nome());

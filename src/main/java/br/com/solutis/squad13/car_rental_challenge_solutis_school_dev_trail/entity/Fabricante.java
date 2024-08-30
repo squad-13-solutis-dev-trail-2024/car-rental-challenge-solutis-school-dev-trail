@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -17,6 +18,7 @@ import java.util.Objects;
         name = "tb_fabricante",
         schema = "db_car_rental_solutis"
 )
+@Schema(description = "Entidade que representa um fabricante de carros.")
 public class Fabricante {
 
     @Id
@@ -24,6 +26,7 @@ public class Fabricante {
     private Long id;
 
     @Column(nullable = false)
+    @Schema(description = "Nome do fabricante.", example = "Toyota")
     private String nome;
 
     /**
@@ -45,7 +48,8 @@ public class Fabricante {
             fetch = FetchType.EAGER
     )
     @Setter(AccessLevel.NONE)
-    private List<ModeloCarro> modelos = new ArrayList<>();
+    @Schema(description = "Lista de modelos de carros produzidos pelo fabricante.")
+    private List<ModeloCarro> modelos = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de modelo para existir
 
     @Override
     public String toString() {

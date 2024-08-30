@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.DescricaoAcessorio;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -21,6 +22,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_acessorio_descricao", columnNames = "descricao")
         }
 )
+@Schema(description = "Representa um acessório de carro.")
 public class Acessorio {
 
     @Id
@@ -29,6 +31,7 @@ public class Acessorio {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Schema(description = "Descrição do tipo de acessório.", example = "GPS")
     private DescricaoAcessorio descricao;
 
     /**
@@ -60,7 +63,8 @@ public class Acessorio {
      */
     @ManyToMany(mappedBy = "acessorios")
     @Setter(AccessLevel.NONE)
-    private Set<Carro> carros = new HashSet<>();
+    @Schema(description = "Conjunto de carros que possuem este acessório.")
+    private Set<Carro> carros = new HashSet<>(); // Inicializado, pois um acessório não precisa estar associado a nenhum carro
 
     public void adicionarCarro(Carro carro) {
         carros.add(carro);

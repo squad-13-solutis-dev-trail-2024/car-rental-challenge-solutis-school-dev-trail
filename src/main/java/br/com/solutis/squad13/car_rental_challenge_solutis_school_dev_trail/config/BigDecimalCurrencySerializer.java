@@ -3,6 +3,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.con
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,14 +35,15 @@ import static java.text.NumberFormat.getCurrencyInstance;
  * @see NumberFormat
  * @see Locale
  */
+@Schema(description = "Serializador personalizado para formatar valores BigDecimal como moeda brasileira (R$).")
 public class BigDecimalCurrencySerializer extends JsonSerializer<BigDecimal> {
 
     /**
      * Serializa um valor {@link BigDecimal} em uma string formatada como moeda brasileira.
      *
-     * @param value        O valor {@link BigDecimal} a ser serializado.
-     * @param gen          O gerador JSON utilizado para a escrita da string.
-     * @param serializers  O provedor de serializers que pode ser utilizado para serialização de objetos complexos.
+     * @param value       O valor {@link BigDecimal} a ser serializado.
+     * @param gen         O gerador JSON utilizado para a escrita da string.
+     * @param serializers O provedor de serializers que pode ser utilizado para serialização de objetos complexos.
      * @throws IOException Se ocorrer um erro de I/O durante a serialização.
      */
     @Override

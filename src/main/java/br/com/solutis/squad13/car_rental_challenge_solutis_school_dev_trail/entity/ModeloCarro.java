@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -18,11 +19,14 @@ import java.util.Objects;
         name = "tb_modelo_carro",
         schema = "db_car_rental_solutis"
 )
+@Schema(description = "Entidade que representa um modelo de carro.")
 public class ModeloCarro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Schema(description = "Descrição do modelo de carro.", example = "Corolla")
     private String descricao;
 
     /**
@@ -36,10 +40,12 @@ public class ModeloCarro {
      */
     @ManyToOne
     @JoinColumn(name = "fabricante_id", nullable = false)
+    @Schema(description = "Fabricante do modelo de carro.")
     private Fabricante fabricante;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Schema(description = "Categoria do modelo de carro.", example = "SEDAN_COMPACTO")
     private Categoria categoria;
 
     /**
@@ -56,7 +62,8 @@ public class ModeloCarro {
      */
     @OneToMany(mappedBy = "modelo", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
-    private List<Carro> carros = new ArrayList<>();
+    @Schema(description = "Lista de carros específicos deste modelo.")
+    private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
 
     @Override
     public String toString() {

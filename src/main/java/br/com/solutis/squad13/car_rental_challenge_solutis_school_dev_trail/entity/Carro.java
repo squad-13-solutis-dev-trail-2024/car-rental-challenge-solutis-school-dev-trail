@@ -3,6 +3,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAtualizarCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -24,6 +25,7 @@ import static java.util.Optional.ofNullable;
         name = "tb_carro",
         schema = "db_car_rental_solutis"
 )
+@Schema(description = "Entidade que representa um carro.")
 public class Carro {
 
     @Id
@@ -31,23 +33,28 @@ public class Carro {
     private Long id;
 
     @Column(nullable = false)
+    @Schema(description = "Nome do modelo do carro.", example = "Corolla")
     private String nome;
 
     @Column(nullable = false)
+    @Schema(description = "Placa do carro.", example = "ABC1234")
     private String placa;
 
     @Column(nullable = false)
+    @Schema(description = "Chassi do carro.", example = "1HGBH41JXMN109186")
     private String chassi;
 
     @Column(nullable = false)
+    @Schema(description = "Cor do carro.", example = "Preto")
     private String cor;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Schema(description = "Indica se o carro está disponível para aluguel (true) ou indisponível (false).", example = "true")
     private boolean disponivel;
 
     @Column(precision = 10, scale = 2, nullable = false)
+    @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
     private BigDecimal valorDiaria;
-
 
     /**
      * Lista de acessórios associados a este carro.
@@ -89,6 +96,7 @@ public class Carro {
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
     @JsonIgnore
+    @Schema(description = "Lista de acessórios do carro.")
     private List<Acessorio> acessorios;
 
     /**
@@ -113,6 +121,7 @@ public class Carro {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modelo_carro_id", nullable = false)
+    @Schema(description = "Modelo do carro.")
     private ModeloCarro modelo;
 
     /**
@@ -141,7 +150,8 @@ public class Carro {
             orphanRemoval = true
     )
     @Setter(AccessLevel.NONE)
-    private List<Aluguel> alugueis = new ArrayList<>();
+    @Schema(description = "Lista de aluguéis associados a este carro.")
+    private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
 
     public void disponibilizarAluguel() {
         this.disponivel = true;
