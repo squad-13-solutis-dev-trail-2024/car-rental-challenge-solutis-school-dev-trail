@@ -1,21 +1,30 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAlugarCarro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.ApoliceSeguroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /*
 
@@ -75,52 +84,160 @@ acesso ao veículo escolhido para as datas desejadas.
  */
 
 @Service
-@Log4j2
+@Schema(description = "Serviço que implementa as operações de aluguel")
 public class AluguelServiceImpl implements AluguelService {
+
+    private static final Logger log = getLogger(AluguelServiceImpl.class);
 
     private final AluguelRepository aluguelRepository;
     private final MotoristaRepository motoristaRepository;
     private final CarroRepository carroRepository;
+    private final 
+    ApoliceSeguroRepository apoliceSeguroRepository;
 
     public AluguelServiceImpl(AluguelRepository aluguelRepository,
                               MotoristaRepository motoristaRepository,
-                              CarroRepository carroRepository) {
+                              CarroRepository carroRepository,
+                              ApoliceSeguroRepository apoliceSeguroRepository) {
         this.aluguelRepository = aluguelRepository;
         this.motoristaRepository = motoristaRepository;
         this.carroRepository = carroRepository;
+        this.apoliceSeguroRepository = apoliceSeguroRepository;
     }
-
+/// ajudando vc um pouquinho, ou atrapalhando, ai eu não sei
+/// Obrigado amigue
     @Override
-    public Aluguel findByid(Long id) {
-        Optional<Aluguel> aluguel = aluguelRepository.findById(id);
-        if (aluguel.isEmpty()) log.warn("Informações do aluguel não encontrado!");
-        return aluguel.orElse(null);
+    public Aluguel buscarPorId(Long id) {
+        log.info("Buscando aluguel por ID: {}", id);
+
+        Aluguel aluguel = aluguelRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Aluguel não encontrado para ID: {}", id);
+                    return new EntityNotFoundException("Aluguel não encontrado");
+                });
+
+        log.info("Aluguel encontrado: {}", aluguel);
+        return aluguel;
     }
 
     @Override
     @Transactional
-    public Aluguel alugar(@Valid DadosAlugarCarro alugar) {
+    public Aluguel alugar(@Valid DadosCadastroAluguel alugar)  {
+        log.info("Iniciando processo de aluguel: {}", alugar);
 
-        Aluguel aluguel = new Aluguel();
-
-        if (motoristaRepository.existsByEmail(alugar.emailMotorista())) {
-            Motorista motorista = motoristaRepository.findByEmail(alugar.emailMotorista());
-            Carro carro = carroRepository.findById(alugar.idCarro())
-                    .orElseThrow(() -> new RuntimeException("Carro não encontrado com o ID: " + alugar.idCarro()));
-            if (carro.isDisponivel()) {
-                carro.bloquearAluguel();
-                carroRepository.save(carro);
-                aluguel.setMotorista(motorista);
-                aluguel.setCarro(carro);
-                aluguel.setDataEntrega(alugar.dataEntrega());
-                aluguel.setDataDevolucaoPrevista(alugar.dataDevolucao());
-                aluguel.setDataPedido(LocalDate.from(Instant.now()));
-                return aluguelRepository.save(aluguel);
-            } else {
-                throw new RuntimeException("Carro indisponivel para aluguel");
-            }
-        } else {
-            throw new RuntimeException("Email invalido ou inexistente");
+        // 1. Verificar se o motorista existe
+        if (!motoristaRepository.existsByEmail(alugar.emailMotorista())) {
+            log.warn("Motorista não encontrado com o email: {}", alugar.emailMotorista());
+            throw new EntityNotFoundException("Motorista não encontrado com o email: " + alugar.emailMotorista());
         }
+
+        // 2. Validate Carro
+        Carro carro = carroRepository.findById(alugar.idCarro())
+                .orElseThrow(() -> {
+                    log.warn("Carro não encontrado com o ID: {}", alugar.idCarro());
+                    return new EntityNotFoundException("Carro não encontrado com o ID: " + alugar.idCarro());
+                });
+
+        if (!carro.isDisponivel()) {
+            log.warn("Carro indisponível para aluguel: {}", carro.getId());
+            throw new EntityNotFoundException("Carro indisponível para aluguel");
+        }
+
+        // 3. Create Aluguel
+        Aluguel aluguel = new Aluguel();
+        aluguel.setMotorista(motoristaRepository.findByEmail(alugar.emailMotorista())); // Fetch Motorista
+        aluguel.setCarro(carro);
+        aluguel.setDataEntrega(alugar.dataEntrega());
+        aluguel.setDataDevolucaoPrevista(alugar.dataDevolucaoPrevista());
+        aluguel.setDataPedido(LocalDate.now());
+
+        // 4. Block Carro and Save
+        carro.bloquearAluguel();
+        carroRepository.save(carro);
+
+        Aluguel aluguelSalvo = aluguelRepository.save(aluguel);
+        log.info("Aluguel realizado com sucesso: {}", aluguelSalvo);
+        return aluguelSalvo;
+    }
+
+    @Override
+    public Page<DadosListagemAluguel> listar(Pageable paginacao) {
+        log.info("Listando alugueis com paginação: {}", paginacao);
+        Page<Aluguel> alugueis = aluguelRepository.findAll(paginacao);
+        log.info("Alugueis listados com sucesso: {}", alugueis);
+        return alugueis.map(DadosListagemAluguel::new);
+    }
+
+    @Override
+    public BigDecimal calcularCustoTotal(Long idCarro, Long idApoliceSeguro, Aluguel aluguel) {
+        log.info("Calculando custo total do aluguel para o carro: {}", idCarro);
+
+        Carro carro = carroRepository.findById(idCarro)
+                .orElseThrow(() -> new EntityNotFoundException("Carro não encontrado com o ID: " + idCarro));
+
+        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findById(idApoliceSeguro)
+                .orElseThrow(() -> new EntityNotFoundException("Apólice de seguro não encontrada com o ID: " + idApoliceSeguro));
+
+        long diasAluguel = ChronoUnit.DAYS.between(aluguel.getDataEntrega(), aluguel.getDataDevolucaoPrevista());
+        BigDecimal custoDiarias = carro.getValorDiaria().multiply(BigDecimal.valueOf(diasAluguel));
+        BigDecimal valorSeguro = apoliceSeguro.getValorFranquia();
+
+        BigDecimal custoTotal = valorSeguro.add(custoDiarias);
+
+        log.info("Custo total calculado: {}", custoTotal);
+        return custoTotal;
+    }
+
+//    @Override
+//    @Transactional
+//    public Aluguel confirmarAluguel(Long idAluguel, DadosPagamento dadosPagamento) {
+//        log.info("Confirmando aluguel com ID: {}", idAluguel);
+//
+//        Aluguel aluguel = aluguelRepository.findById(idAluguel)
+//                .orElseThrow(() -> new EntityNotFoundException("Aluguel não encontrado com o ID: " + idAluguel));
+//
+//        // TODO: Implementar lógica de validação dos dados de pagamento (simulada)
+//
+//        aluguel.setStatusAluguel(StatusAluguel.CONFIRMADO); // Atualizar status do aluguel
+//        aluguel.setDadosPagamento(dadosPagamento); // Salvar dados de pagamento (simulados)
+//
+//        Aluguel aluguelConfirmado = aluguelRepository.save(aluguel);
+//
+//        // TODO: Implementar lógica de geração e envio da confirmação do aluguel
+//
+//        log.info("Aluguel confirmado com sucesso: {}", aluguelConfirmado);
+//        return aluguelConfirmado;
+//    }
+
+    @Override
+    public Page<DadosListagemAluguel> listarAlugueisPorCliente(Long idCliente, Pageable paginacao) {
+        log.info("Listando alugueis do cliente com ID: {}", idCliente);
+
+        // TODO: Implementar lógica para buscar alugueis por cliente (utilizando o relacionamento com Motorista)
+
+        Page<Aluguel> alugueis = aluguelRepository.findAll(paginacao); // Substituir pela busca correta
+        log.info("Alugueis do cliente listados com sucesso: {}", alugueis);
+        return alugueis.map(DadosListagemAluguel::new);
+    }
+
+    @Override
+    @Transactional
+    public void cancelarAluguel(Long idAluguel) {
+        log.info("Cancelando aluguel com ID: {}", idAluguel);
+
+        Aluguel aluguel = aluguelRepository.findById(idAluguel)
+                .orElseThrow(() -> new EntityNotFoundException("Aluguel não encontrado com o ID: " + idAluguel));
+
+        // TODO: Implementar lógica de verificação do prazo permitido para cancelamento
+
+        aluguel.setStatusAluguel(StatusAluguel.CANCELADO); // Atualizar status do aluguel
+
+        Carro carro = aluguel.getCarro();
+        carro.disponibilizarAluguel();
+
+        carroRepository.save(carro);
+        aluguelRepository.save(aluguel);
+
+        log.info("Aluguel cancelado com sucesso: {}", aluguel);
     }
 }

@@ -34,7 +34,6 @@ public class CarroServiceImpl implements CarroService {
         this.carroRepository = carroRepository;
     }
 
-
     @Override
     @Transactional
     public Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro) {

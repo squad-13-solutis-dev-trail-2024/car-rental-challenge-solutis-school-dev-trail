@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.test;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAlugarCarro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosApoliceAluguelTeste;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;
 
 import java.math.BigDecimal;
@@ -19,12 +20,15 @@ public class TesteDadosAlugarCarro {
         );
 
         // Criação do objeto DadosAlugarCarro
-        DadosAlugarCarro dados = new DadosAlugarCarro(
+        DadosCadastroAluguel dados = new DadosCadastroAluguel(
                 LocalDate.of(2024, 8, 1),
                 LocalDate.of(2024, 8, 10),
                 LocalDate.of(2024, 8, 12),
+                LocalDate.of(2024, 8, 12),
                 BigDecimal.valueOf(300.50),
-                apoliceSeguro,
+                BigDecimal.valueOf(900.50),
+                new DadosApoliceAluguelTeste(BigDecimal.valueOf(300.50),true,
+                        true,true),
                 "test@example.com",
                 1L
         );
@@ -32,8 +36,9 @@ public class TesteDadosAlugarCarro {
         // Verificação dos valores dos campos
         boolean testPassed = dados.dataPedido().equals(LocalDate.of(2024, 8, 1)) &&
                 dados.dataEntrega().equals(LocalDate.of(2024, 8, 10)) &&
-                dados.dataDevolucao().equals(LocalDate.of(2024, 8, 12)) &&
-                dados.valor().equals(BigDecimal.valueOf(300.50)) &&
+                dados.dataDevolucaoPrevista().equals(LocalDate.of(2024, 8, 12)) &&
+                dados.valorTotalInicial().equals(BigDecimal.valueOf(300.50)) &&
+                dados.valorTotalfinal().equals(BigDecimal.valueOf(900.50)) &&
                 dados.apoliceSeguro().equals(apoliceSeguro) &&
                 dados.emailMotorista().equals("test@example.com") &&
                 dados.idCarro().equals(1L);

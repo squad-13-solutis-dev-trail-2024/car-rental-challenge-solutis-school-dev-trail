@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -52,6 +53,9 @@ public class Aluguel {
     @Schema(description = "Valor total final do aluguel, calculado com base na data de devolução efetiva (se disponível).", example = "1350.00")
     private BigDecimal valorTotalFinal;
 
+    @Enumerated(EnumType.STRING)
+    private StatusAluguel statusAluguel;
+
     /**
      * Motorista que realizou este aluguel.
      * <p>
@@ -63,9 +67,9 @@ public class Aluguel {
      *
      * @see Motorista
      */
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
-    @JsonIgnore
     @Schema(description = "Motorista que realizou o aluguel.")
     private Motorista motorista;
 
@@ -126,7 +130,7 @@ public class Aluguel {
 
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucao=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataEntrega=" + dataEntrega + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
     }
 
     @Override

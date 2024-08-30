@@ -43,6 +43,7 @@ public class ApoliceSeguro {
     @Schema(description = "Indica se a apólice cobre roubo do veículo.", example = "true")
     private Boolean protecaoRoubo;
 
+
     /**
      * Aluguel associado à apólice de seguro.
      * <p>

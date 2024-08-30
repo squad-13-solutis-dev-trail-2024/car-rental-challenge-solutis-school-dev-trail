@@ -25,7 +25,7 @@ public class OpenApiConfig {
                         .summary("Alguma descrição relevante e chamativa")
                         .license(new License().name("Licença").url("https://github.com/squad-13-solutis-dev-trail-2024/car-rental-challenge-solutis-school-dev-trail/blob/main/LICENSE"))
                         .contact(new Contact()
-                                .name("Mmebros do SQUAD 13")
+                                .name("Membros do SQUAD 13")
                                 .url("https://github.com/orgs/squad-13-solutis-dev-trail-2024/people")));
     }
 
