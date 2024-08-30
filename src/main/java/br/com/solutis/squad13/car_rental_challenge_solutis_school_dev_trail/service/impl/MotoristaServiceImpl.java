@@ -75,13 +75,32 @@ public class MotoristaServiceImpl implements MotoristaService {
                 dadosAtualizacaoMotorista.numeroCNH() != null) {
 
             log.info("Se chegou aqui é pq o usuário decidiu atualizar ou CPF, ou EMAIL ou numeroCNH");
-            DadosCadastroMotorista dadosParaValidacao = new DadosCadastroMotorista(
-                    motorista.getCpf(),
-                    motorista.getEmail(),
-                    motorista.getNumeroCNH()
-            );
+            if (dadosAtualizacaoMotorista.cpf() != null) {
+                if (!motorista.getCpf().equals(dadosAtualizacaoMotorista.cpf())) {
+                    if (motoristaRepository.existsByCpf(dadosAtualizacaoMotorista.cpf())) {
+                        log.warn("Tentativa de atualização com CPF duplicado: {}", dadosAtualizacaoMotorista.cpf());
+                        throw new DuplicateEntryException("Já existe um motorista cadastrado com esse CPF");
+                    }
+                }
+            }
 
-            validarCamposDuplicados(dadosParaValidacao); // Valide os campos duplicados
+            if (dadosAtualizacaoMotorista.email() != null) {
+                if (!motorista.getEmail().equals(dadosAtualizacaoMotorista.email())) {
+                    if (motoristaRepository.existsByEmail(dadosAtualizacaoMotorista.email())) {
+                        log.warn("Tentativa de atualização com e-mail duplicado: {}", dadosAtualizacaoMotorista.email());
+                        throw new DuplicateEntryException("Já existe um motorista cadastrado com esse e-mail");
+                    }
+                }
+            }
+
+            if (dadosAtualizacaoMotorista.numeroCNH() != null) {
+                if (!motorista.getNumeroCNH().equals(dadosAtualizacaoMotorista.numeroCNH())) {
+                    if (motoristaRepository.existsByNumeroCNH(dadosAtualizacaoMotorista.numeroCNH())) {
+                        log.warn("Tentativa de atualização com número da CNH duplicado: {}", dadosAtualizacaoMotorista.numeroCNH());
+                        throw new DuplicateEntryException("Já existe um motorista cadastrado com esse número da CNH");
+                    }
+                }
+            }
         }
 
         motorista.atualizarInformacoes(dadosAtualizacaoMotorista);

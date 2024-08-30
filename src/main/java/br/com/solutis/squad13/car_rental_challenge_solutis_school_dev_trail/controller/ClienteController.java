@@ -64,7 +64,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemMotorista>> listar(@PageableDefault(size = 5, sort = {"nome"}) Pageable paginacao) {
+    public ResponseEntity<Page<DadosListagemMotorista>> listar(@PageableDefault(size = 20, sort = {"nome"}) Pageable paginacao) {
         var motoristas = motoristaService.listar(paginacao);
         return ResponseEntity.ok(motoristas);
     }
