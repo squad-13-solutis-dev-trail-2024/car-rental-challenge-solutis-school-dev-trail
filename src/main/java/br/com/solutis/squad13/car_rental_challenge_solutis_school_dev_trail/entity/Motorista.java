@@ -7,11 +7,11 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
 
@@ -84,7 +84,7 @@ public class Motorista extends Pessoa {
         this.setCpf(dadosCadastroMotorista.cpf());
         this.setEmail(dadosCadastroMotorista.email());
         this.setSexo(dadosCadastroMotorista.sexo());
-        this.setLastUpdated(LocalDateTime.now());
+        this.setLastUpdated(now());
         this.setAtivo(true);
         this.numeroCNH = dadosCadastroMotorista.numeroCNH();
     }
@@ -96,7 +96,7 @@ public class Motorista extends Pessoa {
         ofNullable(dadosAtualizacaoMotorista.sexo()).ifPresent(this::setSexo);
         ofNullable(dadosAtualizacaoMotorista.numeroCNH()).ifPresent(value -> this.numeroCNH = value);
         ofNullable(dadosAtualizacaoMotorista.cpf()).ifPresent(this::setCpf);
-        this.setLastUpdated(LocalDateTime.now());
+        this.setLastUpdated(now());
     }
 
     public void adicionarAluguel(Aluguel aluguel) {

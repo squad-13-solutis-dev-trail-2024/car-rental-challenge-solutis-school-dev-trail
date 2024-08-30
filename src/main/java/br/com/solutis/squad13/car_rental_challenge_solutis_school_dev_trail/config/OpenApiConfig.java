@@ -21,7 +21,7 @@ public class OpenApiConfig {
                         .contact(new Contact()
                                 .name("Solutis")
                                 .email("solutis@gmail.com.br")
-                                .url("https://solutis.com.br"))
+                                .url("https://github.com/squad-13-solutis-dev-trail-2024"))
                 );
     }
 

@@ -20,9 +20,4 @@ public record DadosAlugarCarro(
 
         Long idCarro
 ) {
-    // O construtor padrão do record já faz a validação das anotações @NotBlank e @Email
-    // portanto, não é necessário incluir a validação explícita aqui.
-
-    // Caso precise de lógica adicional, você pode adicionar métodos ao record, mas
-    // não é possível adicionar setters, pois records são imutáveis.
 }

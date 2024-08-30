@@ -1,8 +1,10 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAtualizarCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.Optional.ofNullable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,16 +48,6 @@ public class Carro {
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal valorDiaria;
 
-    public Carro(DadosCadastroCarro dadosCadastroCarro) {
-        this.nome = dadosCadastroCarro.nome();
-        this.placa = dadosCadastroCarro.placa();
-        this.chassi = dadosCadastroCarro.chassi();
-        this.cor = dadosCadastroCarro.cor();
-        this.valorDiaria = dadosCadastroCarro.valorDiario();
-        this.acessorios = dadosCadastroCarro.acessorio();
-        this.modelo = dadosCadastroCarro.modelo();
-        this.ativo = true;
-    }
 
     /**
      * Lista de acessórios associados a este carro.
@@ -156,6 +150,60 @@ public class Carro {
     public void bloquearAluguel() {
         this.ativo = false;
     }
+
+    public Carro(DadosCadastroCarro dadosCadastroCarro) {
+        this.nome = dadosCadastroCarro.nome();
+        this.placa = dadosCadastroCarro.placa();
+        this.chassi = dadosCadastroCarro.chassi();
+        this.cor = dadosCadastroCarro.cor();
+        this.valorDiaria = dadosCadastroCarro.valorDiario();
+        this.acessorios = dadosCadastroCarro.acessorio();
+        this.modelo = dadosCadastroCarro.modelo();
+        this.ativo = true;
+    }
+
+    public void atualizar(@Valid DadosAtualizarCarro dadosAtualizarCarro) {
+        ofNullable(dadosAtualizarCarro.nome()).ifPresent(this::setNome);
+        ofNullable(dadosAtualizarCarro.placa()).ifPresent(this::setPlaca);
+        ofNullable(dadosAtualizarCarro.chassi()).ifPresent(this::setChassi);
+        ofNullable(dadosAtualizarCarro.cor()).ifPresent(this::setCor);
+        ofNullable(dadosAtualizarCarro.valorDiario()).ifPresent(this::setValorDiaria);
+        ofNullable(dadosAtualizarCarro.acessorio()).ifPresent(this::adicionarAcessorios);
+        ofNullable(dadosAtualizarCarro.modelo()).ifPresent(this::setModelo);
+    }
+
+    public void adicionarAcessorio(Acessorio acessorio) {
+        this.acessorios.add(acessorio);
+    }
+
+    public void removerAcessorio(Acessorio acessorio) {
+        this.acessorios.remove(acessorio);
+    }
+
+    public void adicionarAcessorios(List<Acessorio> acessorios) {
+        this.acessorios.addAll(acessorios);
+    }
+
+    public void removerAcessorios(List<Acessorio> acessorios) {
+        this.acessorios.removeAll(acessorios);
+    }
+
+    public void adicionarAluguel(Aluguel aluguel) {
+        this.alugueis.add(aluguel);
+    }
+
+    public void removerAluguel(Aluguel aluguel) {
+        this.alugueis.remove(aluguel);
+    }
+
+    public void adicionarAlugueis(List<Aluguel> alugueis) {
+        this.alugueis.addAll(alugueis);
+    }
+
+    public void removerAlugueis(List<Aluguel> alugueis) {
+        this.alugueis.removeAll(alugueis);
+    }
+
 
     @Override
     public String toString() {

@@ -2,15 +2,12 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Acessorio;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ModeloCarro;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public record DadosCadastroCarro (
+public record DadosCadastroCarro(
         @NotBlank(message = "O nome do carro é obrigatório")
         String nome,
 
@@ -26,6 +23,11 @@ public record DadosCadastroCarro (
         String cor,
 
         @NotNull(message = "O valor diário do aluguel é obrigatório")
+        @DecimalMin(
+                value = "0.0",
+                inclusive = false,
+                message = "O valor diário deve ser maior que zero"
+        )
         BigDecimal valorDiario,
 
         @NotNull(message = "A lista de acessórios não pode ser nula")

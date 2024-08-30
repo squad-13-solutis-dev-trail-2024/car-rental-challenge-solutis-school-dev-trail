@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
-/**
+/*
 História de Usuário: Cadastro de Cliente
 
 Como um cliente em potencial,
@@ -39,7 +39,7 @@ essenciais do cadastro de cliente em uma locadora de automóveis.
 public interface MotoristaService {
 
     @Transactional
-    Motorista cadastrarMotorista(DadosCadastroMotorista motorista);
+    Motorista cadastrarMotorista(@Valid DadosCadastroMotorista motorista);
 
     Motorista buscarPorId(Long id);
 
@@ -48,6 +48,9 @@ public interface MotoristaService {
 
     @Transactional
     void deletarMotorista(Long id);
+
+    @Transactional
+    void desativarMotorista(Long id);
 
     Page<DadosListagemMotorista> listar(Pageable paginacao);
 }

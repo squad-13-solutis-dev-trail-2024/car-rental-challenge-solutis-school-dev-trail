@@ -123,6 +123,17 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
+    @Transactional
+    public void desativarMotorista(Long id) {
+        log.info("Desativando motorista com ID: {}", id);
+        Motorista motorista = motoristaRepository.getReferenceById(id);
+
+        motorista.desativar();
+        motoristaRepository.save(motorista);
+        log.info("Motorista desativado com sucesso: {}", motorista);
+    }
+
+    @Override
     public Page<DadosListagemMotorista> listar(Pageable paginacao) {
         log.info("Listando motoristas com paginação: {}", paginacao);
         Page<Motorista> motoristas = motoristaRepository.findAllByAtivoTrue(paginacao);
@@ -130,7 +141,7 @@ public class MotoristaServiceImpl implements MotoristaService {
         return motoristas.map(DadosListagemMotorista::new);
     }
 
-    private void validarCamposDuplicados(DadosCadastroMotorista dados) {
+    private void validarCamposDuplicados(@Valid DadosCadastroMotorista dados) {
         List<String> errosDuplicados = new ArrayList<>();
 
         if (motoristaRepository.existsByCpf(dados.cpf())) {

@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -58,6 +60,16 @@ public abstract class Pessoa {
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     private LocalDateTime lastUpdated;
+
+    public void desativar() {
+        this.ativo = false;
+        this.lastUpdated = now();
+    }
+
+    public void ativar() {
+        this.ativo = true;
+        this.lastUpdated = now();
+    }
 
     @Override
     public String toString() {
