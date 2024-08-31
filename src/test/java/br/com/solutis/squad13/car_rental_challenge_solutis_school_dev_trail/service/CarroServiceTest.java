@@ -3,7 +3,12 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ser
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosAtualizarCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.carro.DadosListagemCarro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Acessorio;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Fabricante;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ModeloCarro;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.DescricaoAcessorio;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl.CarroServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,7 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,13 +25,18 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria.SEDAN_COMPACTO;
+import static java.time.LocalDateTime.now;
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.stream.LongStream.range;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 
 @ActiveProfiles("CarroServiceTest")
 public class CarroServiceTest {
@@ -43,27 +53,50 @@ public class CarroServiceTest {
     @Test
     @DisplayName("Deve cadastrar um carro com sucesso")
     public void givenDadosCadastroCarro_whenCadastrarCarro_thenCarroIsSaved() {
-        // given
-        DadosCadastroCarro dados = new DadosCadastroCarro("ABC-1234", "9BWZZZ377VT004251",
-                "VW Golf", "Preto", BigDecimal.valueOf(200.00), null, null);
+        // Given
+        Fabricante fabricante = new Fabricante(1L, "Volkswagen", null);
+        ModeloCarro modelo = new ModeloCarro(1L, "VW Golf", fabricante, SEDAN_COMPACTO, null);
+
+        List<Acessorio> acessorios = range(0, DescricaoAcessorio.values().length)
+                .mapToObj(i -> new Acessorio(i + 1, DescricaoAcessorio.values()[(int) i], null))
+                .collect(Collectors.toList());
+
+        DadosCadastroCarro dados = new DadosCadastroCarro(
+                "Corolla",
+                "ABC-1234",
+                "9BWZZZ377VT004251",
+                "Preto",
+                BigDecimal.valueOf(200.00),
+                acessorios,
+                modelo,
+                now(),
+                now()
+        );
 
         Carro carroEsperado = new Carro(dados);
 
         when(carroRepository.existsByPlaca(dados.placa())).thenReturn(false);
         when(carroRepository.existsByChassi(dados.chassi())).thenReturn(false);
-        when(carroRepository.save(Mockito.any(Carro.class))).thenReturn(carroEsperado);
 
-        // when
+        // When
         Carro carroSalvo = carroService.cadastrarCarro(dados);
 
-        // then
+        // Then
         assertNotNull(carroSalvo);
-        assertEquals("ABC-1234", carroSalvo.getPlaca());
-        assertEquals("9BWZZZ377VT004251", carroSalvo.getChassi());
-        assertEquals("VW Golf", carroSalvo.getModelo().getDescricao());
-        assertEquals("Preto", carroSalvo.getCor());
 
-        verify(carroRepository, times(1)).save(carroEsperado);
+        ArgumentCaptor<Carro> carroCaptor = ArgumentCaptor.forClass(Carro.class);
+        verify(carroRepository, times(1)).save(carroCaptor.capture());
+
+        Carro carroSalvoNoRepositorio = carroCaptor.getValue();
+
+        assertAll(
+                () -> assertEquals(carroEsperado.getPlaca(), carroSalvoNoRepositorio.getPlaca()),
+                () -> assertEquals(carroEsperado.getChassi(), carroSalvoNoRepositorio.getChassi()),
+                () -> assertEquals(carroEsperado.getCor(), carroSalvoNoRepositorio.getCor()),
+                () -> assertEquals(carroEsperado.getValorDiaria(), carroSalvoNoRepositorio.getValorDiaria()),
+                () -> assertEquals(carroEsperado.getModelo(), carroSalvoNoRepositorio.getModelo()),
+                () -> assertEquals(carroEsperado.getAcessorios(), carroSalvoNoRepositorio.getAcessorios())
+        );
     }
 
     @Test
@@ -71,10 +104,10 @@ public class CarroServiceTest {
     public void givenInvalidId_whenBuscarPorId_thenThrowsEntityNotFoundException() {
         // given
         Long id = 1L;
-        when(carroRepository.findById(id)).thenReturn(Optional.empty());
+        when(carroRepository.findById(id)).thenReturn(empty());
 
         // when
-        EntityNotFoundException thrown = Assertions.assertThrows(
+        EntityNotFoundException thrown = assertThrows(
                 EntityNotFoundException.class,
                 () -> carroService.buscarPorId(id),
                 "Esperava-se lançar EntityNotFoundException"
@@ -88,10 +121,25 @@ public class CarroServiceTest {
     @Test
     @DisplayName("Deve atualizar um carro com sucesso")
     public void givenValidDadosAtualizarCarro_whenAtualizarCarro_thenCarroIsUpdated() {
+
+        // Given
+        Fabricante fabricante = new Fabricante(1L, "Volkswagen", null);
+        ModeloCarro modelo = new ModeloCarro(1L, "VW Golf", fabricante, SEDAN_COMPACTO, null);
+
+        List<Acessorio> acessorios = new ArrayList<>(range(0, DescricaoAcessorio.values().length)
+                .mapToObj(i -> new Acessorio(i + 1, DescricaoAcessorio.values()[(int) i], null))
+                .toList());
         // given
-        DadosAtualizarCarro dadosAtualizar = new DadosAtualizarCarro(1L, "DEF-5678", "9BWZZZ377VT004252",
-                "VW Jetta", "Branco",
-                BigDecimal.valueOf(200.00), null, null);
+        DadosAtualizarCarro dadosAtualizar = new DadosAtualizarCarro(
+                1L,
+                "DEF-5678",
+                "9BWZZZ377VT004252",
+                "VW Jetta",
+                "Branco",
+                BigDecimal.valueOf(200.00),
+                acessorios,
+                modelo
+        );
 
         Carro carroExistente = new Carro(
                 1L,
@@ -101,7 +149,7 @@ public class CarroServiceTest {
                 "Preto",
                 true,
                 BigDecimal.valueOf(200.00),
-                null,
+                acessorios,
                 null,
                 null,
                 null,
@@ -123,19 +171,21 @@ public class CarroServiceTest {
     }
 
     @Test
-    @DisplayName("Deve deletar um carro existente com sucesso")
-    public void givenValidId_whenBloquearCarro_thenCarroAluguelIsDeleted() {
-
-        // given
+    @DisplayName("Deve bloquear um carro existente com sucesso")
+    public void givenValidId_whenBloquearCarro_thenCarroAluguelIsBlocked() {
+        // Given
         Long id = 1L;
-        when(carroRepository.existsById(id)).thenReturn(true);
-        doNothing().when(carroRepository).deleteById(id);
+        Carro carro = new Carro(); // Crie um objeto Carro para o teste
+        carro.setId(id);
 
-        //when
+        when(carroRepository.findById(id)).thenReturn(Optional.of(carro)); // Mock findById() para retornar o carro
+
+        // When
         carroService.bloquearCarroAluguel(id);
 
-        //then
-        verify(carroRepository, times(1)).deleteById(id);
+        // Then
+        assertFalse(carro.isDisponivel()); // Verifique se o carro foi bloqueado
+        verify(carroRepository, times(1)).save(carro); // Verifique se o carro foi salvo
     }
 
     @Test
@@ -162,16 +212,24 @@ public class CarroServiceTest {
         // given
         Pageable paginacao = PageRequest.of(0, 10);
 
+        // Crie um objeto ModeloCarro
+        Fabricante fabricante = new Fabricante(1L, "Volkswagen", null);
+        ModeloCarro modeloCarro = new ModeloCarro(1L, "VW Golf", fabricante, Categoria.SEDAN_COMPACTO, null);
+
+        List<Acessorio> acessorios = new ArrayList<>(range(0, DescricaoAcessorio.values().length)
+                .mapToObj(i -> new Acessorio(i + 1, DescricaoAcessorio.values()[(int) i], null))
+                .toList());
+
         Carro carro1 = new Carro(
                 1L,
+                "Corolla", // Nome do carro 1
                 "ABC-1234",
                 "9BWZZZ377VT004251",
-                "VW Golf",
                 "Preto",
                 true,
                 BigDecimal.valueOf(200.00),
-                null,
-                null,
+                acessorios,
+                modeloCarro,
                 null,
                 null,
                 null
@@ -179,20 +237,20 @@ public class CarroServiceTest {
 
         Carro carro2 = new Carro(
                 2L,
+                "Gol", // Nome do carro 2
                 "ABC-1235",
-                "9BWZZZ377VT004251",
-                "Gol",
+                "9BWZZZ377VT004252",
                 "Branco",
                 true,
                 BigDecimal.valueOf(200.00),
-                null,
-                null,
+                acessorios,
+                modeloCarro,
                 null,
                 null,
                 null
         );
 
-        List<Carro> carros = Arrays.asList(carro1, carro2);
+        List<Carro> carros = asList(carro1, carro2);
         Page<Carro> carroPage = new PageImpl<>(carros, paginacao, carros.size());
 
         when(carroRepository.findAllByDisponivelTrue(paginacao)).thenReturn(carroPage);
@@ -203,8 +261,13 @@ public class CarroServiceTest {
         // then
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
-        assertEquals("Corolla", result.getContent().get(0).nome());
-        assertEquals("Civic", result.getContent().get(1).nome());
+
+        // Asserções corrigidas
+        assertEquals(carro1.getNome(), result.getContent().get(0).nome());
+        assertEquals(carro2.getNome(), result.getContent().get(1).nome());
+        assertEquals(modeloCarro.getDescricao(), result.getContent().get(0).modeloCarro());
+        assertEquals(modeloCarro.getDescricao(), result.getContent().get(1).modeloCarro());
+
         verify(carroRepository, times(1)).findAllByDisponivelTrue(paginacao);
     }
 }

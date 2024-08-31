@@ -18,12 +18,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo.MASCULINO;
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,10 +50,10 @@ public class MotoristaServiceTest {
                 LocalDate.of(2001, 12, 6),
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
-                "123456789",
+                "07493612633",
                 MASCULINO,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                now(),
+                now()
         );
 
         //when - action or the behaviour that we arre testing
@@ -66,11 +66,11 @@ public class MotoristaServiceTest {
         assertThat(motoristaSalvo.getDataNascimento()).isEqualTo(LocalDate.of(2001, 12, 6));
         assertThat(motoristaSalvo.getCpf()).isEqualTo("447.841.608-76");
         assertThat(motoristaSalvo.getEmail()).isEqualTo("vinicius_andrade2010@hotmail.com");
-        assertThat(motoristaSalvo.getNumeroCNH()).isEqualTo("123456789");
+        assertThat(motoristaSalvo.getNumeroCNH()).isEqualTo("07493612633");
         assertThat(motoristaSalvo.getSexo()).isEqualTo(MASCULINO);
         assertThat(motoristaSalvo.getAlugueis().isEmpty()).isTrue();
 
-        // O que isso verifica ?
+        // O que isso verifica?
         verify(motoristaRepository, times(1)).save(motoristaSalvo);
     }
 
@@ -176,14 +176,17 @@ public class MotoristaServiceTest {
     public void givenValidId_whenDeletarMotorista_thenMotoristaIsDeleted() {
         // given
         Long id = 1L;
-        when(motoristaRepository.existsById(id)).thenReturn(true);
-        doNothing().when(motoristaRepository).deleteById(id);
+        Motorista motorista = new Motorista(); // Crie um objeto Motorista para teste
+        motorista.setId(id); // Defina o ID do motorista
+
+        when(motoristaRepository.findById(id)).thenReturn(Optional.of(motorista)); // Retorne um Optional contendo o motorista
+        doNothing().when(motoristaRepository).delete(motorista); // Use delete(motorista) para deletar o objeto
 
         // when
         motoristaService.deletarMotorista(id);
 
         // then
-        verify(motoristaRepository, times(1)).deleteById(id);
+        verify(motoristaRepository, times(1)).delete(motorista); // Verifique se o método delete foi chamado com o objeto motorista
     }
 
     @Test
@@ -191,17 +194,16 @@ public class MotoristaServiceTest {
     public void givenInvalidId_whenDeletarMotorista_thenThrowsEntityNotFoundException() {
         // given
         Long id = 99L;
-        when(motoristaRepository.existsById(id)).thenReturn(false);
+        when(motoristaRepository.findById(id)).thenReturn(Optional.empty()); // Retorne um Optional vazio para simular motorista inexistente
 
-        // when
-        EntityNotFoundException thrown = Assertions.assertThrows(
+        // when / then
+        Assertions.assertThrows(
                 EntityNotFoundException.class,
                 () -> motoristaService.deletarMotorista(id),
                 "Esperava-se lançar EntityNotFoundException"
         );
 
-        // then
-        assertEquals("Motorista não encontrado com o ID: 99", thrown.getMessage());
+        verify(motoristaRepository, never()).delete(any(Motorista.class)); // Verifique se delete nunca foi chamado
     }
 
     @Test
@@ -232,7 +234,7 @@ public class MotoristaServiceTest {
         motorista.setDataNascimento(LocalDate.of(2001, 12, 6));
         motorista.setCpf("447.841.608-76");
         motorista.setEmail("vinicius_andrade2010@hotmail.com");
-        motorista.setNumeroCNH("123456789");
+        motorista.setNumeroCNH("07493612633");
         motorista.setSexo(MASCULINO);
         motorista.setAtivo(true);
         motorista.adicionarListaAlugueis(new ArrayList<>());

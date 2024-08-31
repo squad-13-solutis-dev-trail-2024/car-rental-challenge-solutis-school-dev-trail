@@ -28,7 +28,7 @@ public record DadosListagemCarro(
         this(
                 carro.getNome(),
                 carro.getPlaca(),
-                carro.getModelo().getDescricao(),
+                carro.getModelo() != null ? carro.getModelo().getDescricao() : null,
                 carro.isDisponivel(),
                 carro.getAcessorios()
                         .stream()

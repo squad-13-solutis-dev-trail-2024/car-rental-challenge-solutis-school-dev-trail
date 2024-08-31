@@ -78,11 +78,10 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Transactional
     public void deletarMotorista(Long id) {
         log.info("Deletando motorista com ID: {}", id);
+        Motorista motorista = existeMotoristaPeloId(id); // Busca o motorista pelo ID
 
-        Motorista motorista = existeMotoristaPeloId(id);
         log.info("Motorista encontrado para deleção: {}", motorista);
-
-        motoristaRepository.deleteById(id);
+        motoristaRepository.delete(motorista); // Usa delete(motorista) para deletar o objeto
         log.info("Motorista deletado com sucesso: {}", id);
     }
 
