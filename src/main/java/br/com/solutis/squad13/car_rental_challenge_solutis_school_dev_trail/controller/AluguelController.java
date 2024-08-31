@@ -85,8 +85,8 @@ public class AluguelController {
     @Operation(summary = "Confirmar um aluguel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Aluguel confirmado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
-            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado.")
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado."),
+            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado.")
     })
     public ResponseEntity<DadosListagemAluguel> confirmarAluguel(
             @PathVariable Long id,

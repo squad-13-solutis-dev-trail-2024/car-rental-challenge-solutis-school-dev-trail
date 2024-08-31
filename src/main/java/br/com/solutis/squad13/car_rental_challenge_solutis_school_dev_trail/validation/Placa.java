@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = PlacaValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se a placa informada é válida.")
-public @interface PLACA {
+public @interface Placa {
 
     String message() default "Placa inválida.";
 
@@ -23,16 +23,16 @@ public @interface PLACA {
 }
 
 @Schema(description = "Validador que verifica se a placa informada é válida.")
-class PlacaValidator implements ConstraintValidator<PLACA, String> {
+class PlacaValidator implements ConstraintValidator<Placa, String> {
 
     @Override
-    public void initialize(PLACA constraintAnnotation) {
+    public void initialize(Placa constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(String placa, ConstraintValidatorContext constraintValidatorContext) {
-        return false; // Implemente a lógica de validação da placa aqui
+        return true; // Implemente a lógica de validação da placa aqui
         // todo : implementar validação de chassi
     }
 }

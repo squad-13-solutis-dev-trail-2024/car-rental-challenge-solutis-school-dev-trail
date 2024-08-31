@@ -14,7 +14,7 @@ import java.time.*;
 @Constraint(validatedBy = AdultoValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se a data de nascimento indica que a pessoa é maior de idade.")
-public @interface ADULTO {
+public @interface Adulto {
 
     String message() default "A data de nascimento informada não corresponde a uma pessoa maior de idade.";
 
@@ -24,13 +24,13 @@ public @interface ADULTO {
 }
 
 @Schema(description = "Validador que verifica se a data de nascimento corresponde a uma pessoa maior de idade.")
-class AdultoValidator implements ConstraintValidator<ADULTO, LocalDate> {
+class AdultoValidator implements ConstraintValidator<Adulto, LocalDate> {
 
     public AdultoValidator() {
     }
 
     @Override
-    public void initialize(ADULTO constraintAnnotation) {
+    public void initialize(Adulto constraintAnnotation) {
     }
 
     @Override

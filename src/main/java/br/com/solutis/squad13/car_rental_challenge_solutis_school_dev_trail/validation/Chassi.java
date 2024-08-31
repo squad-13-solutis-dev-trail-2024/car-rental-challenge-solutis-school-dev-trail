@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = ChassiValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se o chassi informado é válido.")
-public @interface CHASSI {
+public @interface Chassi {
 
     String message() default "Chassi inválido.";
 
@@ -22,18 +22,17 @@ public @interface CHASSI {
     Class<? extends Payload>[] payload() default {};
 }
 
-
 @Schema(description = "Validador que verifica se o chassi informado é válido.")
-class ChassiValidator implements ConstraintValidator<CHASSI, String> {
+class ChassiValidator implements ConstraintValidator<Chassi, String> {
 
     @Override
-    public void initialize(CHASSI constraintAnnotation) {
+    public void initialize(Chassi constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return false;
+        return true;
         // todo : implementar validação de chassi
     }
 }

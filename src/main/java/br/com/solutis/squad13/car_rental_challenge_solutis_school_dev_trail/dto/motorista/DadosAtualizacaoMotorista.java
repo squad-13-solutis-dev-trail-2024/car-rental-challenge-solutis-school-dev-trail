@@ -1,7 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.ADULTO;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.Adulto;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.CNH;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +26,7 @@ public record DadosAtualizacaoMotorista(
 
         @NotNull(message = "A data de nascimento é obrigatória")
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @ADULTO(message = "Você não é maior de idade")
+        @Adulto(message = "Você não é maior de idade")
         @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 

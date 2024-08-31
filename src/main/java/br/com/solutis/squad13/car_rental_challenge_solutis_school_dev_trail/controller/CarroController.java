@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/api/v1/carros")
+@RequestMapping("/api/v1/carro")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Carro Controller", description = "Controller para gerenciamento de carros")
 public class CarroController {
@@ -42,7 +42,7 @@ public class CarroController {
             UriComponentsBuilder uriBuilder
     ) {
         var carro = carroService.cadastrarCarro(dadosCadastroCarro);
-        var uri = uriBuilder.path("/api/v1/carros/{id}").buildAndExpand(carro.getId()).toUri();
+        var uri = uriBuilder.path("/api/v1/carro/{id}").buildAndExpand(carro.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemCarro(carro));
     }
 
@@ -126,8 +126,6 @@ public class CarroController {
         var carro = carroService.atualizarCarro(dadosAtualizacaoCarro);
         return ResponseEntity.ok(new DadosListagemCarro(carro));
     }
-
-
 
     @Transactional
     @DeleteMapping("/{id}")

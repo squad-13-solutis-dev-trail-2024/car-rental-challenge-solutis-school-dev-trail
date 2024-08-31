@@ -1,0 +1,40 @@
+###
+POST http://localhost:8080/api/v1/aluguel/alugar
+Content-Type: application/json
+
+{
+  "dataRetirada": "",
+  "dataDevolucaoPrevista": "",
+  "apoliceSeguro": {},
+  "emailMotorista": "",
+  "idCarro": 0,
+  "dataCreated": "",
+  "lastUpdated": ""
+}
+
+###
+GET http://localhost:8080/api/v1/aluguel/{{id}}
+Content-Type: application/json
+
+{
+  "dataRetirada": "",
+  "dataDevolucaoPrevista": "",
+  "apoliceSeguro": {},
+  "emailMotorista": "",
+  "idCarro": 0,
+  "dataCreated": "",
+  "lastUpdated": ""
+}
+
+###
+GET http://localhost:8080/api/v1/aluguel
+
+###
+PATCH http://localhost:8080/api/v1/aluguel/confirmar/{{id}}?
+    tipoPagamento={{$placeholder}}
+    Content-Type: application/x-www-form-urlencoded
+
+###
+PATCH http://localhost:8080/api/v1/aluguel/cancelar/{{id}}
+Content-Type: application/x-www-form-urlencoded
+

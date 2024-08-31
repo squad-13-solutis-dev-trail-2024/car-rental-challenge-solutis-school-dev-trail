@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/api/v1/clientes")
+@RequestMapping("/api/v1/cliente")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Tag(name = "Cliente Controller", description = "Controller para gerenciamento de clientes (motoristas)")
 public class ClienteController {
@@ -42,7 +42,7 @@ public class ClienteController {
             UriComponentsBuilder uriBuilder
     ) {
         var motorista = motoristaService.cadastrarMotorista(dadosCadastroMotorista);
-        var uri = uriBuilder.path("/api/v1/clientes/{id}").buildAndExpand(motorista.getId()).toUri();
+        var uri = uriBuilder.path("/api/v1/cliente/{id}").buildAndExpand(motorista.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemMotorista(motorista));
     }
 
