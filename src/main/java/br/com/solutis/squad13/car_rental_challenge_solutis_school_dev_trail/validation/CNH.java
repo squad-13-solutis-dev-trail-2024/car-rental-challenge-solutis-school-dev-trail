@@ -9,9 +9,9 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CNHValidator.class)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se um número de CNH é válido de acordo com o algoritmo de verificação brasileiro.")
 public @interface CNH {
 

@@ -19,6 +19,8 @@ public record DadosListagemCarro(
         @Schema(description = "Nome do modelo do carro.", example = "Sedan Compacto")
         String modeloCarro,
 
+        boolean disponivel,
+
         @Schema(description = "Lista de nomes dos acessórios do carro.", example = "[\"Ar Condicionado\", \"GPS\", \"Câmera de Ré\"]")
         List<String> acessorios
 ){
@@ -27,6 +29,7 @@ public record DadosListagemCarro(
                 carro.getNome(),
                 carro.getPlaca(),
                 carro.getModelo().getDescricao(),
+                carro.isDisponivel(),
                 carro.getAcessorios()
                         .stream()
                         .map(DadosListagemAcessorios::new)

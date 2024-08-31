@@ -7,13 +7,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
 @AllArgsConstructor
@@ -87,15 +91,11 @@ public class Carro {
      * garantindo a consistência dos dados.
      * </p>
      */
+    @JsonIgnore
     @ManyToMany
-    @JoinTable(
-            name = "tb_carro_acessorio",
-            joinColumns = @JoinColumn(name = "id_carro"),
-            inverseJoinColumns = @JoinColumn(name = "id_acessorio")
-    )
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
-    @JsonIgnore
+    @JoinTable(name = "tb_carro_acessorio", joinColumns = @JoinColumn(name = "id_carro"), inverseJoinColumns = @JoinColumn(name = "id_acessorio"))
     @Schema(description = "Lista de acessórios do carro.")
     private List<Acessorio> acessorios;
 
@@ -144,14 +144,21 @@ public class Carro {
      *
      * @see Aluguel
      */
-    @OneToMany(
-            mappedBy = "carro",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "carro", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de aluguéis associados a este carro.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
+
+    @CreationTimestamp
+    @Setter(AccessLevel.NONE)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
+    @Schema(description = "Data e hora de criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
+    private LocalDateTime dataCreated;
+
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    @Schema(description = "Data e hora da última atualização do registro.")
+    private LocalDateTime lastUpdated;
 
     public void disponibilizarAluguel() {
         this.disponivel = true;
@@ -170,6 +177,8 @@ public class Carro {
         this.acessorios = dadosCadastroCarro.acessorio();
         this.modelo = dadosCadastroCarro.modelo();
         this.disponivel = true;
+        this.dataCreated = now();
+        this.lastUpdated = now();
     }
 
     public void atualizar(@Valid DadosAtualizarCarro dadosAtualizarCarro) {
@@ -180,6 +189,7 @@ public class Carro {
         ofNullable(dadosAtualizarCarro.valorDiario()).ifPresent(this::setValorDiaria);
         ofNullable(dadosAtualizarCarro.acessorio()).ifPresent(this::adicionarAcessorios);
         ofNullable(dadosAtualizarCarro.modelo()).ifPresent(this::setModelo);
+        this.lastUpdated = now();
     }
 
     public void adicionarAcessorio(Acessorio acessorio) {
@@ -213,7 +223,6 @@ public class Carro {
     public void removerAlugueis(List<Aluguel> alugueis) {
         this.alugueis.removeAll(alugueis);
     }
-
 
     @Override
     public String toString() {

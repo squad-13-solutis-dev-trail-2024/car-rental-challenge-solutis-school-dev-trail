@@ -4,7 +4,6 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl.MotoristaServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo.MASCULINO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,7 +37,7 @@ public class MotoristaServiceTest {
 
     @BeforeEach
     public void setup() {
-        motoristaRepository = Mockito.mock(MotoristaRepository.class);
+        motoristaRepository = mock(MotoristaRepository.class);
         motoristaService = new MotoristaServiceImpl(motoristaRepository);
     }
 
@@ -52,7 +51,7 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "123456789",
-                Sexo.MASCULINO,
+                MASCULINO,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -68,7 +67,7 @@ public class MotoristaServiceTest {
         assertThat(motoristaSalvo.getCpf()).isEqualTo("447.841.608-76");
         assertThat(motoristaSalvo.getEmail()).isEqualTo("vinicius_andrade2010@hotmail.com");
         assertThat(motoristaSalvo.getNumeroCNH()).isEqualTo("123456789");
-        assertThat(motoristaSalvo.getSexo()).isEqualTo(Sexo.MASCULINO);
+        assertThat(motoristaSalvo.getSexo()).isEqualTo(MASCULINO);
         assertThat(motoristaSalvo.getAlugueis().isEmpty()).isTrue();
 
         // O que isso verifica ?
@@ -123,8 +122,7 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "123456789",
-                Sexo.MASCULINO,
-                LocalDateTime.now()
+                MASCULINO
         );
 
         Motorista motoristaExistente = criarMotoristaEsperado();
@@ -142,7 +140,7 @@ public class MotoristaServiceTest {
         assertThat(motoristaAtualizado.getCpf()).isEqualTo("447.841.608-76");
         assertThat(motoristaAtualizado.getEmail()).isEqualTo("vinicius_andrade2010@hotmail.com");
         assertThat(motoristaAtualizado.getNumeroCNH()).isEqualTo("123456789");
-        assertThat(motoristaAtualizado.getSexo()).isEqualTo(Sexo.MASCULINO);
+        assertThat(motoristaAtualizado.getSexo()).isEqualTo(MASCULINO);
         verify(motoristaRepository, times(1)).save(motoristaExistente);
     }
 
@@ -157,8 +155,7 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "123456789",
-                Sexo.MASCULINO,
-                LocalDateTime.now()
+                MASCULINO
         );
 
         when(motoristaRepository.findById(dadosAtualizacao.id())).thenReturn(Optional.empty());
@@ -236,7 +233,7 @@ public class MotoristaServiceTest {
         motorista.setCpf("447.841.608-76");
         motorista.setEmail("vinicius_andrade2010@hotmail.com");
         motorista.setNumeroCNH("123456789");
-        motorista.setSexo(Sexo.MASCULINO);
+        motorista.setSexo(MASCULINO);
         motorista.setAtivo(true);
         motorista.adicionarListaAlugueis(new ArrayList<>());
         return motorista;

@@ -6,6 +6,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.vali
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -15,37 +16,40 @@ import java.time.LocalDate;
 public record DadosAtualizacaoMotorista(
 
         @NotNull(message = "ID é obrigatório")
-        @Schema(description = "ID do motorista a ser atualizado.", example = "1")
+        @Schema(description = "ID do motorista a ser atualizado.")
         Long id,
 
         @NotBlank(message = "O nome é obrigatório")
         @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
-        @Schema(description = "Nome completo do motorista.", example = "João Silva")
+        @Schema(description = "Nome completo do motorista.")
         String nome,
 
         @NotNull(message = "A data de nascimento é obrigatória")
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
         @ADULTO(message = "Você não é maior de idade")
-        @Schema(description = "Data de nascimento do motorista.", example = "10/05/1990")
+        @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 
+        @Column(unique = true)
         @NotBlank(message = "O CPF é obrigatório")
         @CPF(message = "CPF inválido")
-        @Schema(description = "CPF do motorista.", example = "123.456.789-00")
+        @Schema(description = "CPF do motorista.")
         String cpf,
 
+        @Column(unique = true)
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "E-mail inválido")
-        @Schema(description = "Endereço de email do motorista.", example = "joao.silva@example.com")
+        @Schema(description = "Endereço de email do motorista.")
         String email,
 
+        @Column(unique = true)
         @NotBlank(message = "O número da CNH é obrigatório")
         @CNH(message = "Número da CNH inválido")
-        @Schema(description = "Número da CNH do motorista.", example = "12345678901")
+        @Schema(description = "Número da CNH do motorista.")
         String numeroCNH,
 
         @NotNull(message = "O sexo é obrigatório")
-        @Schema(description = "Sexo do motorista.", example = "MASCULINO")
+        @Schema(description = "Sexo do motorista.")
         Sexo sexo
 ) {
 }

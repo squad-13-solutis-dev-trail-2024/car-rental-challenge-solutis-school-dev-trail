@@ -1,14 +1,18 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -44,7 +48,7 @@ public class Aluguel {
     @Schema(description = "Data efetiva da devolução do carro (pode ser nula).")
     private LocalDate dataDevolucaoEfetiva;
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "valor_total_inicial", precision = 10, scale = 2)
     @Schema(description = "Valor total inicial do aluguel, calculado com base na data de devolução prevista.")
     private BigDecimal valorTotalInicial;
 
@@ -54,6 +58,11 @@ public class Aluguel {
 
     @Enumerated(EnumType.STRING)
     private StatusAluguel statusAluguel;
+
+    @Enumerated(EnumType.STRING)
+    private TipoPagamento tipoPagamento;
+
+    private LocalDate dataPagamento;
 
     /**
      * Motorista que realizou este aluguel.
@@ -66,11 +75,11 @@ public class Aluguel {
      *
      * @see Motorista
      */
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
-    @Setter(AccessLevel.NONE)
     @Schema(description = "Motorista que realizou o aluguel.")
-    @JsonIgnore
     private Motorista motorista;
 
     /**
@@ -84,11 +93,11 @@ public class Aluguel {
      *
      * @see Carro
      */
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
-    @Setter(AccessLevel.NONE)
     @Schema(description = "Carro alugado.")
-    @JsonIgnore
     private Carro carro;
 
     /**
@@ -102,11 +111,22 @@ public class Aluguel {
      * @see ApoliceSeguro
      */
     @OneToOne
-    @JoinColumn(name = "apolice_seguro_id", nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Schema(description = "Apólice de seguro associada ao aluguel.")
     @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @JoinColumn(name = "apolice_seguro_id", nullable = false)
+    @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro;
+
+    @CreationTimestamp
+    @Setter(AccessLevel.NONE)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
+    @Schema(description = "Data e hora da criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
+    private LocalDateTime dataCreated;
+
+    @UpdateTimestamp
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    @Schema(description = "Data e hora da última atualização do registro.")
+    private LocalDateTime lastUpdated;
 
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {
         this.apoliceSeguro = apoliceSeguro;

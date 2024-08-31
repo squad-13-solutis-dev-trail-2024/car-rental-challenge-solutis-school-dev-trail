@@ -4,6 +4,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
@@ -24,7 +25,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/v1/aluguel")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@Tag(name = "Carro Controller", description = "Controller para gerenciamento de aluguel")
+@Tag(name = "Aluguel Controller", description = "Controller para gerenciamento de aluguel")
 public class AluguelController {
 
     private final AluguelService aluguelService;
@@ -80,22 +81,6 @@ public class AluguelController {
         return ResponseEntity.ok(new DadosDetalhamentoAluguel(aluguel));
     }
 
-    @GetMapping("/cliente/{idCliente}")
-    @Operation(summary = "Listar aluguéis por cliente", description = "Retorna uma lista paginada de aluguéis de um cliente específico.")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Lista de aluguéis do cliente."),
-                    @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
-            }
-    )
-    public ResponseEntity<Page<DadosListagemAluguel>> listarAlugueisPorCliente(
-            @PathVariable Long idCliente,
-            @PageableDefault(size = 5) Pageable paginacao
-    ) {
-        var alugueis = aluguelService.listarAlugueisPorCliente(idCliente, paginacao);
-        return ResponseEntity.ok(alugueis);
-    }
-
     @PatchMapping("/confirmar/{id}")
     @Operation(summary = "Confirmar um aluguel")
     @ApiResponses(value = {
@@ -103,8 +88,10 @@ public class AluguelController {
             @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
             @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado.")
     })
-    public ResponseEntity<DadosListagemAluguel> confirmarAluguel(@PathVariable Long id) {
-        var aluguel = aluguelService.confirmarAluguel(id);
+    public ResponseEntity<DadosListagemAluguel> confirmarAluguel(
+            @PathVariable Long id,
+            @RequestParam TipoPagamento tipoPagamento) {
+        var aluguel = aluguelService.confirmarAluguel(id, tipoPagamento);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
 
@@ -112,8 +99,8 @@ public class AluguelController {
     @Operation(summary = "Finalizar um aluguel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Aluguel finalizado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser finalizado ou data de devolução inválida."),
             @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
-            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser finalizado ou data de devolução inválida.")
     })
     public ResponseEntity<DadosListagemAluguel> finalizarAluguel(
             @PathVariable Long id,
@@ -127,8 +114,8 @@ public class AluguelController {
     @Operation(summary = "Cancelar um aluguel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Aluguel cancelado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser cancelado."),
             @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
-            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser cancelado.")
     })
     public ResponseEntity<DadosListagemAluguel> cancelarAluguel(@PathVariable Long id) {
         var aluguel = aluguelService.cancelarAluguel(id);

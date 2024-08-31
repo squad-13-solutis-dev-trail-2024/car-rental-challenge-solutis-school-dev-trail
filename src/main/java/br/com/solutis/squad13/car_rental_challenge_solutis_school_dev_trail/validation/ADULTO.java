@@ -7,14 +7,12 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
-import java.time.LocalDate;
-import java.time.Period;
-
+import java.time.*;
 
 @Documented
-@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AdultoValidator.class)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se a data de nascimento indica que a pessoa é maior de idade.")
 public @interface ADULTO {
 

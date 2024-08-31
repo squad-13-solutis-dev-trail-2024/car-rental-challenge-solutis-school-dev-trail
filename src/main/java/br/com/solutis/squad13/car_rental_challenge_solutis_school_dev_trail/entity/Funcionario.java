@@ -10,7 +10,6 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

@@ -37,38 +37,38 @@ public abstract class Pessoa {
     private Long id;
 
     @Column(nullable = false)
-    @Schema(description = "Nome completo da pessoa.", example = "João Silva")
+    @Schema(description = "Nome completo da pessoa.")
     private String nome;
 
     @Column(nullable = false)
-    @Schema(description = "Endereço de email da pessoa.", example = "joao.silva@example.com")
+    @Schema(description = "Endereço de email da pessoa.")
     private String email;
 
     @Column(nullable = false)
-    @Schema(description = "Data de nascimento da pessoa.", example = "1990-05-10")
+    @Schema(description = "Data de nascimento da pessoa.")
     private LocalDate dataNascimento;
 
     @Column(nullable = false)
-    @Schema(description = "CPF da pessoa.", example = "123.456.789-00")
+    @Schema(description = "CPF da pessoa.")
     private String cpf;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "Sexo da pessoa.", example = "MASCULINO")
+    @Schema(description = "Sexo da pessoa.")
     private Sexo sexo;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    @Schema(description = "Indica se a pessoa está ativa (true) ou inativa (false).", example = "true")
+    @Schema(description = "Indica se a pessoa está ativa (true) ou inativa (false).")
     private Boolean ativo;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    @Schema(description = "Data e hora de criação do registro.", example = "2024-08-30T15:40:05.522-03:00", accessMode = Schema.AccessMode.READ_ONLY)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
+    @Schema(description = "Data e hora de criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    @Schema(description = "Data e hora da última atualização do registro.", example = "2024-08-30T15:40:05.522-03:00")
+    @Schema(description = "Data e hora da última atualização do registro.")
     private LocalDateTime lastUpdated;
 
     public void desativar() {

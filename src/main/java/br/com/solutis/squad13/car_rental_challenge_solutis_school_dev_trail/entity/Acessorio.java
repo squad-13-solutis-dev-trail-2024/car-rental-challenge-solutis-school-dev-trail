@@ -31,7 +31,7 @@ public class Acessorio {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Schema(description = "Descrição do tipo de acessório.", example = "GPS")
+    @Schema(description = "Descrição do tipo de acessório.")
     private DescricaoAcessorio descricao;
 
     /**

@@ -39,6 +39,7 @@ public class CarroServiceImpl implements CarroService {
     public Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro) {
         log.info("Iniciando cadastro do carro: {}", dadosCadastroCarro);
         validarCamposDuplicados(dadosCadastroCarro);
+        log.info("Campos validados com sucesso");
 
         Carro carro = new Carro(dadosCadastroCarro);
         carroRepository.save(carro);
@@ -50,12 +51,7 @@ public class CarroServiceImpl implements CarroService {
     @Override
     public Carro buscarPorId(Long id) {
         log.info("Buscando carro por ID: {}", id);
-        Carro carro = carroRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Carro não encontrado para ID: {}", id);
-                    return new EntityNotFoundException("Carro não encontrado");
-                });
-
+        Carro carro = existeCarroPeloId(id);
         log.info("Carro encontrado: {}", carro);
         return carro;
     }
@@ -64,38 +60,10 @@ public class CarroServiceImpl implements CarroService {
     @Transactional
     public Carro atualizarCarro(@Valid DadosAtualizarCarro dadosAtualizarCarro) {
         log.info("Atualizando carro com dados: {}", dadosAtualizarCarro);
-        Carro carro = carroRepository.findById(dadosAtualizarCarro.id())
-                .orElseThrow(() -> {
-                    log.warn("Carro não encontrado para atualização: {}", dadosAtualizarCarro.id());
-                    return new EntityNotFoundException("Carro não encontrado");
-                });
-
+        Carro carro = existeCarroPeloId(dadosAtualizarCarro.id());
         log.info("Carro encontrado para atualização: {}", carro);
-        log.info("Verificando se há campos para atualização que não permitem duplicação");
 
-        //Chassi e placa
-        if (dadosAtualizarCarro.chassi() != null ||
-                dadosAtualizarCarro.placa() != null) {
-
-            log.info("Verificando se o chassi e a placa já estão cadastrados");
-            if (dadosAtualizarCarro.chassi() != null) {
-                if (!carro.getChassi().equals(dadosAtualizarCarro.chassi())) {
-                    if (carroRepository.existsByChassi(dadosAtualizarCarro.chassi())) {
-                        log.warn("Tentativa de atualização de chassi para um já cadastrado: {}", dadosAtualizarCarro.chassi());
-                        throw new EntityExistsException("Chassi já cadastrado");
-                    }
-                }
-            }
-
-            if (dadosAtualizarCarro.placa() != null) {
-                if (!carro.getPlaca().equals(dadosAtualizarCarro.placa())) {
-                    if (carroRepository.existsByPlaca(dadosAtualizarCarro.placa())) {
-                        log.warn("Tentativa de atualização de placa para uma já cadastrada: {}", dadosAtualizarCarro.placa());
-                        throw new EntityExistsException("Placa já cadastrada");
-                    }
-                }
-            }
-        }
+        validarCamposDuplicadosNoDtoAtualizacao(dadosAtualizarCarro, carro); // Verifica se há campos para atualização que não permitem duplicação
 
         carro.atualizar(dadosAtualizarCarro);
         carroRepository.save(carro);
@@ -106,20 +74,16 @@ public class CarroServiceImpl implements CarroService {
     @Override
     public void deletarCarro(Long id) {
         log.info("Deletando carro com ID: {}", id);
-        if (!carroRepository.existsById(id)) {
-            log.warn("Carro não encontrado para deletar: {}", id);
-            throw new EntityNotFoundException("Carro não encontrado");
-        } else {
-            carroRepository.deleteById(id);
-            log.info("Carro deletado com sucesso: {}", id);
-        }
+        existeCarroPeloId(id);
+        carroRepository.deleteById(id);
+        log.info("Carro deletado com sucesso: {}", id);
     }
 
     @Override
     @Transactional
     public void desativarCarro(Long id) {
         log.info("Desativando carro com ID: {}", id);
-        Carro carro = carroRepository.getReferenceById(id);
+        Carro carro = existeCarroPeloId(id);
 
         carro.bloquearAluguel();
         carroRepository.save(carro);
@@ -134,22 +98,48 @@ public class CarroServiceImpl implements CarroService {
         return carros.map(DadosListagemCarro::new);
     }
 
+    private void validarCamposDuplicadosNoDtoAtualizacao(@Valid DadosAtualizarCarro dadosAtualizarCarro, Carro carroAtual) {
+        List<String> erroDuplicados = new ArrayList<>();
+
+        if (dadosAtualizarCarro.placa() != null && !dadosAtualizarCarro.placa().equals(carroAtual.getPlaca()))
+            verificarDuplicidade(dadosAtualizarCarro.placa(), carroRepository.existsByPlaca(dadosAtualizarCarro.placa()), "Placa", erroDuplicados);
+
+        if (dadosAtualizarCarro.chassi() != null && !dadosAtualizarCarro.chassi().equals(carroAtual.getChassi()))
+            verificarDuplicidade(dadosAtualizarCarro.chassi(), carroRepository.existsByChassi(dadosAtualizarCarro.chassi()), "Chassi", erroDuplicados);
+
+        if (!erroDuplicados.isEmpty()) {
+            log.warn("Campos duplicados ao atualizar: {}", erroDuplicados);
+            throw new EntityExistsException("Campos duplicados: " + String.join(", ", erroDuplicados));
+        }
+    }
+
     private void validarCamposDuplicados(@Valid DadosCadastroCarro dadosCadastroCarro) {
         List<String> erroDuplicados = new ArrayList<>();
 
-        if (carroRepository.existsByPlaca(dadosCadastroCarro.placa())) {
-            log.warn("Placa já cadastrada: {}", dadosCadastroCarro.placa());
-            erroDuplicados.add("Placa já cadastrada");
-        }
-
-        if (carroRepository.existsByChassi(dadosCadastroCarro.chassi())) {
-            log.warn("Chassi já cadastrado: {}", dadosCadastroCarro.chassi());
-            erroDuplicados.add("Chassi já cadastrado");
-        }
+        verificarDuplicidade(dadosCadastroCarro.placa(), carroRepository.existsByPlaca(dadosCadastroCarro.placa()), "Placa", erroDuplicados);
+        verificarDuplicidade(dadosCadastroCarro.chassi(), carroRepository.existsByChassi(dadosCadastroCarro.chassi()), "Chassi", erroDuplicados);
 
         if (!erroDuplicados.isEmpty()) {
-            log.warn("Campos duplicados: {}", erroDuplicados);
-            throw new EntityExistsException("Campos duplicados");
+            log.warn("Campos duplicados ao cadastrar: {}", erroDuplicados);
+            throw new EntityExistsException("Campos duplicados: " + String.join(", ", erroDuplicados));
         }
+    }
+
+    private void verificarDuplicidade(String valor,
+                                      boolean existe,
+                                      String campo,
+                                      List<String> erros) {
+        if (existe) {
+            log.warn("{} já cadastrado: {}", campo, valor);
+            erros.add(campo + " já cadastrado");
+        }
+    }
+
+    private Carro existeCarroPeloId(Long id) {
+        return carroRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Carro não encontrado: {}", id);
+                    return new EntityNotFoundException("Carro não encontrado");
+                });
     }
 }

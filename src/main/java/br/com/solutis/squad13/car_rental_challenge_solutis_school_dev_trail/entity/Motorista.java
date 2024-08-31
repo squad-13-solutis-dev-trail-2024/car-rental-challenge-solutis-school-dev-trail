@@ -15,7 +15,6 @@ import java.util.Objects;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
-
 /**
  * Classe que representa um Motorista no sistema de aluguel de carros.
  * <p>

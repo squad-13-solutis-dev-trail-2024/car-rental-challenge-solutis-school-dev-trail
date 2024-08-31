@@ -7,6 +7,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public record DadosDetalhamentoAluguel(
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor total inicial do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.200,00")
+        @Column(name = "valor_total_inicial", precision = 10, scale = 2)
         BigDecimal valorTotalInicial,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)

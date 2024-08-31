@@ -36,7 +36,7 @@ public class CarroServiceTest {
 
     @BeforeEach
     public void setup() {
-        carroRepository = Mockito.mock(CarroRepository.class);
+        carroRepository = mock(CarroRepository.class);
         carroService = new CarroServiceImpl(carroRepository);
     }
 
@@ -45,7 +45,7 @@ public class CarroServiceTest {
     public void givenDadosCadastroCarro_whenCadastrarCarro_thenCarroIsSaved() {
         // given
         DadosCadastroCarro dados = new DadosCadastroCarro("ABC-1234", "9BWZZZ377VT004251",
-                "VW Golf", "Preto", BigDecimal.valueOf(200.00),null,null);
+                "VW Golf", "Preto", BigDecimal.valueOf(200.00), null, null);
 
         Carro carroEsperado = new Carro(dados);
 
@@ -60,7 +60,7 @@ public class CarroServiceTest {
         assertNotNull(carroSalvo);
         assertEquals("ABC-1234", carroSalvo.getPlaca());
         assertEquals("9BWZZZ377VT004251", carroSalvo.getChassi());
-        assertEquals("VW Golf", carroSalvo.getModelo());
+        assertEquals("VW Golf", carroSalvo.getModelo().getDescricao());
         assertEquals("Preto", carroSalvo.getCor());
 
         verify(carroRepository, times(1)).save(carroEsperado);
@@ -84,20 +84,30 @@ public class CarroServiceTest {
         assertEquals("Carro não encontrado", thrown.getMessage());
         verify(carroRepository, times(1)).findById(id);
     }
+
     @Test
     @DisplayName("Deve atualizar um carro com sucesso")
     public void givenValidDadosAtualizarCarro_whenAtualizarCarro_thenCarroIsUpdated() {
         // given
         DadosAtualizarCarro dadosAtualizar = new DadosAtualizarCarro(1L, "DEF-5678", "9BWZZZ377VT004252",
                 "VW Jetta", "Branco",
-                BigDecimal.valueOf(200.00),null,null);
+                BigDecimal.valueOf(200.00), null, null);
 
-        Carro carroExistente = new Carro(1l,"ABC-1234", "9BWZZZ377VT004251", "VW Golf",
-                "Preto",true, BigDecimal.valueOf(200.00),
+        Carro carroExistente = new Carro(
+                1L,
+                "ABC-1234",
+                "9BWZZZ377VT004251",
+                "VW Golf",
+                "Preto",
+                true,
+                BigDecimal.valueOf(200.00),
                 null,
                 null,
-                null);
-        when(carroRepository.findById(dadosAtualizar.id())).thenReturn((Optional<Carro>) Optional.of(carroExistente));
+                null,
+                null,
+                null
+        );
+        when(carroRepository.findById(dadosAtualizar.id())).thenReturn(Optional.of(carroExistente));
         when(carroRepository.existsByPlaca(dadosAtualizar.placa())).thenReturn(false);
         when(carroRepository.existsByChassi(dadosAtualizar.chassi())).thenReturn(false);
         when(carroRepository.save(carroExistente)).thenReturn(carroExistente);
@@ -126,7 +136,6 @@ public class CarroServiceTest {
 
         //then
         verify(carroRepository, times(1)).deleteById(id);
-
     }
 
     @Test
@@ -153,17 +162,35 @@ public class CarroServiceTest {
         // given
         Pageable paginacao = PageRequest.of(0, 10);
 
-        Carro carro1 = new Carro(1l,"ABC-1234", "9BWZZZ377VT004251", "VW Golf",
-                "Preto",true, BigDecimal.valueOf(200.00),
+        Carro carro1 = new Carro(
+                1L,
+                "ABC-1234",
+                "9BWZZZ377VT004251",
+                "VW Golf",
+                "Preto",
+                true,
+                BigDecimal.valueOf(200.00),
                 null,
                 null,
-                null);
+                null,
+                null,
+                null
+        );
 
-        Carro carro2 = new Carro(2l,"ABC-1235", "9BWZZZ377VT004251", "Gol",
-                "Branco",true, BigDecimal.valueOf(200.00),
+        Carro carro2 = new Carro(
+                2L,
+                "ABC-1235",
+                "9BWZZZ377VT004251",
+                "Gol",
+                "Branco",
+                true,
+                BigDecimal.valueOf(200.00),
                 null,
                 null,
-                null);
+                null,
+                null,
+                null
+        );
 
         List<Carro> carros = Arrays.asList(carro1, carro2);
         Page<Carro> carroPage = new PageImpl<>(carros, paginacao, carros.size());
