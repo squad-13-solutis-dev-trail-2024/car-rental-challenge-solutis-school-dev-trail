@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/aluguel")
@@ -40,8 +43,8 @@ public class AluguelController {
     public ResponseEntity<DadosListagemAluguel> alugarCarro(
             @RequestBody @Valid DadosCadastroAluguel dadosAlugarCarro,
             UriComponentsBuilder uriComponentsBuilder
-    )  {
-        var aluguel = aluguelService.alugar(dadosAlugarCarro);
+    ) {
+        var aluguel = aluguelService.reservarCarro(dadosAlugarCarro);
         var uri = uriComponentsBuilder.path("/api/v1/aluguel/{id}").buildAndExpand(aluguel.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemAluguel(aluguel));
     }
@@ -61,8 +64,8 @@ public class AluguelController {
     @GetMapping
     @Operation(summary = "Listar aluguéis", description = "Retorna uma lista paginada de aluguéis.")
     @ApiResponse(responseCode = "200", description = "Lista de aluguéis.")
-    public ResponseEntity<Page<DadosListagemAluguel>> listar(@PageableDefault(size = 5) Pageable paginacao){
-        var aluguel = aluguelService.listar(paginacao);
+    public ResponseEntity<Page<DadosListagemAluguel>> listar(@PageableDefault(size = 5) Pageable paginacao) {
+        var aluguel = aluguelService.listarAlugueis(paginacao);
         return ResponseEntity.ok(aluguel);
     }
 
@@ -75,5 +78,60 @@ public class AluguelController {
     public ResponseEntity<DadosDetalhamentoAluguel> detalharCompleto(@PathVariable Long id) {
         Aluguel aluguel = aluguelService.buscarPorId(id);
         return ResponseEntity.ok(new DadosDetalhamentoAluguel(aluguel));
+    }
+
+    @GetMapping("/cliente/{idCliente}")
+    @Operation(summary = "Listar aluguéis por cliente", description = "Retorna uma lista paginada de aluguéis de um cliente específico.")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Lista de aluguéis do cliente."),
+                    @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+            }
+    )
+    public ResponseEntity<Page<DadosListagemAluguel>> listarAlugueisPorCliente(
+            @PathVariable Long idCliente,
+            @PageableDefault(size = 5) Pageable paginacao
+    ) {
+        var alugueis = aluguelService.listarAlugueisPorCliente(idCliente, paginacao);
+        return ResponseEntity.ok(alugueis);
+    }
+
+    @PatchMapping("/confirmar/{id}")
+    @Operation(summary = "Confirmar um aluguel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluguel confirmado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado.")
+    })
+    public ResponseEntity<DadosListagemAluguel> confirmarAluguel(@PathVariable Long id) {
+        var aluguel = aluguelService.confirmarAluguel(id);
+        return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
+    }
+
+    @PatchMapping("/finalizar/{id}")
+    @Operation(summary = "Finalizar um aluguel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluguel finalizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser finalizado ou data de devolução inválida.")
+    })
+    public ResponseEntity<DadosListagemAluguel> finalizarAluguel(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataDevolucao
+    ) {
+        var aluguel = aluguelService.finalizarAluguel(id, dataDevolucao);
+        return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
+    }
+
+    @PatchMapping("/cancelar/{id}")
+    @Operation(summary = "Cancelar um aluguel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluguel cancelado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser cancelado.")
+    })
+    public ResponseEntity<DadosListagemAluguel> cancelarAluguel(@PathVariable Long id) {
+        var aluguel = aluguelService.cancelarAluguel(id);
+        return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
 }

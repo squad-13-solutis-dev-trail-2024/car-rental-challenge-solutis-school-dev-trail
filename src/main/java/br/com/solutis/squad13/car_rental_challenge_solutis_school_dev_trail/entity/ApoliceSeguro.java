@@ -43,7 +43,6 @@ public class ApoliceSeguro {
     @Schema(description = "Indica se a apólice cobre roubo do veículo.", example = "true")
     private Boolean protecaoRoubo;
 
-
     /**
      * Aluguel associado à apólice de seguro.
      * <p>
@@ -57,6 +56,16 @@ public class ApoliceSeguro {
     @OneToOne(mappedBy = "apoliceSeguro")
     @Schema(description = "Aluguel associado a esta apólice de seguro.")
     private Aluguel aluguel;
+
+    public ApoliceSeguro(BigDecimal valorFranquia,
+                         Boolean protecaoTerceiro,
+                         Boolean protecaoCausasNaturais,
+                         Boolean protecaoRoubo) {
+        this.valorFranquia = valorFranquia;
+        this.protecaoTerceiro = protecaoTerceiro;
+        this.protecaoCausasNaturais = protecaoCausasNaturais;
+        this.protecaoRoubo = protecaoRoubo;
+    }
 
     @Override
     public String toString() {

@@ -12,6 +12,7 @@ import java.time.LocalDate;
 
 @Schema(description = "Dados resumidos de um aluguel para a listagem de carros.")
 public record DadosListagemAluguelDeCarro(
+
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Schema(description = "Data do pedido do aluguel.", example = "01/08/2024")
         LocalDate dataPedido,

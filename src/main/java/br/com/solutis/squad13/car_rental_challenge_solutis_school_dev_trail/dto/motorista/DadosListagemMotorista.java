@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Schema(description = "Dados resumidos de um motorista para listagem.")
 public record DadosListagemMotorista(
+
         @Schema(description = "Nome completo do motorista.", example = "João Silva")
         String nome,
 

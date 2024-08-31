@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Schema(description = "Interface que define os serviços relacionados a Alguel.")
@@ -18,16 +17,18 @@ public interface AluguelService {
     Aluguel buscarPorId(Long id);
 
     @Transactional
-    Aluguel alugar(@Valid DadosCadastroAluguel aluguel);
+    Aluguel reservarCarro(@Valid DadosCadastroAluguel aluguel);
 
-    Page<DadosListagemAluguel> listar(Pageable paginacao);
+    @Transactional
+    Aluguel confirmarAluguel(Long idAluguel);
+
+    @Transactional
+    Aluguel finalizarAluguel(Long idAluguel, LocalDate dataDevolucao);
+
+    @Transactional
+    Aluguel cancelarAluguel(Long idAluguel);
+
+    Page<DadosListagemAluguel> listarAlugueis(Pageable paginacao);
 
     Page<DadosListagemAluguel> listarAlugueisPorCliente(Long idCliente, Pageable paginacao);
-
-    BigDecimal calcularCustoTotal(Long idCarro, Long idApoliceSeguro, Aluguel aluguel);
-
-//    @Transactional
-//    Aluguel confirmarAluguel(Long idAluguel, DadosPagamento dadosPagamento);
-
-    void cancelarAluguel(Long idAluguel);
 }

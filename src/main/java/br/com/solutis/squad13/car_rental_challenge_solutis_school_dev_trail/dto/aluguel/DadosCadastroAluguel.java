@@ -1,65 +1,40 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosApoliceAluguelTeste;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosCadastroApolice;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Schema(description = "Dados mínimo para alugar o veículo")
+@Schema(description = "Dados mínimos para alugar um veículo.")
 public record DadosCadastroAluguel(
 
-        @JsonFormat(pattern = "dd/MM/yyyy",
-                shape = JsonFormat.Shape.STRING,
-                locale = "pt-BR",
-                timezone = "Brazil/East")
-        @Column(nullable = false)
-        LocalDate dataPedido,
+        @NotNull(message = "A data de retirada é obrigatória.")
+        @FutureOrPresent(message = "A data de retirada deve ser hoje ou uma data futura.")
+        @Schema(description = "Data de retirada do veículo.", example = "01/09/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
+        LocalDate dataRetirada,
 
-        @JsonFormat(pattern = "dd/MM/yyyy",
-                shape = JsonFormat.Shape.STRING,
-                locale = "pt-BR",
-                timezone = "Brazil/East")
-        @Column(nullable = false)
-        LocalDate dataEntrega,
-
-        @JsonFormat(pattern = "dd/MM/yyyy",
-                shape = JsonFormat.Shape.STRING,
-                locale = "pt-BR",
-                timezone = "Brazil/East")
-        @Column(nullable = false)
+        @NotNull(message = "A data de devolução prevista é obrigatória.")
+        @Future(message = "A data de devolução prevista deve ser uma data futura.")
+        @Schema(description = "Data de devolução prevista do veículo.", example = "10/09/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
         LocalDate dataDevolucaoPrevista,
 
-        @JsonFormat(pattern = "dd/MM/yyyy",
-                shape = JsonFormat.Shape.STRING,
-                locale = "pt-BR",
-                timezone = "Brazil/East")
-        @Column(nullable = false)
-        LocalDate dataDevolucaoEfetiva,
+        @Valid
+        @NotNull(message = "Os dados da apólice de seguro são obrigatórios.")
+        @Schema(description = "Dados da apólice de seguro do aluguel.")
+        DadosCadastroApolice apoliceSeguro,
 
-        @DecimalMin(value = "0.0",
-                inclusive = false,
-                message = "O valor total inicial não pode ser menor que zero")
-        BigDecimal valorTotalInicial,
-
-        @DecimalMin(value = "0.0",
-                inclusive = false,
-                message = "O valor diário deve ser maior que zero")
-        BigDecimal valorTotalfinal,
-
-        DadosApoliceAluguelTeste apoliceSeguro,
-
-        @NotBlank(message = "Email é obrigatório")
-        @Email(message = "Email inválido")
+        @NotBlank(message = "O email do motorista é obrigatório.")
+        @Email(message = "Email inválido.")
+        @Schema(description = "Endereço de email do motorista.", example = "joao.silva@example.com")
         String emailMotorista,
 
-        @NotNull
+        @NotNull(message = "O ID do carro é obrigatório.")
+        @Schema(description = "ID do carro a ser alugado.", example = "1")
         Long idCarro
 ) {
 }

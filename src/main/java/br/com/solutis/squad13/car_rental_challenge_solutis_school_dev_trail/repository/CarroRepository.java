@@ -15,5 +15,7 @@ public interface CarroRepository extends JpaRepository<Carro, Long> {
 
     boolean existsByChassi(String chassi);
 
+    boolean existsByIdAndDisponivelTrue(Long id);
+
     Page<Carro> findAllByDisponivelTrue(Pageable pageable);
 }

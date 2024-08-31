@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Schema(description = "Dados detalhados de um motorista, incluindo histórico de aluguéis e timestamps.")
 public record DadosDetalhamentoMotorista(
+
         @Schema(description = "ID do motorista.", example = "1")
         Long id,
 

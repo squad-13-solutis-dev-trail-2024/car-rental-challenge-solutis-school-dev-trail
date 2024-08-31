@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Schema(description = "Dados necessários para cadastrar um novo motorista.")
 public record DadosCadastroMotorista(
+
         @NotBlank(message = "Nome é obrigatório")
         @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
         @Schema(description = "Nome completo do motorista.", example = "João Silva")

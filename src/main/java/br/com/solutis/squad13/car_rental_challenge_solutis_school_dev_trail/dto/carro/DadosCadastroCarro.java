@@ -10,6 +10,7 @@ import java.util.List;
 
 @Schema(description = "Dados necessários para cadastrar um novo carro.")
 public record DadosCadastroCarro(
+
         @NotBlank(message = "O nome do carro é obrigatório")
         @Schema(description = "Nome do modelo do carro.", example = "Corolla")
         String nome,

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Schema(description = "Repositório JPA para a entidade Motorista.")
 public interface MotoristaRepository extends JpaRepository<Motorista, Long> {
@@ -17,7 +19,7 @@ public interface MotoristaRepository extends JpaRepository<Motorista, Long> {
 
     boolean existsByNumeroCNH(String numeroCNH);
 
-    Motorista findByEmail(String email);
+    Optional<Motorista> findByEmail(String email);
 
     Page<Motorista> findAllByAtivoTrue(Pageable pageable);
 }

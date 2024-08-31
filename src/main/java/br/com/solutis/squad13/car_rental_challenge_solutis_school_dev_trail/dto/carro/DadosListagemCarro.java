@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 @Schema(description = "Dados resumidos de um carro para listagem.")
 public record DadosListagemCarro(
+
         @Schema(description = "Nome do modelo do carro.", example = "Corolla")
         String nome,
 

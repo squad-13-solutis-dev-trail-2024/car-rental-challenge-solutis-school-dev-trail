@@ -21,12 +21,13 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("API para Gerenciamento de Aluguel de Veículos")
                         .description("Solutis School Dev Trail - Nivelamento - 2024")
-                        .version(apiVersion) // Lê a versão da API do arquivo de propriedades
-                        .summary("Alguma descrição relevante e chamativa")
+                        .version(apiVersion)
                         .license(new License().name("Licença").url("https://github.com/squad-13-solutis-dev-trail-2024/car-rental-challenge-solutis-school-dev-trail/blob/main/LICENSE"))
                         .contact(new Contact()
                                 .name("Membros do SQUAD 13")
-                                .url("https://github.com/orgs/squad-13-solutis-dev-trail-2024/people")));
+                                .url("https://github.com/orgs/squad-13-solutis-dev-trail-2024/people")
+                        )
+                );
     }
 
     @Bean

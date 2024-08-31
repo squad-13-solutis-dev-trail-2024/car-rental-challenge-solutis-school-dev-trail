@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 @Schema(description = "Dados resumidos de uma apólice de seguro para listagem.")
 public record DadosListagemApoliceSeguro(
+
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor da franquia da apólice de seguro.", example = "R$ 500,00")
         BigDecimal valorFranquia,

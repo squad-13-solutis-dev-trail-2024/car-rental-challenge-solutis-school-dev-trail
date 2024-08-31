@@ -23,7 +23,7 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
             // Verifica se o arquivo de flag existe
             if (!new File("src/main/resources/.data_initialized").exists()) {
                 try {
-                    String filePath = "C:\\Users\\Pichau\\Desktop\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\script_car_rental_solutis_seed.sql";
+                    String filePath = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\script_car_rental_solutis_seed.sql";
                     String sqlScript = new String(Files.readAllBytes(Paths.get(filePath)));
 
                     String[] sqlCommands = sqlScript.split(";");

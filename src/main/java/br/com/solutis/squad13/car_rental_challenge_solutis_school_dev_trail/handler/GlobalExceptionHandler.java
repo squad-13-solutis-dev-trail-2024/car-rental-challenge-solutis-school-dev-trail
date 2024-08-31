@@ -76,6 +76,37 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Manipula a exceção {@link IllegalStateException}, que é lançada quando uma operação
+     * é solicitada em um estado inválido.
+     * <p>
+     * Esta exceção indica que a requisição não pôde ser processada porque o sistema
+     * não se encontra no estado necessário para realizar a operação. O metodo encapsula
+     * os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta com
+     * status HTTP 400 (Bad Request), indicando que a requisição não pôde ser processada
+     * devido a um estado inválido.
+     * </p>
+     *
+     * @param exception  A exceção de estado ilegal, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    @Schema(description = "Manipula a exceção IllegalStateException, lançada quando uma operação é solicitada em um estado inválido.")
+    public ResponseEntity<List<ErrorDetails>> handleIllegalStateException(IllegalStateException exception,
+                                                                          WebRequest webRequest) {
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "ILLEGAL_STATE"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * Manipula a exceção {@link EntityNotFoundException}, que é lançada quando uma entidade
      * requisitada não é encontrada no banco de dados.
      * <p>
@@ -103,6 +134,36 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(List.of(errorDetails), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Manipula a exceção {@link IllegalArgumentException}, que é lançada quando um argumento inválido
+     * é passado para um metodo.
+     * <p>
+     * Esta exceção indica que os dados fornecidos pelo cliente na requisição não são válidos
+     * para a operação solicitada. O metodo encapsula os detalhes do erro em um objeto
+     * {@link ErrorDetails} e retorna uma resposta com status HTTP 400 (Bad Request),
+     * indicando que a requisição não pôde ser processada devido a dados inválidos.
+     * </p>
+     *
+     * @param exception  A exceção de argumento inválido, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @Schema(description = "Manipula a exceção IllegalArgumentException, lançada quando um argumento inválido é passado.")
+    public ResponseEntity<List<ErrorDetails>> handleIllegalArgumentException(IllegalArgumentException exception,
+                                                                             WebRequest webRequest) {
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "INVALID_ARGUMENT"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), HttpStatus.BAD_REQUEST);
     }
 
     /**

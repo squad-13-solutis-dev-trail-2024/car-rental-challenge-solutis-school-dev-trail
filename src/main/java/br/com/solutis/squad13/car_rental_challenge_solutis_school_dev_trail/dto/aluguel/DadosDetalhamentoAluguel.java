@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Schema
+@Schema(description = "Dados detalhados de um aluguel.")
 public record DadosDetalhamentoAluguel(
 
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
