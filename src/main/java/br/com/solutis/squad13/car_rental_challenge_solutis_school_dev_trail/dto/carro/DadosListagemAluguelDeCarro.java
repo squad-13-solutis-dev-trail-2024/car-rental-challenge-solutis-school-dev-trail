@@ -36,7 +36,7 @@ public record DadosListagemAluguelDeCarro(
     public DadosListagemAluguelDeCarro(Aluguel aluguel) {
         this(
                 aluguel.getDataPedido(),
-                aluguel.getDataEntrega(),
+                aluguel.getDataRetirada(),
                 aluguel.getDataDevolucaoPrevista(),
                 aluguel.getValorTotalFinal(),
                 new DadosListagemApoliceSeguro(aluguel.getApoliceSeguro())

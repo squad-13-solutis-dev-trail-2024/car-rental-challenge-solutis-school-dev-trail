@@ -57,6 +57,37 @@ INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causa
 INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (250.00, FALSE, FALSE, FALSE);
 INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (650.00, TRUE, FALSE, TRUE);
 INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (300.00, FALSE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (620.00, TRUE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (480.00, FALSE, TRUE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (710.00, TRUE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (330.00, FALSE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (550.00, TRUE, FALSE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (290.00, FALSE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (840.00, TRUE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (410.00, FALSE, TRUE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (670.00, TRUE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (390.00, FALSE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (510.00, TRUE, FALSE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (270.00, FALSE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (800.00, TRUE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (430.00, FALSE, TRUE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (690.00, TRUE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (350.00, FALSE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (570.00, TRUE, FALSE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (230.00, FALSE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (760.00, TRUE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (490.00, FALSE, TRUE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (630.00, TRUE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (310.00, FALSE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (530.00, TRUE, FALSE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (280.00, FALSE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (810.00, TRUE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (440.00, FALSE, TRUE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (680.00, TRUE, TRUE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (360.00, FALSE, FALSE, TRUE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (580.00, TRUE, FALSE, FALSE);
+INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (240.00, FALSE, TRUE, FALSE);
+
 
 INSERT INTO tb_fabricante (nome) VALUES ('Toyota');
 INSERT INTO tb_fabricante (nome) VALUES ('Honda');
@@ -100,6 +131,7 @@ INSERT INTO tb_fabricante (nome) VALUES ('Opel');
 INSERT INTO tb_fabricante (nome) VALUES ('Seat');
 INSERT INTO tb_fabricante (nome) VALUES ('Skoda');
 
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Vinícius dos Santos Andrade', 'vinicius_andrade2010@hotmail.com', '2001-12-06', '447.841.608-76', 'MASCULINO');
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('João Silva', 'joao.silva@email.com', '1990-05-10', '244.722.840-65', 'MASCULINO');
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Maria Oliveira', 'maria.oliveira@email.com', '1985-12-20', '626.407.030-05', 'FEMININO');
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Pedro Santos', 'pedro.santos1@email.com', '1995-08-15', '424.472.920-82', 'MASCULINO');
@@ -119,7 +151,26 @@ INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Lucas O
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Amanda Ferreira', 'amanda.ferreira@email.com', '1991-08-11', '441.589.140-35', 'FEMININO');
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Bruno Rodrigues', 'bruno.rodrigues@email.com', '1998-03-07', '967.178.240-00', 'MASCULINO');
 INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Camila Gomes', 'camila.gomes@email.com', '1986-10-19', '700.432.460-52', 'FEMININO');
-INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Vinícius dos Santos Andrade', 'vinicius_andrade2010@hotmail.com', '2001-12-06', '447.841.608-76', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Roberta Rodrigues', 'roberta.rodrigues@email.com', '1993-09-21', '892.765.910-42', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Eduardo Costa', 'eduardo.costa@email.com', '1987-02-14', '174.389.160-38', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Mariana Silva', 'mariana.silva@email.com', '1995-06-05', '925.513.300-94', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Felipe Almeida', 'felipe.almeida@email.com', '1990-11-28', '308.937.540-89', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Luciana Santos', 'luciana.santos@email.com', '1992-04-12', '691.155.780-63', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Rafael Gomes', 'rafael.gomes@email.com', '1998-08-09', '583.379.020-27', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Carolina Pereira', 'carolina.pereira@email.com', '1989-03-26', '476.597.260-81', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('André Lima', 'andre.lima@email.com', '1994-12-17', '269.815.500-45', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Beatriz Oliveira', 'beatriz.oliveira@email.com', '1991-07-03', '161.033.740-09', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Daniel Castro', 'daniel.castro@email.com', '1986-02-21', '854.251.980-73', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Vivian Cunha', 'vivian.cunha@email.com', '1997-10-15', '747.469.220-37', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Leonardo Ferreira', 'leonardo.ferreira@email.com', '1993-05-08', '639.687.460-01', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Gabriela Rodrigues', 'gabriela.rodrigues@email.com', '1988-11-30', '432.905.700-65', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Thiago Costa', 'thiago.costa@email.com', '1996-04-23', '224.123.940-29', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Manuela Silva', 'manuela.silva@email.com', '1991-09-16', '117.341.180-93', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Samuel Almeida', 'samuel.almeida@email.com', '1987-03-09', '909.559.420-57', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Juliana Gomes', 'juliana.gomes@email.com', '1995-12-27', '802.777.660-21', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Bruno Pereira', 'bruno.pereira@email.com', '1990-07-19', '694.995.900-85', 'MASCULINO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Alice Lima', 'alice.lima@email.com', '1992-02-04', '588.213.140-49', 'FEMININO');
+INSERT INTO tb_pessoa (nome, email, data_nascimento, cpf, sexo) VALUES ('Rafaela Oliveira', 'rafaela.oliveira@email.com', '1998-05-18', '381.441.380-13', 'FEMININO');
 
 INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (1, '69539881188');
 INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (2, '25603561673');
@@ -141,6 +192,27 @@ INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (17, '17234508761');
 INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (18, '24726224861');
 INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (19, '25480246897');
 INSERT INTO tb_motorista (pessoa_id, numerocnh) VALUES (20, '07493612633');
+
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (21, 'F00124');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (22, 'F00125');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (23, 'F00126');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (24, 'F00127');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (25, 'F00128');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (26, 'F00129');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (27, 'F00130');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (28, 'F00131');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (29, 'F00132');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (30, 'F00133');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (31, 'F00134');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (32, 'F00135');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (33, 'F00136');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (34, 'F00137');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (35, 'F00138');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (36, 'F00139');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (37, 'F00140');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (38, 'F00141');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (39, 'F00142');
+INSERT INTO tb_funcionario (pessoa_id, matricula) VALUES (40, 'F00143');
 
 INSERT INTO tb_modelo_carro (descricao, fabricante_id, categoria) VALUES ('Corolla', 1, 'SEDAN_COMPACTO');
 INSERT INTO tb_modelo_carro (descricao, fabricante_id, categoria) VALUES ('Civic', 2, 'SEDAN_MEDIO');
@@ -179,10 +251,10 @@ INSERT INTO tb_modelo_carro (descricao, fabricante_id, categoria) VALUES ('Ibiza
 INSERT INTO tb_modelo_carro (descricao, fabricante_id, categoria) VALUES ('Octavia', 35, 'SEDAN_MEDIO');
 
 
-INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Corolla', 'ABC1234', '1HGBH41JXMN109186', 'Preto', TRUE, 150.00, 1);
+INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Corolla', 'ABC1234', '1HGBH41JXMN109186', 'Preto',TRUE, 150.00, 1);
 INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Civic', 'XYZ5678', '2HGBH41JXMN109187', 'Branco', TRUE, 180.00, 2);
 INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Elantra', 'LMN9012', '3HGBH41JXMN109188', 'Prata', TRUE, 170.00, 3);
-INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Compass', 'PQR3456', '4HGBH41JXMN109189', 'Azul', TRUE, 200.00, 4);
+INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Compass', 'PQR3457', '4HGBH41JXMN109189', 'Azul', TRUE, 200.00, 4);
 INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Golf', 'STU7890', '5HGBH41JXMN109190', 'Verde', TRUE, 160.00, 5);
 INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Mustang', 'VWX2345', '6HGBH41JXMN109191', 'Vermelho', TRUE, 220.00, 6);
 INSERT INTO tb_carro (nome, placa, chassi, cor, disponivel, valor_diaria, modelo_carro_id) VALUES ('Cruze', 'YZA6789', '7HGBH41JXMN109192', 'Cinza', TRUE, 175.00, 7);

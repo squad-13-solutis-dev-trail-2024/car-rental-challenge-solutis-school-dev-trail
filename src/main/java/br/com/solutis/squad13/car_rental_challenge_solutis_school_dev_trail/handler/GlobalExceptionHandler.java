@@ -1,8 +1,10 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.handler;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.ValidationesException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -76,31 +78,29 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Manipula a exceção {@link IllegalStateException}, que é lançada quando uma operação
-     * é solicitada em um estado inválido.
+     * Manipula a exceção {@link ValidationException}, que é lançada quando ocorre um erro de validação.
      * <p>
-     * Esta exceção indica que a requisição não pôde ser processada porque o sistema
-     * não se encontra no estado necessário para realizar a operação. O metodo encapsula
-     * os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta com
-     * status HTTP 400 (Bad Request), indicando que a requisição não pôde ser processada
-     * devido a um estado inválido.
+     * Esta exceção indica que a requisição não pôde ser processada porque os dados fornecidos
+     * não atendem às regras de validação definidas. O metodo encapsula os detalhes do erro
+     * em um objeto {@link ErrorDetails} e retorna uma resposta com status HTTP 400 (Bad Request),
+     * indicando que a requisição não pôde ser processada devido a erros de validação.
      * </p>
      *
-     * @param exception  A exceção de estado ilegal, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param exception  A exceção de validação, que contém a mensagem de erro a ser retornada ao cliente.
      * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
      * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
      * e o status HTTP 400 (Bad Request).
      */
-    @ExceptionHandler(IllegalStateException.class)
-    @Schema(description = "Manipula a exceção IllegalStateException, lançada quando uma operação é solicitada em um estado inválido.")
-    public ResponseEntity<List<ErrorDetails>> handleIllegalStateException(IllegalStateException exception,
-                                                                          WebRequest webRequest) {
+    @ExceptionHandler(ValidationesException.class)
+    @Schema(description = "Manipula a exceção ValidationException, lançada quando ocorre um erro de validação.")
+    public ResponseEntity<List<ErrorDetails>> handleValidationException(ValidationException exception,
+                                                                        WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
-                "ILLEGAL_STATE"
+                "VALIDATION_ERROR"
         );
 
         return new ResponseEntity<>(List.of(errorDetails), HttpStatus.BAD_REQUEST);

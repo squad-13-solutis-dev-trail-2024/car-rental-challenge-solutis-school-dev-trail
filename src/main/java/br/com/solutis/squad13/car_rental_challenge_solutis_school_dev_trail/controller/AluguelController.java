@@ -3,8 +3,8 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.con
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosDetalhamentoAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
@@ -90,7 +90,7 @@ public class AluguelController {
     })
     public ResponseEntity<DadosListagemAluguel> confirmarAluguel(
             @PathVariable Long id,
-            @RequestParam TipoPagamento tipoPagamento) {
+            @RequestParam @Valid DadosPagamento tipoPagamento) {
         var aluguel = aluguelService.confirmarAluguel(id, tipoPagamento);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }

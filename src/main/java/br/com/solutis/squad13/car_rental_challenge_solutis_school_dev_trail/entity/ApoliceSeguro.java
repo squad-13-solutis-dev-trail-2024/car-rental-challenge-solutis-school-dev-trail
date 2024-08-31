@@ -16,10 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity(name = "ApoliceSeguro")
-@Table(
-        name = "tb_apolice_seguro",
-        schema = "db_car_rental_solutis"
-)
+@Table(name = "tb_apolice_seguro", schema = "db_car_rental_solutis")
 @Schema(description = "Entidade que representa uma apólice de seguro.")
 public class ApoliceSeguro {
 

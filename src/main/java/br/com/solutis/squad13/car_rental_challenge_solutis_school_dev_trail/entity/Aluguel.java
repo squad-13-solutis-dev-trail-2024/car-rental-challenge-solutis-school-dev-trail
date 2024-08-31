@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,10 +23,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Setter
 @Getter
 @Entity(name = "Aluguel")
-@Table(
-        name = "tb_aluguel",
-        schema = "db_car_rental_solutis"
-)
+@Table(name = "tb_aluguel", schema = "db_car_rental_solutis")
 @Schema(description = "Representa um aluguel de carro.")
 public class Aluguel {
 
@@ -39,7 +37,7 @@ public class Aluguel {
 
     @Column(nullable = false)
     @Schema(description = "Data em que o carro foi entregue ao motorista.")
-    private LocalDate dataEntrega;
+    private LocalDate dataRetirada;
 
     @Column(nullable = false)
     @Schema(description = "Data prevista para a devolução do carro.")
@@ -62,7 +60,14 @@ public class Aluguel {
     @Enumerated(EnumType.STRING)
     private TipoPagamento tipoPagamento;
 
+    @Enumerated(EnumType.STRING)
+    private StatusPagamento statusPagamento;
+
+    @Schema(description = "Data em que o pagamento foi efetuado.")
     private LocalDate dataPagamento;
+
+    @Schema(description = "Data em que o aluguel foi cancelado.")
+    private LocalDate dataCancelamento;
 
     /**
      * Motorista que realizou este aluguel.
@@ -148,21 +153,21 @@ public class Aluguel {
 
     @Schema(description = "Calcula o valor total inicial do aluguel (com base na data de devolução prevista e no valor da apólice de seguro).")
     public BigDecimal calcularValorTotalInicial() {
-        long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoPrevista) + 1;
+        long quantidadeDias = DAYS.between(dataRetirada, dataDevolucaoPrevista) + 1;
         BigDecimal valorTotal = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
         return valorTotal.add(apoliceSeguro.getValorFranquia());
     }
 
     @Schema(description = "Calcula o valor total final do aluguel (com base na data de devolução efetiva, se disponível, e no valor da apólice de seguro).")
     public BigDecimal calcularValorTotalFinal() {
-        long quantidadeDias = DAYS.between(dataEntrega, dataDevolucaoEfetiva != null ? dataDevolucaoEfetiva : dataDevolucaoPrevista) + 1;
+        long quantidadeDias = DAYS.between(dataRetirada, dataDevolucaoEfetiva != null ? dataDevolucaoEfetiva : dataDevolucaoPrevista) + 1;
         BigDecimal valorTotal = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
         return valorTotal.add(apoliceSeguro.getValorFranquia());
     }
 
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataEntrega + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataRetirada + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
     }
 
     @Override

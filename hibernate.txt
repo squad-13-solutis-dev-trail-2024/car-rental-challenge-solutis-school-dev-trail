@@ -1,17 +1,23 @@
-/*
-Hibernate:
+Hibernate: 
     create table tb_acessorio (
         id bigint not null auto_increment,
         descricao enum ('AIRBAGS','ALARM','AQUECIMENTO_BANCOS','AR_CONDICIONADO','ASSISTENTE_FRENAGEM_EMERGENCIA','ASSISTENTE_PARTIDA_RAMPA','BANCOS_COURO','BLUETOOTH','CADEIRA_INFANTIL','CAMERA_RE','CARREGADOR_WIRELESS','CHAVE_CARTAO','CONTROLE_ESTABILIDADE','FAROL_DE_MILHA','FREIOS_ABS','GPS','NAVEGACAO_INTEGRADA','PARA_BRISA_DESEMBACADOR','PORTA_MALAS_AUTOMATICO','RETROVISORES_ELETRICOS','RODAS_LIGA_LEVE','SENSOR_ESTACIONAMENTO','SOM_PREMIUM','SUSPENSAO_ESPORTIVA','TETO_SOLAR','VOLANTE_MULTIFUNCIONAL') not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_aluguel (
         id bigint not null auto_increment,
+        data_cancelamento date,
+        data_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
         data_devolucao_efetiva date,
         data_devolucao_prevista date not null,
-        data_entrega date not null,
+        data_pagamento date,
         data_pedido date not null,
+        data_retirada date not null,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+        status_aluguel enum ('CANCELADO','EM_ANDAMENTO','FINALIZADO','INCOMPLETO'),
+        status_pagamento enum ('CANCELADO','CONFIRMADO','PENDENTE'),
+        tipo_pagamento enum ('BOLETO','CARTAO_CREDITO','CARTAO_DEBITO','DINHEIRO','PIX'),
         valor_total_final decimal(10,2),
         valor_total_inicial decimal(10,2),
         apolice_seguro_id bigint not null,
@@ -19,7 +25,7 @@ Hibernate:
         motorista_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_apolice_seguro (
         id bigint not null auto_increment,
         protecao_causas_naturais BOOLEAN DEFAULT FALSE not null,
@@ -28,31 +34,33 @@ Hibernate:
         valor_franquia decimal(10,2) not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_carro (
         id bigint not null auto_increment,
-        ativo BOOLEAN DEFAULT FALSE not null,
         chassi varchar(255) not null,
         cor varchar(255) not null,
+        data_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+        disponivel BOOLEAN DEFAULT TRUE not null,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
         nome varchar(255) not null,
         placa varchar(255) not null,
         valor_diaria decimal(10,2) not null,
         modelo_carro_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_fabricante (
         id bigint not null auto_increment,
         nome varchar(255) not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_funcionario (
         matricula varchar(255) not null,
         pessoa_id bigint not null,
         primary key (pessoa_id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_modelo_carro (
         id bigint not null auto_increment,
         categoria enum ('ESPORTIVO','HATCH_COMPACTO','HATCH_MEDIO','MINIVAN','SEDAN_COMPACTO','SEDAN_GRANDE','SEDAN_MEDIO','UTILITARIO_COMERCIAL') not null,
@@ -60,13 +68,13 @@ Hibernate:
         fabricante_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_motorista (
         numerocnh varchar(255) not null,
         pessoa_id bigint not null,
         primary key (pessoa_id)
     ) engine=InnoDB
-Hibernate:
+Hibernate: 
     create table tb_pessoa (
         id bigint not null auto_increment,
         ativo BOOLEAN DEFAULT TRUE not null,
@@ -79,84 +87,101 @@ Hibernate:
         sexo enum ('FEMININO','MASCULINO'),
         primary key (id)
     ) engine=InnoDB
-Hibernate:
-    alter table tb_acessorio
+Hibernate: 
+    alter table tb_acessorio 
        drop index uk_acessorio_descricao
-Hibernate:
-    alter table tb_acessorio
+Hibernate: 
+    alter table tb_acessorio 
        add constraint uk_acessorio_descricao unique (descricao)
-Hibernate:
-    alter table tb_aluguel
+Hibernate: 
+    alter table tb_aluguel 
        drop index UK4tkn76dohfy2re8237cr8dmcb
-Hibernate:
-    alter table tb_aluguel
+Hibernate: 
+    alter table tb_aluguel 
        add constraint UK4tkn76dohfy2re8237cr8dmcb unique (apolice_seguro_id)
-Hibernate:
-    alter table tb_funcionario
+Hibernate: 
+    alter table tb_carro 
+       drop index uk_carro_placa
+Hibernate: 
+    alter table tb_carro 
+       add constraint uk_carro_placa unique (placa)
+Hibernate: 
+    alter table tb_carro 
+       drop index uk_carro_chassi
+Hibernate: 
+    alter table tb_carro 
+       add constraint uk_carro_chassi unique (chassi)
+Hibernate: 
+    alter table tb_funcionario 
        drop index uk_funcionario_matricula
-Hibernate:
-    alter table tb_funcionario
+Hibernate: 
+    alter table tb_funcionario 
        add constraint uk_funcionario_matricula unique (matricula)
-Hibernate:
-    alter table tb_pessoa
+Hibernate: 
+    alter table tb_motorista 
+       drop index uk_motorista_numero_cnh
+Hibernate: 
+    alter table tb_motorista 
+       add constraint uk_motorista_numero_cnh unique (numerocnh)
+Hibernate: 
+    alter table tb_pessoa 
        drop index uk_pessoa_cpf
-Hibernate:
-    alter table tb_pessoa
+Hibernate: 
+    alter table tb_pessoa 
        add constraint uk_pessoa_cpf unique (cpf)
-Hibernate:
-    alter table tb_pessoa
+Hibernate: 
+    alter table tb_pessoa 
        drop index uk_pessoa_email
-Hibernate:
-    alter table tb_pessoa
+Hibernate: 
+    alter table tb_pessoa 
        add constraint uk_pessoa_email unique (email)
-Hibernate:
+Hibernate: 
     create table tb_carro_acessorio (
         id_carro bigint not null,
         id_acessorio bigint not null
     ) engine=InnoDB
-Hibernate:
-    alter table tb_aluguel
-       add constraint FKh7xaobj94rpt292hwotl1irn6
-       foreign key (apolice_seguro_id)
+Hibernate: 
+    alter table tb_aluguel 
+       add constraint FKh7xaobj94rpt292hwotl1irn6 
+       foreign key (apolice_seguro_id) 
        references tb_apolice_seguro (id)
-Hibernate:
-    alter table tb_aluguel
-       add constraint FKlvmt4ph6gr2r9sdlqq06kf4g8
-       foreign key (carro_id)
+Hibernate: 
+    alter table tb_aluguel 
+       add constraint FKlvmt4ph6gr2r9sdlqq06kf4g8 
+       foreign key (carro_id) 
        references tb_carro (id)
-Hibernate:
-    alter table tb_aluguel
-       add constraint FKf1bcfn2heg58msxn2k2sj0gef
-       foreign key (motorista_id)
+Hibernate: 
+    alter table tb_aluguel 
+       add constraint FKf1bcfn2heg58msxn2k2sj0gef 
+       foreign key (motorista_id) 
        references tb_motorista (pessoa_id)
-Hibernate:
-    alter table tb_carro
-       add constraint FK3o51cc9nwb0bhp9r7llvrqk1
-       foreign key (modelo_carro_id)
+Hibernate: 
+    alter table tb_carro 
+       add constraint FK3o51cc9nwb0bhp9r7llvrqk1 
+       foreign key (modelo_carro_id) 
        references tb_modelo_carro (id)
-Hibernate:
-    alter table tb_funcionario
-       add constraint FKekpws4jkfri675vhralomxo1
-       foreign key (pessoa_id)
+Hibernate: 
+    alter table tb_funcionario 
+       add constraint FKekpws4jkfri675vhralomxo1 
+       foreign key (pessoa_id) 
        references tb_pessoa (id)
-Hibernate:
-    alter table tb_modelo_carro
-       add constraint FKu2tq8byyt3wvfqe7qy5alpy2
-       foreign key (fabricante_id)
+Hibernate: 
+    alter table tb_modelo_carro 
+       add constraint FKu2tq8byyt3wvfqe7qy5alpy2 
+       foreign key (fabricante_id) 
        references tb_fabricante (id)
-Hibernate:
-    alter table tb_motorista
-       add constraint FKdrt0hr605caqaiurt1yodq0nv
-       foreign key (pessoa_id)
+Hibernate: 
+    alter table tb_motorista 
+       add constraint FKdrt0hr605caqaiurt1yodq0nv 
+       foreign key (pessoa_id) 
        references tb_pessoa (id)
-Hibernate:
-    alter table tb_carro_acessorio
-       add constraint FKbsfriur010kgg3xufw2qn7pbo
-       foreign key (id_acessorio)
+Hibernate: 
+    alter table tb_carro_acessorio 
+       add constraint FKbsfriur010kgg3xufw2qn7pbo 
+       foreign key (id_acessorio) 
        references tb_acessorio (id)
-Hibernate:
-    alter table tb_carro_acessorio
-       add constraint FKh4r50po6pk34u6vytpokby8ib
-       foreign key (id_carro)
+Hibernate: 
+    alter table tb_carro_acessorio 
+       add constraint FKh4r50po6pk34u6vytpokby8ib 
+       foreign key (id_carro) 
        references tb_carro (id)
- */

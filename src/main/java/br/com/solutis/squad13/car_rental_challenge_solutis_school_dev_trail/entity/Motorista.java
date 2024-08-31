@@ -15,39 +15,6 @@ import java.util.Objects;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
-/**
- * Classe que representa um Motorista no sistema de aluguel de carros.
- * <p>
- * Esta classe herda os atributos comuns de {@link Pessoa}, adicionando campos específicos
- * que identificam o motorista, como o número da CNH, status de atividade, data de criação
- * e última atualização. A classe é mapeada para a tabela 'tb_motorista' no banco de dados,
- * com a chave primária herdada da classe {@link Pessoa}.
- * </p>
- *
- * <p>
- * A relação entre {@link Motorista} e {@link Aluguel} é definida como:
- * <ul>
- *     <li>Um {@link Motorista} pode ter vários {@link Aluguel} associados a ele.</li>
- *     <li>Cada {@link Aluguel} é obrigatoriamente associado a um único {@link Motorista}.</li>
- * </ul>
- * Esta relação é mapeada utilizando a anotação {@code @OneToMany} no lado de {@link Motorista},
- * indicando que o campo `alugueis` contém a lista de todos os aluguéis associados ao motorista.
- * </p>
- *
- * <p>
- * A classe inclui campos para:
- * <ul>
- *     <li>{@code numeroCNH} - O número da Carteira Nacional de Habilitação (CNH) do motorista.</li>
- *     <li>{@code ativo} - Um campo booleano que indica se o motorista está ativo no sistema.</li>
- *     <li>{@code dataCreated} - A data e hora em que o registro do motorista foi criado.</li>
- *     <li>{@code lastUpdated} - A data e hora da última atualização do registro do motorista.</li>
- * </ul>
- * </p>
- *
- * @see Pessoa
- * @see Aluguel
- * @see Funcionario
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -56,14 +23,17 @@ import static java.util.Optional.ofNullable;
 @Entity(name = "Motorista")
 @Table(
         name = "tb_motorista",
-        schema = "db_car_rental_solutis"
+        schema = "db_car_rental_solutis",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_motorista_numero_cnh", columnNames = "numerocnh")
+        }
 )
 @PrimaryKeyJoinColumn(name = "pessoa_id")
 @Schema(description = "Entidade que representa um motorista.")
 public class Motorista extends Pessoa {
 
     @Column(nullable = false)
-    @Schema(description = "Número da Carteira Nacional de Habilitação (CNH) do motorista.", example = "12345678901")
+    @Schema(description = "Número da Carteira Nacional de Habilitação (CNH) do motorista.")
     private String numeroCNH;
 
     /**

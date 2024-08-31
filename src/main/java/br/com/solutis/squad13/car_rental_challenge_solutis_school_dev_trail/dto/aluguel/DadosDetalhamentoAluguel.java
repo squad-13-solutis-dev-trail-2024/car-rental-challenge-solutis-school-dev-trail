@@ -49,7 +49,7 @@ public record DadosDetalhamentoAluguel(
     public DadosDetalhamentoAluguel(Aluguel aluguel) {
         this(
                 aluguel.getDataPedido(),
-                aluguel.getDataEntrega(),
+                aluguel.getDataRetirada(),
                 aluguel.getDataDevolucaoPrevista(),
                 aluguel.getDataDevolucaoEfetiva(),
                 aluguel.getValorTotalInicial(),

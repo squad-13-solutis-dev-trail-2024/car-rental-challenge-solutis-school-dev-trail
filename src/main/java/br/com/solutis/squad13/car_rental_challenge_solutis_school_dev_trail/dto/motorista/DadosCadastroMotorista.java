@@ -19,45 +19,45 @@ public record DadosCadastroMotorista(
 
         @NotBlank(message = "Nome é obrigatório")
         @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
-        @Schema(description = "Nome completo do motorista.", example = "João Silva")
+        @Schema(description = "Nome completo do motorista.")
         String nome,
 
         @NotNull(message = "Data de nascimento é obrigatória")
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
         @ADULTO(message = "Você não é maior de idade")
-        @Schema(description = "Data de nascimento do motorista.", example = "10/05/1990")
+        @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 
         @NotBlank(message = "CPF é obrigatório")
         @Column(unique = true)
         @CPF(message = "CPF inválido")
-        @Schema(description = "CPF do motorista.", example = "123.456.789-00")
+        @Schema(description = "CPF do motorista.")
         String cpf,
 
         @NotBlank(message = "O email não pode ser nulo")
         @Email(message = "O email é inválido")
         @Column(unique = true)
-        @Schema(description = "Endereço de email do motorista.", example = "joao.silva@example.com")
+        @Schema(description = "Endereço de email do motorista.")
         String email,
 
         @NotBlank(message = "Número da CNH é obrigatório")
         @CNH(message = "Número da CNH inválido")
         @Column(unique = true)
-        @Schema(description = "Número da CNH do motorista.", example = "12345678901")
+        @Schema(description = "Número da CNH do motorista.")
         String numeroCNH,
 
         @NotNull(message = "Sexo é obrigatório")
-        @Schema(description = "Sexo do motorista.", example = "MASCULINO")
+        @Schema(description = "Sexo do motorista.")
         Sexo sexo,
 
         @CreationTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-        @Schema(description = "Data e hora de criação do registro do motorista.", example = "30/08/2024 15:40:05", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
         LocalDateTime dataCreated,
 
         @UpdateTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-        @Schema(description = "Data e hora da última atualização do registro do motorista.", example = "31/08/2024 10:20:30", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
         LocalDateTime lastUpdated
 ) {
 }

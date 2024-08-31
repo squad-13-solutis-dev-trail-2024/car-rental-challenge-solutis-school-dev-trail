@@ -72,7 +72,29 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
-    public void deletarCarro(Long id) {
+    @Transactional
+    public void bloquearCarroAluguel(Long id) {
+        log.info("Desativando carro com ID: {}", id);
+        Carro carro = existeCarroPeloId(id);
+        carro.bloquearAluguel();
+        carroRepository.save(carro);
+        log.info("Carro desativado com sucesso: {}", carro);
+
+    }
+
+    @Override
+    @Transactional
+    public void disponibilizarCarroAluguel(Long id) {
+        log.info("Ativando carro com ID: {}", id);
+        Carro carro = existeCarroPeloId(id);
+        carro.disponibilizarAluguel();
+        carroRepository.save(carro);
+        log.info("Carro ativado com sucesso: {}", carro);
+    }
+
+    @Override
+    @Transactional
+    public void excluirCarro(Long id) {
         log.info("Deletando carro com ID: {}", id);
         existeCarroPeloId(id);
         carroRepository.deleteById(id);
@@ -80,21 +102,26 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
-    @Transactional
-    public void desativarCarro(Long id) {
-        log.info("Desativando carro com ID: {}", id);
-        Carro carro = existeCarroPeloId(id);
-
-        carro.bloquearAluguel();
-        carroRepository.save(carro);
-        log.info("Carro desativado com sucesso: {}", carro);
-    }
-
-    @Override
     public Page<DadosListagemCarro> listar(Pageable paginacao) {
         log.info("Listando carros com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAllByDisponivelTrue(paginacao);
         log.info("Carros encontrados: {}", carros);
+        return carros.map(DadosListagemCarro::new);
+    }
+
+    @Override
+    public Page<DadosListagemCarro> listarCarrosDisponiveis(Pageable paginacao) {
+        log.info("Listando carros disponíveis com paginação: {}", paginacao);
+        Page<Carro> carros = carroRepository.findAllByDisponivelTrue(paginacao);
+        log.info("Carros disponíveis encontrados: {}", carros);
+        return carros.map(DadosListagemCarro::new);
+    }
+
+    @Override
+    public Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao) {
+        log.info("Listando carros alugados com paginação: {}", paginacao);
+        Page<Carro> carros = carroRepository.findAllByDisponivelFalse(paginacao);
+        log.info("Carros alugados encontrados: {}", carros);
         return carros.map(DadosListagemCarro::new);
     }
 

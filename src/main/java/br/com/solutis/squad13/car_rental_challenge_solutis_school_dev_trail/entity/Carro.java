@@ -27,7 +27,11 @@ import static java.util.Optional.ofNullable;
 @Entity(name = "Carro")
 @Table(
         name = "tb_carro",
-        schema = "db_car_rental_solutis"
+        schema = "db_car_rental_solutis",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_carro_placa", columnNames = "placa"),
+                @UniqueConstraint(name = "uk_carro_chassi", columnNames = "chassi")
+        }
 )
 @Schema(description = "Entidade que representa um carro.")
 public class Carro {

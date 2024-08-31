@@ -124,7 +124,7 @@ public class CarroServiceTest {
 
     @Test
     @DisplayName("Deve deletar um carro existente com sucesso")
-    public void givenValidId_whenDeletarCarro_thenCarroIsDeleted() {
+    public void givenValidId_whenBloquearCarro_thenCarroAluguelIsDeleted() {
 
         // given
         Long id = 1L;
@@ -132,7 +132,7 @@ public class CarroServiceTest {
         doNothing().when(carroRepository).deleteById(id);
 
         //when
-        carroService.deletarCarro(id);
+        carroService.bloquearCarroAluguel(id);
 
         //then
         verify(carroRepository, times(1)).deleteById(id);
@@ -140,7 +140,7 @@ public class CarroServiceTest {
 
     @Test
     @DisplayName("Deve lançar EntityNotFoundException ao tentar deletar um carro inexistente")
-    public void givenInvalidId_whenDeletarCarro_thenThrowsEntityNotFoundException() {
+    public void givenInvalidId_whenBloquearCarro_Aluguel_thenThrowsEntityNotFoundException() {
         // given
         Long id = 99L;
         when(carroRepository.existsById(id)).thenReturn(false);
@@ -148,7 +148,7 @@ public class CarroServiceTest {
         // when
         EntityNotFoundException thrown = Assertions.assertThrows(
                 EntityNotFoundException.class,
-                () -> carroService.deletarCarro(id),
+                () -> carroService.bloquearCarroAluguel(id),
                 "Esperava-se lançar EntityNotFoundException"
         );
 

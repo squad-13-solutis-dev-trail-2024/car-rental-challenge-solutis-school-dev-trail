@@ -76,6 +76,44 @@ public class CarroController {
         return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
     }
 
+    @GetMapping("/disponiveis")
+    @Operation(summary = "Listar carros disponíveis", description = "Retorna uma lista paginada de carros disponíveis para aluguel.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros disponíveis.")
+    public ResponseEntity<Page<DadosListagemCarro>> listarCarrosDisponiveis(@PageableDefault(size = 20) Pageable paginacao) {
+        var carros = carroService.listarCarrosDisponiveis(paginacao);
+        return ResponseEntity.ok(carros);
+    }
+
+    @GetMapping("/alugados")
+    @Operation(summary = "Listar carros alugados", description = "Retorna uma lista paginada de carros que estão atualmente alugados.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros alugados.")
+    public ResponseEntity<Page<DadosListagemCarro>> listarCarrosAlugados(@PageableDefault(size = 20) Pageable paginacao) {
+        var carros = carroService.listarCarrosAlugados(paginacao);
+        return ResponseEntity.ok(carros);
+    }
+
+    @PatchMapping("/{id}/bloquear")
+    @Operation(summary = "Bloquear aluguel de um carro", description = "Bloqueia um carro para que ele não possa ser alugado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Carro bloqueado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
+    })
+    public ResponseEntity<Void> bloquearAluguel(@PathVariable Long id) {
+        carroService.bloquearCarroAluguel(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/disponibilizar")
+    @Operation(summary = "Disponibilizar aluguel de um carro", description = "Disponibiliza um carro para que ele possa ser alugado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Carro disponibilizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
+    })
+    public ResponseEntity<Void> disponibilizarAluguel(@PathVariable Long id) {
+        carroService.disponibilizarCarroAluguel(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @Transactional
     @PatchMapping
     @Operation(summary = "Atualizar um carro", description = "Atualiza parte ou todos os dados de um carro.")
@@ -89,27 +127,17 @@ public class CarroController {
         return ResponseEntity.ok(new DadosListagemCarro(carro));
     }
 
+
+
     @Transactional
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Desativar um carro", description = "Aos desativar um carro, ele não poderá ser alugado.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Carro desativado com sucesso."),
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
-    public ResponseEntity<Void> desativar(@PathVariable Long id) {
-        carroService.desativarCarro(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Transactional
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Deletar um carro do banco de dados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Carro deletado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
-    })
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        carroService.deletarCarro(id);
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        carroService.excluirCarro(id);
         return ResponseEntity.noContent().build();
     }
 }

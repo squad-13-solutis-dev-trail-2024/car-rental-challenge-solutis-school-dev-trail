@@ -19,7 +19,7 @@ import java.util.Objects;
         name = "tb_funcionario",
         schema = "db_car_rental_solutis",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_funcionario_matricula", columnNames = "matricula")
+                @UniqueConstraint(name = "uk_funcionario_matricula", columnNames = "matricula"),
         }
 )
 @PrimaryKeyJoinColumn(name = "pessoa_id")

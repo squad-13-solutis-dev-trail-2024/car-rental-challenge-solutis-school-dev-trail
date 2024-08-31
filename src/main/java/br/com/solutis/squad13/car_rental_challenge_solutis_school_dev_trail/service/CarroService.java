@@ -22,10 +22,17 @@ public interface CarroService {
     Carro atualizarCarro(@Valid DadosAtualizarCarro dadosAtualizarCarro);
 
     @Transactional
-    void deletarCarro(Long id);
+    void excluirCarro(Long id);
 
     @Transactional
-    void desativarCarro(Long id);
+    void disponibilizarCarroAluguel(Long id);
+
+    @Transactional
+    void bloquearCarroAluguel(Long id);
 
     Page<DadosListagemCarro> listar(Pageable paginacao);
+
+    Page<DadosListagemCarro> listarCarrosDisponiveis(Pageable paginacao);
+
+    Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao);
 }

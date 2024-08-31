@@ -2,10 +2,12 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ser
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Motorista;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
@@ -16,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +29,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.CONFIRMADO;
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.PENDENTE;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.*;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.CONFIRMADO;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.PENDENTE;
 import static java.time.LocalDate.now;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -124,6 +128,13 @@ public class AluguelServiceImpl implements AluguelService {
         Motorista motorista = buscarMotoristaPorEmail(dadosCadastroAluguel.emailMotorista());
         log.info("Motorista encontrado: {}", motorista);
 
+        boolean motoristaAtivo = motorista.getAtivo();
+
+        if (!motoristaAtivo) {
+            log.warn("Motorista não pode alugar veículos, pois está desativado. Email do motorista: {}", dadosCadastroAluguel.emailMotorista());
+            throw new ValidationException("Motorista não pode alugar veículos, pois está desativado.");
+        }
+
         Carro carro = buscarCarroPorId(dadosCadastroAluguel.idCarro());
         log.info("Carro encontrado: {}", carro);
 
@@ -166,24 +177,32 @@ public class AluguelServiceImpl implements AluguelService {
 
     @Override
     @Transactional
-    public Aluguel confirmarAluguel(Long idAluguel, TipoPagamento tipoPagamento) {
+    public Aluguel confirmarAluguel(Long idAluguel, DadosPagamento dadosPagamento) {
         log.info("Iniciando confirmação do aluguel com ID: {}", idAluguel);
         Aluguel aluguel = buscarAluguelPeloId(idAluguel);
 
-        if (aluguel.getStatusAluguel() != PENDENTE) {
-            log.warn("Aluguel não pode ser confirmado, pois não está pendente. ID do aluguel: {}", idAluguel);
-            throw new IllegalStateException("Aluguel não pode ser confirmado, pois não está pendente.");
+        if (aluguel.getStatusAluguel() != INCOMPLETO) {
+            log.warn("Aluguel não pode ser confirmado, pois não está Incompleto. ID do aluguel: {}", idAluguel);
+            throw new ValidationException("Aluguel não pode ser confirmado, pois não está pendente.");
+        }
+
+        if (aluguel.getStatusPagamento() != PENDENTE) {
+            log.warn("Aluguel não pode ser confirmado, pois o pagamento já foi realizado. ID do aluguel: {}", idAluguel);
+            throw new ValidationException("Aluguel não pode ser confirmado, pois o pagamento já foi realizado.");
         }
 
         log.debug("Bloqueando carro para o aluguel. ID do carro: {}", aluguel.getCarro().getId());
         bloquearCarroParaAluguel(aluguel);
 
         // Lógica de pagamento
-        processarPagamento(aluguel, tipoPagamento);
+        processarPagamento(aluguel, dadosPagamento);
         log.debug("Pagamento processado com sucesso. ID do aluguel: {}", idAluguel);
 
+        TipoPagamento tipoPagamento = dadosPagamento.tipoPagamento();
+
         aluguel.setTipoPagamento(tipoPagamento);
-        aluguel.setStatusAluguel(CONFIRMADO);
+        aluguel.setStatusAluguel(EM_ANDAMENTO);
+        aluguel.setStatusPagamento(CONFIRMADO);
         aluguel.setDataPagamento(now());
 
         aluguelRepository.save(aluguel);
@@ -191,65 +210,45 @@ public class AluguelServiceImpl implements AluguelService {
         return aluguel;
     }
 
-    private void processarPagamento(Aluguel aluguel, TipoPagamento tipoPagamento) {
-        switch (tipoPagamento) {
-            case PIX -> {
-                // Processar pagamento por PIX
-                log.info("Processando pagamento por PIX para o aluguel: {}", aluguel.getId());
-                // todo: ... Implemente a lógica de pagamento por PIX
-            }
-            case BOLETO -> {
-                // Processar pagamento por Boleto
-                log.info("Processando pagamento por Boleto para o aluguel: {}", aluguel.getId());
-                // todo: ... Implemente a lógica de pagamento por Boleto
-            }
-            case CARTAO_CREDITO -> {
-                // Processar pagamento por Cartão de Crédito
-                log.info("Processando pagamento por Cartão de Crédito para o aluguel: {}", aluguel.getId());
-                // todo: ... Implemente a lógica de pagamento por Cartão de Crédito
-            }
-            case CARTAO_DEBITO -> {
-                // Processar pagamento por Cartão de Débito
-                log.info("Processando pagamento por Cartão de Débito para o aluguel: {}", aluguel.getId());
-                // todo: ... Implemente a lógica de pagamento por Cartão de Débito
-            }
-            case DINHEIRO -> {
-                // Processar pagamento em Dinheiro
-                log.info("Processando pagamento em Dinheiro para o aluguel: {}", aluguel.getId());
-                // todo: ... Implemente a lógica de pagamento em Dinheiro
-            }
-            default -> {
-                log.warn("Tipo de pagamento inválido: {}", tipoPagamento);
-                throw new IllegalArgumentException("Tipo de pagamento inválido.");
-            }
-        }
-    }
-
     @Override
     @Transactional
-    public Aluguel finalizarAluguel(Long idAluguel, LocalDate dataDevolucao) {
-        log.info("Iniciando finalização do aluguel com ID: {} e data de devolução: {}", idAluguel, dataDevolucao);
+    public Aluguel finalizarAluguel(Long idAluguel, LocalDate dataDevolucaoDefinitiva) {
+        log.info("Iniciando finalização do aluguel com ID: {} e data de devolução: {}", idAluguel, dataDevolucaoDefinitiva);
 
         Aluguel aluguel = buscarAluguelPeloId(idAluguel);
 
-        if (aluguel.getStatusAluguel() != CONFIRMADO) {
+        if (aluguel.getStatusAluguel() != EM_ANDAMENTO) {
             log.warn("Aluguel não pode ser finalizado, pois não está confirmado. ID do aluguel: {}", idAluguel);
-            throw new IllegalStateException("Aluguel não pode ser finalizado, pois não está confirmado.");
+            throw new ValidationException("Aluguel não pode ser finalizado, pois não está confirmado.");
         }
 
-        log.debug("Validando data de devolução: {} contra data de entrega: {}", dataDevolucao, aluguel.getDataEntrega());
-        validarDataDevolucao(dataDevolucao, aluguel.getDataEntrega());
+        log.debug("Validando data de devolução: {} contra data de entrega: {}", dataDevolucaoDefinitiva, aluguel.getDataRetirada());
+        validarDataDevolucao(dataDevolucaoDefinitiva, aluguel.getDataRetirada());
 
         log.debug("Finalizando o aluguel e registrando a data de devolução efetiva. ID do aluguel: {}", idAluguel);
-        aluguel.setStatusAluguel(StatusAluguel.FINALIZADO);
-        aluguel.setDataDevolucaoEfetiva(dataDevolucao);
+        aluguel.setStatusAluguel(FINALIZADO);
+        aluguel.setDataDevolucaoEfetiva(dataDevolucaoDefinitiva);
 
-        log.debug("Calculando valor total final com base na data de devolução: {}", dataDevolucao);
-        BigDecimal valorTotalFinal = calcularValorTotalFinal(aluguel, dataDevolucao);
+        log.debug("Calculando valor total final com base na data de devolução: {}", dataDevolucaoDefinitiva);
+        BigDecimal valorTotalFinal = calcularValorTotalFinal(aluguel, dataDevolucaoDefinitiva);
         aluguel.setValorTotalFinal(valorTotalFinal);
         log.info("Valor total final calculado: {}", valorTotalFinal);
 
-        log.debug("Liberando carro para novos aluguéis. ID do carro: {}", aluguel.getCarro().getId());
+        if (valorTotalFinal.compareTo(aluguel.getValorTotalInicial()) < 0) {
+            log.warn("Valor total final menor que o valor inicial. Valor total inicial: {}, Valor total final: {}", aluguel.getValorTotalInicial(), valorTotalFinal);
+            BigDecimal diferenca = aluguel.getValorTotalInicial().subtract(valorTotalFinal);
+            log.warn("Cliente deverá ser reembolsado. Diferença: {}", diferenca);
+        }
+
+        if (valorTotalFinal.compareTo(aluguel.getValorTotalInicial()) > 0) {
+            log.warn("Valor total final maior que o valor inicial. Valor total inicial: {}, Valor total final: {}", aluguel.getValorTotalInicial(), valorTotalFinal);
+            BigDecimal diferenca = valorTotalFinal.subtract(aluguel.getValorTotalInicial());
+            log.warn("Cliente deverá pagar a diferença. Diferença: {}", diferenca);
+        }
+
+        Long idCarro = aluguel.getCarro().getId();
+
+        log.debug("Liberando carro para novos aluguéis. ID do carro: {}", idCarro);
         liberarCarroParaAluguel(aluguel);
 
         aluguelRepository.save(aluguel);
@@ -265,9 +264,9 @@ public class AluguelServiceImpl implements AluguelService {
         Aluguel aluguel = buscarAluguelPeloId(idAluguel);
         log.debug("Aluguel encontrado: {}", aluguel);
 
-        if (aluguel.getStatusAluguel() == StatusAluguel.FINALIZADO) {
+        if (aluguel.getStatusAluguel() == FINALIZADO) {
             log.warn("Aluguel não pode ser cancelado, pois já foi finalizado. ID do aluguel: {}", idAluguel);
-            throw new IllegalStateException("Aluguel não pode ser cancelado, pois já foi finalizado.");
+            throw new ValidationException("Aluguel não pode ser cancelado, pois já foi finalizado.");
         }
 
         log.debug("Validando prazo para cancelamento do aluguel. ID do aluguel: {}", idAluguel);
@@ -275,6 +274,11 @@ public class AluguelServiceImpl implements AluguelService {
 
         log.debug("Cancelando o aluguel. Alterando status para CANCELADO. ID do aluguel: {}", idAluguel);
         aluguel.setStatusAluguel(StatusAluguel.CANCELADO);
+        aluguel.setStatusPagamento(StatusPagamento.CANCELADO);
+        aluguel.setDataDevolucaoEfetiva(null);
+        aluguel.setValorTotalFinal(null);
+        aluguel.setDataPagamento(null);
+        aluguel.setDataCancelamento(now());
 
         log.debug("Liberando carro para novos aluguéis, se necessário. ID do carro: {}", aluguel.getCarro().getId());
         liberarCarroParaAluguel(aluguel);
@@ -290,6 +294,48 @@ public class AluguelServiceImpl implements AluguelService {
         Page<Aluguel> alugueis = aluguelRepository.findAll(paginacao);
         log.info("Alugueis listados com sucesso: {}", alugueis);
         return alugueis.map(DadosListagemAluguel::new);
+    }
+
+    private void processarPagamento(Aluguel aluguel, DadosPagamento tipoPagamento) {
+        TipoPagamento modalidadePagamento = tipoPagamento.tipoPagamento();
+        log.info("Processando pagamento para o aluguel: {} com a modalidade: {}", aluguel.getId(), modalidadePagamento);
+
+        switch (modalidadePagamento) {
+            case PIX -> {
+                // Processar pagamento por PIX
+                log.info("Processando pagamento por PIX para o aluguel: {}", aluguel.getId());
+                // todo: ... Implemente a lógica de pagamento por PIX
+            }
+
+            case BOLETO -> {
+                // Processar pagamento por Boleto
+                log.info("Processando pagamento por Boleto para o aluguel: {}", aluguel.getId());
+                // todo: ... Implemente a lógica de pagamento por Boleto
+            }
+
+            case CARTAO_CREDITO -> {
+                // Processar pagamento por Cartão de Crédito
+                log.info("Processando pagamento por Cartão de Crédito para o aluguel: {}", aluguel.getId());
+                // todo: ... Implemente a lógica de pagamento por Cartão de Crédito
+            }
+
+            case CARTAO_DEBITO -> {
+                // Processar pagamento por Cartão de Débito
+                log.info("Processando pagamento por Cartão de Débito para o aluguel: {}", aluguel.getId());
+                // todo: ... Implemente a lógica de pagamento por Cartão de Débito
+            }
+
+            case DINHEIRO -> {
+                // Processar pagamento em Dinheiro
+                log.info("Processando pagamento em Dinheiro para o aluguel: {}", aluguel.getId());
+                // todo: ... Implemente a lógica de pagamento em Dinheiro
+            }
+
+            default -> {
+                log.warn("Tipo de pagamento inválido: {}", tipoPagamento);
+                throw new ValidationException("Tipo de pagamento inválido.");
+            }
+        }
     }
 
     private void bloquearCarroParaAluguel(Aluguel aluguel) {
@@ -326,12 +372,12 @@ public class AluguelServiceImpl implements AluguelService {
 
     private void validarPrazoCancelamentoAluguel(Long idAluguel, Aluguel aluguel) {
         LocalDate dataAtual = now();
-        LocalDate dataLimiteCancelamento = aluguel.getDataEntrega().minusDays(2); // 48 horas antes da data de retirada
+        LocalDate dataLimiteCancelamento = aluguel.getDataRetirada().minusDays(2); // 48 horas antes da data de retirada
         log.debug("Validando prazo para cancelamento do aluguel. Data atual: {}, Data limite: {}", dataAtual, dataLimiteCancelamento);
 
         if (dataAtual.isAfter(dataLimiteCancelamento)) {
             log.warn("Aluguel não pode ser cancelado, pois já passou do prazo de 48 horas antes da retirada. ID do aluguel: {}", idAluguel);
-            throw new IllegalStateException("Aluguel não pode ser cancelado, pois já passou do prazo de 48 horas antes da retirada.");
+            throw new ValidationException("Aluguel não pode ser cancelado, pois já passou do prazo de 48 horas antes da retirada.");
         }
     }
 
@@ -392,7 +438,7 @@ public class AluguelServiceImpl implements AluguelService {
 
         if (!errosDatas.isEmpty()) {
             String mensagemErro = String.join("\n", errosDatas); // Junta as mensagens de erro com quebra de linha
-            throw new IllegalArgumentException(mensagemErro);
+            throw new ValidationException(mensagemErro);
         }
     }
 
@@ -408,9 +454,9 @@ public class AluguelServiceImpl implements AluguelService {
         return valorTotalInicial;
     }
 
-    private BigDecimal calcularValorTotalFinal(Aluguel aluguel, LocalDate dataDevolucao) {
+    private BigDecimal calcularValorTotalFinal(Aluguel aluguel, LocalDate dataDevolucaoEfetiva) {
         log.debug("Calculando valor total final para o aluguel. ID do aluguel: {}", aluguel.getId());
-        long diasAluguel = DAYS.between(aluguel.getDataEntrega(), dataDevolucao);
+        long diasAluguel = DAYS.between(aluguel.getDataRetirada(), dataDevolucaoEfetiva);
         BigDecimal valorDiario = aluguel.getCarro().getValorDiaria();
         BigDecimal seguro = aluguel.getApoliceSeguro().getValorFranquia();
         BigDecimal valorTotalFinal = valorDiario.multiply(BigDecimal.valueOf(diasAluguel)).add(seguro);
@@ -418,11 +464,11 @@ public class AluguelServiceImpl implements AluguelService {
         return valorTotalFinal;
     }
 
-    private void validarDataDevolucao(LocalDate dataDevolucao, LocalDate dataEntrega) {
-        log.debug("Validando data de devolução. Data de devolução: {}, Data de entrega: {}", dataDevolucao, dataEntrega);
-        if (dataDevolucao.isBefore(dataEntrega)) {
-            log.warn("Data de devolução inválida: {} (anterior à data de entrega: {})", dataDevolucao, dataEntrega);
-            throw new IllegalArgumentException("Data de devolução inválida: anterior à data de entrega.");
+    private void validarDataDevolucao(LocalDate dataDevolucaoEfetiva, LocalDate dataRetirada) {
+        log.debug("Validando data de devolução. Data de devolução: {}, Data de entrega: {}", dataDevolucaoEfetiva, dataRetirada);
+        if (dataDevolucaoEfetiva.isBefore(dataRetirada)) {
+            log.warn("Data de devolução inválida: {} (anterior à data de entrega: {})", dataDevolucaoEfetiva, dataRetirada);
+            throw new ValidationException("Data de devolução inválida: anterior à data de entrega.");
         }
     }
 
@@ -437,12 +483,16 @@ public class AluguelServiceImpl implements AluguelService {
         aluguel.adicionarMotorista(motorista);
         aluguel.adicionarApoliceSeguro(apoliceSeguro);
         aluguel.setDataPedido(now());
-        aluguel.setDataEntrega(dadosCadastroAluguel.dataRetirada());
+        aluguel.setDataRetirada(dadosCadastroAluguel.dataRetirada());
         aluguel.setDataDevolucaoPrevista(dadosCadastroAluguel.dataDevolucaoPrevista());
-        aluguel.setStatusAluguel(PENDENTE);
         aluguel.setValorTotalInicial(valorTotalInicial);
+        aluguel.setStatusAluguel(INCOMPLETO);
+        aluguel.setStatusPagamento(PENDENTE);
+        aluguel.setTipoPagamento(null);
+        aluguel.setDataPagamento(null);
+        aluguel.setDataDevolucaoEfetiva(null);
+        aluguel.setDataCancelamento(null);
         log.debug("Aluguel criado com sucesso. ID do aluguel: {}", aluguel.getId());
         return aluguel;
     }
-
 }

@@ -2,8 +2,8 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ser
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public interface AluguelService {
     Aluguel reservarCarro(@Valid DadosCadastroAluguel aluguel);
 
     @Transactional
-    Aluguel confirmarAluguel(Long idAluguel, TipoPagamento tipoPagamento);
+    Aluguel confirmarAluguel(Long idAluguel, DadosPagamento dadosPagamento);
 
     @Transactional
     Aluguel finalizarAluguel(Long idAluguel, LocalDate dataDevolucao);

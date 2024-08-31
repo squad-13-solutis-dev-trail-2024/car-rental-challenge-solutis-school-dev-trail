@@ -18,4 +18,6 @@ public interface CarroRepository extends JpaRepository<Carro, Long> {
     boolean existsByIdAndDisponivelTrue(Long id);
 
     Page<Carro> findAllByDisponivelTrue(Pageable pageable);
+
+    Page<Carro> findAllByDisponivelFalse(Pageable paginacao);
 }
