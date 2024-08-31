@@ -1,8 +1,8 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.Adulto;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.CNH;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.Adulto;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.CNH;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 

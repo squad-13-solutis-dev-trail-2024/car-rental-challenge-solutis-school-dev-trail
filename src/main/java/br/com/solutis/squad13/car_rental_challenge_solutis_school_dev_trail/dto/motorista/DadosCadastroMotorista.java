@@ -1,8 +1,8 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.motorista;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.Adulto;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.CNH;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.Adulto;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.CNH;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -24,8 +24,8 @@ public record DadosCadastroMotorista(
 
         @NotNull(message = "Data de nascimento é obrigatória")
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Adulto(message = "Você não é maior de idade")
         @Schema(description = "Data de nascimento do motorista.")
+        @Adulto(message = "Você não é maior de idade")
         LocalDate dataNascimento,
 
         @NotBlank(message = "CPF é obrigatório")
@@ -41,9 +41,9 @@ public record DadosCadastroMotorista(
         String email,
 
         @NotBlank(message = "Número da CNH é obrigatório")
-        @CNH(message = "Número da CNH inválido")
         @Column(unique = true)
         @Schema(description = "Número da CNH do motorista.")
+        @CNH(message = "Número da CNH inválido")
         String numeroCNH,
 
         @NotNull(message = "Sexo é obrigatório")

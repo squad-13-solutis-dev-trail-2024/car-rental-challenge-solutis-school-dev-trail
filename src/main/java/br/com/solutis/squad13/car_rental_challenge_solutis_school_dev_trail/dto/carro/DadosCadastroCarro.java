@@ -2,8 +2,8 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Acessorio;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ModeloCarro;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.Chassi;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.Placa;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.Chassi;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.Placa;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;

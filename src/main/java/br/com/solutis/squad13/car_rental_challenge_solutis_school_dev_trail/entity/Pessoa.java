@@ -1,6 +1,7 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.Adulto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,6 +47,7 @@ public abstract class Pessoa {
 
     @Column(nullable = false)
     @Schema(description = "Data de nascimento da pessoa.")
+    @Adulto(message = "Você não é maior de idade")
     private LocalDate dataNascimento;
 
     @Column(nullable = false)

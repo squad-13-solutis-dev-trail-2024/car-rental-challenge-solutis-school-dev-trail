@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
                     LocalDateTime.now(),
                     error.getDefaultMessage(), // Mensagem mais amigável do Bean Validation
                     request.getDescription(false),
-                    "VALIDATION_ERROR",
+                    "METHOD_ARGUMENT_NOT_VALID_ERROR",
                     error.getField() // Nome do campo com erro
             ));
         }
