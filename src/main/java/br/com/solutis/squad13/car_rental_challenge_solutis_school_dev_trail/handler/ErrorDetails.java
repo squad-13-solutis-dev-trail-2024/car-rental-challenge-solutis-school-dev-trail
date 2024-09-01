@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
  *     {@code
  *     ErrorDetails errorDetails = new ErrorDetails(
  *         LocalDateTime.now(),
- *         "O valor fornecido para o campo 'email' já está em uso.",
+ *         "O valorTotalParcial fornecido para o campo 'email' já está em uso.",
  *         "uri=/usuarios",
  *         "DUPLICATE_ENTRY"
  *     );

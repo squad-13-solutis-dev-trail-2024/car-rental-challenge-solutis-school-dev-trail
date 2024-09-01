@@ -33,8 +33,8 @@ public record DadosAtualizarCarro(
         @Schema(description = "Cor do carro.", example = "Preto")
         String cor,
 
-        @NotNull(message = "O valor da diária é obrigatório")
-        @DecimalMin(value = "0.0", inclusive = false, message = "O valor diário deve ser maior que zero")
+        @NotNull(message = "O valorTotalParcial da diária é obrigatório")
+        @DecimalMin(value = "0.0", inclusive = false, message = "O valorTotalParcial diário deve ser maior que zero")
         @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
         BigDecimal valorDiario,
 

@@ -16,7 +16,7 @@ import static java.text.NumberFormat.getCurrencyInstance;
  * Classe responsável por serializar objetos do tipo {@link BigDecimal} em formato de moeda brasileira (R$).
  * <p>
  * Esta classe estende {@link JsonSerializer} e sobrescreve o metodo {@link #serialize(BigDecimal, JsonGenerator, SerializerProvider)},
- * formatando o valor do {@link BigDecimal} como uma string no formato de moeda brasileira, incluindo o símbolo "R$".
+ * formatando o valorTotalParcial do {@link BigDecimal} como uma string no formato de moeda brasileira, incluindo o símbolo "R$".
  * A formatação é feita utilizando a classe {@link NumberFormat} com o {@link Locale} apropriado para o Brasil ("pt", "BR").
  * </p>
  * <p>
@@ -39,9 +39,9 @@ import static java.text.NumberFormat.getCurrencyInstance;
 public class BigDecimalCurrencySerializer extends JsonSerializer<BigDecimal> {
 
     /**
-     * Serializa um valor {@link BigDecimal} em uma string formatada como moeda brasileira.
+     * Serializa um valorTotalParcial {@link BigDecimal} em uma string formatada como moeda brasileira.
      *
-     * @param value       O valor {@link BigDecimal} a ser serializado.
+     * @param value       O valorTotalParcial {@link BigDecimal} a ser serializado.
      * @param gen         O gerador JSON utilizado para a escrita da string.
      * @param serializers O provedor de serializers que pode ser utilizado para serialização de objetos complexos.
      * @throws IOException Se ocorrer um erro de I/O durante a serialização.

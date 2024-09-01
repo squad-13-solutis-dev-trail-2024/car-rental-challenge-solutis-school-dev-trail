@@ -4,9 +4,9 @@ DROP FUNCTION IF EXISTS calcular_valor_total_inicial;
 DROP FUNCTION IF EXISTS calcular_valor_total_final;
 
 DELIMITER //
--- Função para calcular o valor total inicial
+-- Função para calcular o valorTotalParcial total inicial
 --
--- Esta função calcula o valor total inicial de um aluguel com base na data de entrega
+-- Esta função calcula o valorTotalParcial total inicial de um aluguel com base na data de entrega
 -- e na data de devolução prevista.
 --
 -- Parâmetros:
@@ -25,7 +25,7 @@ BEGIN
     DECLARE valor_diaria DECIMAL(10, 2);
     DECLARE quantidade_dias INT;
 
-    -- Obter o valor da diária do carro a partir do ID do carro.
+    -- Obter o valorTotalParcial da diária do carro a partir do ID do carro.
     SELECT c.valor_diaria
     INTO valor_diaria
     FROM tb_carro c
@@ -36,13 +36,13 @@ BEGIN
     SELECT DATEDIFF(data_devolucao_prevista, data_entrega) + 1
     INTO quantidade_dias;
 
-    -- Calcular e retornar o valor total inicial do aluguel.
+    -- Calcular e retornar o valorTotalParcial total inicial do aluguel.
     RETURN valor_diaria * quantidade_dias;
 END //
 
--- Função para calcular o valor total final
+-- Função para calcular o valorTotalParcial total final
 --
--- Esta função calcula o valor total final de um aluguel com base na data de entrega
+-- Esta função calcula o valorTotalParcial total final de um aluguel com base na data de entrega
 -- e na data de devolução efetiva. Se a data de devolução efetiva for NULL, a função
 -- utiliza a data de devolução prevista.
 --
@@ -64,7 +64,7 @@ BEGIN
     DECLARE valor_diaria DECIMAL(10, 2);
     DECLARE quantidade_dias INT;
 
-    -- Obter o valor da diária do carro a partir do ID do carro.
+    -- Obter o valorTotalParcial da diária do carro a partir do ID do carro.
     SELECT c.valor_diaria
     INTO valor_diaria
     FROM tb_carro c
@@ -76,7 +76,7 @@ BEGIN
     SELECT DATEDIFF(IFNULL(data_devolucao_efetiva, data_devolucao_prevista), data_entrega) + 1
     INTO quantidade_dias;
 
-    -- Calcular e retornar o valor total final do aluguel.
+    -- Calcular e retornar o valorTotalParcial total final do aluguel.
     RETURN valor_diaria * quantidade_dias;
 END //
 

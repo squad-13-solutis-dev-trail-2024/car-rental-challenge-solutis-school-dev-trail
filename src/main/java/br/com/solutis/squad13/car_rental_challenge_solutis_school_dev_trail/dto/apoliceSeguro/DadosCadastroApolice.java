@@ -2,17 +2,17 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 
 @Schema(description = "Dados da apólice de seguro do aluguel.")
 public record DadosCadastroApolice(
 
-        @NotNull(message = "O valor da franquia é obrigatório.")
-        @DecimalMin(value = "0.0", inclusive = false, message = "O valor da franquia deve ser maior que zero.")
-        @Schema(description = "Valor da franquia da apólice de seguro.", example = "500.00")
+        @Schema(description = "Valor da franquia da apólice de seguro.")
+        @ColumnDefault("0.00")
         BigDecimal valorFranquia,
 
         @NotNull(message = "A informação sobre proteção contra danos a terceiros é obrigatória.")

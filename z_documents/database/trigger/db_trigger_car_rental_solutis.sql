@@ -6,10 +6,10 @@ DROP TRIGGER IF EXISTS atualizar_disponibilidade_after_insert;
 
 DELIMITER //
 
--- Trigger para calcular o valor total inicial antes da inserção
+-- Trigger para calcular o valorTotalParcial total inicial antes da inserção
 --
 -- Este trigger é acionado antes da inserção de um novo aluguel na tabela tb_aluguel.
--- Ele calcula o valor total inicial do aluguel utilizando a função
+-- Ele calcula o valorTotalParcial total inicial do aluguel utilizando a função
 -- calcular_valor_total_inicial e atribui o resultado ao campo valorTotalInicial da nova linha.
 CREATE TRIGGER IF NOT EXISTS calcular_valor_inicial_before_insert
     BEFORE INSERT
@@ -22,10 +22,10 @@ BEGIN
                                          NEW.data_devolucao_prevista);
 END//
 
--- Trigger para calcular o valor total final antes da atualização
+-- Trigger para calcular o valorTotalParcial total final antes da atualização
 --
 -- Este trigger é acionado antes da atualização de um aluguel na tabela tb_aluguel.
--- Ele calcula o valor total final do aluguel utilizando a função
+-- Ele calcula o valorTotalParcial total final do aluguel utilizando a função
 -- calcular_valor_total_final e atribui o resultado ao campo valorTotalFinal da linha atualizada.
 CREATE TRIGGER IF NOT EXISTS calcular_valor_final_before_update
     BEFORE UPDATE

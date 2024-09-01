@@ -1,10 +1,9 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.apoliceSeguro.DadosCadastroApolice;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -27,10 +26,9 @@ public record DadosCadastroAluguel(
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
         LocalDate dataDevolucaoPrevista,
 
-        @Valid
         @NotNull(message = "Os dados da apólice de seguro são obrigatórios.")
         @Schema(description = "Dados da apólice de seguro do aluguel.")
-        DadosCadastroApolice apoliceSeguro,
+        ApoliceSeguro apoliceSeguro,
 
         @NotBlank(message = "O email do motorista é obrigatório.")
         @Email(message = "Email inválido.")

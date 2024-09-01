@@ -2,6 +2,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -20,12 +23,16 @@ import java.util.Objects;
 @Schema(description = "Entidade que representa uma apólice de seguro.")
 public class ApoliceSeguro {
 
+    private static final BigDecimal VALOR_PROTECAO_TERCEIRO = new BigDecimal("100.00");
+    private static final BigDecimal VALOR_PROTECAO_CAUSAS_NATURAIS = new BigDecimal("200.00");
+    private static final BigDecimal VALOR_PROTECAO_ROUBO = new BigDecimal("300.00");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(precision = 10, scale = 2, nullable = false)
-    @Schema(description = "Valor da franquia da apólice.", example = "500.00")
+    @Column(precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    @Schema(description = "Valor da franquia da apólice.")
     private BigDecimal valorFranquia;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
@@ -50,23 +57,25 @@ public class ApoliceSeguro {
      *
      * @see Aluguel
      */
-    @OneToOne(mappedBy = "apoliceSeguro")
-    @Schema(description = "Aluguel associado a esta apólice de seguro.")
-    private Aluguel aluguel;
+    @OneToMany(mappedBy = "apoliceSeguro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Aluguéis associados a esta apólice de seguro.")
+    private List<Aluguel> alugueis = new ArrayList<>();
 
-    public ApoliceSeguro(BigDecimal valorFranquia,
-                         Boolean protecaoTerceiro,
-                         Boolean protecaoCausasNaturais,
-                         Boolean protecaoRoubo) {
-        this.valorFranquia = valorFranquia;
-        this.protecaoTerceiro = protecaoTerceiro;
-        this.protecaoCausasNaturais = protecaoCausasNaturais;
-        this.protecaoRoubo = protecaoRoubo;
+    public static BigDecimal calcularValorTotalApoliceSeguro(
+            Boolean protecaoTerceiro,
+            Boolean protecaoCausasNaturais,
+            Boolean protecaoRoubo) {
+        BigDecimal valorTotal = BigDecimal.ZERO;
+
+        if (protecaoTerceiro) valorTotal = valorTotal.add(VALOR_PROTECAO_TERCEIRO);
+        if (protecaoCausasNaturais) valorTotal = valorTotal.add(VALOR_PROTECAO_CAUSAS_NATURAIS);
+        if (protecaoRoubo) valorTotal = valorTotal.add(VALOR_PROTECAO_ROUBO);
+
+        return valorTotal;
     }
 
-    @Override
     public String toString() {
-        return "ApoliceSeguro{id=" + id + ", valorFranquia=" + valorFranquia + ", protecaoTerceiro=" + protecaoTerceiro + ", protecaoCausasNaturais=" + protecaoCausasNaturais + ", protecaoRoubo=" + protecaoRoubo + ", aluguel=" + aluguel + '}';
+        return "ApoliceSeguro{id=" + id + ", valorFranquia=" + valorFranquia + ", protecaoTerceiro=" + protecaoTerceiro + ", protecaoCausasNaturais=" + protecaoCausasNaturais + ", protecaoRoubo=" + protecaoRoubo + ", aluguel=" + alugueis+ '}';
     }
 
     @Override

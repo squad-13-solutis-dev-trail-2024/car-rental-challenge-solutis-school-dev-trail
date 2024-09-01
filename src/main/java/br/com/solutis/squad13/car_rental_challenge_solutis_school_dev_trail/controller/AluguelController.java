@@ -56,10 +56,10 @@ public class AluguelController {
             @ApiResponse(responseCode = "200", description = "Aluguel encontrado."),
             @ApiResponse(responseCode = "404", description = "Aluguel não encontrado.")
     })
-    public ResponseEntity<Aluguel> buscarAluguel(@PathVariable Long id) {
+    public ResponseEntity<DadosListagemAluguel> buscarAluguel(@PathVariable Long id) {
         Aluguel aluguel = aluguelService.buscarPorId(id);
         if (aluguel == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(aluguel);
+        return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
 
     @GetMapping

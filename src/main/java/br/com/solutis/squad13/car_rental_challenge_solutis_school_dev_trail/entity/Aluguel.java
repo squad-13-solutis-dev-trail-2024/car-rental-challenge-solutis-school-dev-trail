@@ -14,8 +14,11 @@ import org.hibernate.proxy.HibernateProxy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @AllArgsConstructor
@@ -69,6 +72,9 @@ public class Aluguel {
     @Schema(description = "Data em que o aluguel foi cancelado.")
     private LocalDate dataCancelamento;
 
+    @Transient
+    private Map<String, Object> camposAdicionais = new HashMap<>();
+
     /**
      * Motorista que realizou este aluguel.
      * <p>
@@ -115,9 +121,8 @@ public class Aluguel {
      *
      * @see ApoliceSeguro
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @Setter(AccessLevel.NONE)
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro;
@@ -133,6 +138,14 @@ public class Aluguel {
     @Schema(description = "Data e hora da última atualização do registro.")
     private LocalDateTime lastUpdated;
 
+    public void adicionarCampo(String nome, Object valor) {
+        camposAdicionais.put(nome, valor);
+    }
+
+    public Object obterCampo(String nome) {
+        return camposAdicionais.get(nome);
+    }
+
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {
         this.apoliceSeguro = apoliceSeguro;
     }
@@ -147,27 +160,28 @@ public class Aluguel {
 
     @PostLoad
     private void calcularValores() {
-        this.valorTotalInicial = calcularValorTotalInicial();
-        this.valorTotalFinal = calcularValorTotalFinal();
+        this.valorTotalInicial = calcularValorTotal(dataDevolucaoPrevista);
+        this.valorTotalFinal = dataDevolucaoEfetiva != null ? calcularValorTotal(dataDevolucaoEfetiva) : valorTotalInicial;
     }
 
-    @Schema(description = "Calcula o valor total inicial do aluguel (com base na data de devolução prevista e no valor da apólice de seguro).")
-    public BigDecimal calcularValorTotalInicial() {
-        long quantidadeDias = DAYS.between(dataRetirada, dataDevolucaoPrevista) + 1;
-        BigDecimal valorTotal = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
-        return valorTotal.add(apoliceSeguro.getValorFranquia());
+    @Schema(description = "Calcula o valorTotalParcial total do aluguel (com base na data de devolução e no valorTotalParcial da apólice de seguro).")
+    private BigDecimal calcularValorTotal(LocalDate dataDevolucao) {
+        long quantidadeDias = DAYS.between(dataRetirada, dataDevolucao);
+        BigDecimal valorDiarias = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
+        return valorDiarias.add(calcularValorFranquia());
     }
 
-    @Schema(description = "Calcula o valor total final do aluguel (com base na data de devolução efetiva, se disponível, e no valor da apólice de seguro).")
-    public BigDecimal calcularValorTotalFinal() {
-        long quantidadeDias = DAYS.between(dataRetirada, dataDevolucaoEfetiva != null ? dataDevolucaoEfetiva : dataDevolucaoPrevista) + 1;
-        BigDecimal valorTotal = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
-        return valorTotal.add(apoliceSeguro.getValorFranquia());
+    private BigDecimal calcularValorFranquia() {
+        return calcularValorTotalApoliceSeguro(
+                apoliceSeguro.getProtecaoTerceiro(),
+                apoliceSeguro.getProtecaoCausasNaturais(),
+                apoliceSeguro.getProtecaoRoubo()
+        );
     }
 
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataRetirada + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valor=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataRetirada + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valorTotalParcial=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
     }
 
     @Override
