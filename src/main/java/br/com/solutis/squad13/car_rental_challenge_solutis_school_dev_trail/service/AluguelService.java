@@ -25,6 +25,8 @@ public interface AluguelService {
 
     @Transactional
     Aluguel finalizarAluguel(Long idAluguel, LocalDate dataDevolucao);
+    @Transactional
+    Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro);
 
     @Transactional
     Aluguel cancelarAluguel(Long idAluguel);

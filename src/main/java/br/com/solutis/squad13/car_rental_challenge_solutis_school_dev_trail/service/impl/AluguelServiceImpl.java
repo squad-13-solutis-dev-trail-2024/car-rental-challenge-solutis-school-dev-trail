@@ -456,6 +456,76 @@ public class AluguelServiceImpl implements AluguelService {
         log.debug("Valor total inicial calculado: {}", valorTotalParcialInicial);
         return valorTotalParcialInicial;
     }
+    @Override
+    @Transactional
+    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
+
+
+        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
+        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
+        carroErrado.disponibilizarAluguel();
+        Carro carro = buscarCarroPorId(idCarro);
+
+
+        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
+                aluguel.getApoliceSeguro().getProtecaoTerceiro(),
+                aluguel.getApoliceSeguro().getProtecaoCausasNaturais(),
+                aluguel.getApoliceSeguro().getProtecaoRoubo()
+        );
+
+        log.info("Apólice de seguro criada: {}", apoliceSeguro);
+
+        log.debug("Calculando valorTotalParcial total inicial do aluguel");
+        BigDecimal valorTotalInicial = calcularValorTotalInicialAluguelAtt(aluguel, carro);
+        log.info("Valor total inicial calculado: {}", valorTotalInicial);
+        apoliceSeguroRepository.save(apoliceSeguro);
+
+        log.debug("Bloqueando carro para o aluguel");
+        carro.bloquearAluguel();
+        carroRepository.save(carro);
+        log.info("Carro bloqueado e salvo: {}", carro);
+        aluguel.setCarro(carro);
+        log.debug("Salvando informações de aluguel no banco de dados");
+        Aluguel aluguelSalvo = aluguelRepository.save(aluguel);
+        log.info("Aluguel realizado com sucesso: {}", aluguelSalvo);
+        carroRepository.save(carroErrado);
+        return aluguelSalvo;
+    }
+
+    private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro) {
+        log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
+
+        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
+                dadosCadastroAluguel.getApoliceSeguro().getProtecaoTerceiro(),
+                dadosCadastroAluguel.getApoliceSeguro().getProtecaoCausasNaturais(),
+                dadosCadastroAluguel.getApoliceSeguro().getProtecaoRoubo()
+        );
+
+        return calcularValorTotal(
+                dadosCadastroAluguel.getDataRetirada(),
+                dadosCadastroAluguel.getDataDevolucaoPrevista(),
+                carro,
+                apoliceSeguro
+        );
+    }
+    private BigDecimal calcularValorTotal(LocalDate dataRetirada, LocalDate dataDevolucao, Carro carro, ApoliceSeguro apoliceSeguro) {
+        log.debug("Calculando valor total para o aluguel. ID do carro: {}", carro.getId());
+        long diasAluguel = DAYS.between(dataRetirada, dataDevolucao);
+        BigDecimal valorDiario = carro.getValorDiaria();
+
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(
+                apoliceSeguro.getProtecaoTerceiro(),
+                apoliceSeguro.getProtecaoCausasNaturais(),
+                apoliceSeguro.getProtecaoRoubo()
+        );
+
+        BigDecimal valorTotalAluguel = valorDiario.multiply(BigDecimal.valueOf(diasAluguel));
+        BigDecimal valorTotal = valorTotalAluguel.add(valorApoliceSeguro);
+
+        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasAluguel, valorTotalAluguel);
+        log.debug("Valor total calculado: {}", valorTotal);
+        return valorTotal;
+    }
 
     private BigDecimal calcularValorTotalFinal(Aluguel aluguel, LocalDate dataDevolucaoEfetiva) {
         log.debug("Calculando valorTotalParcial total final para o aluguel. ID do aluguel: {}", aluguel.getId());
@@ -474,6 +544,7 @@ public class AluguelServiceImpl implements AluguelService {
             throw new ValidationException("Data de devolução inválida: anterior à data de entrega.");
         }
     }
+
 
     private Aluguel criarAluguel(Carro carro,
                                  Motorista motorista,

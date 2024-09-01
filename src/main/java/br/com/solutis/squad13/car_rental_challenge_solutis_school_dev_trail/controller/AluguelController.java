@@ -95,6 +95,20 @@ public class AluguelController {
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
 
+    @PatchMapping("/trocar-carro/{idAluguel}")
+    @Operation(summary = "Confirmar troca Carro")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluguel confirmado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado."),
+            @ApiResponse(responseCode = "404", description = "Aluguel não encontrado.")
+    })
+    public ResponseEntity<DadosListagemAluguel> trocarCarro(
+            @PathVariable Long idAluguel,
+            @RequestParam Long idCarro) {
+        var aluguel = aluguelService.trocarCarro(idAluguel,idCarro);
+        return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
+    }
+
     @PatchMapping("/finalizar/{id}")
     @Operation(summary = "Finalizar um aluguel")
     @ApiResponses(value = {

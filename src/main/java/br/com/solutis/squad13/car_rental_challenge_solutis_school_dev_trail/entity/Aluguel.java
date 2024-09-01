@@ -122,7 +122,6 @@ public class Aluguel {
      * @see Carro
      */
     @JsonIgnore
-    @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
     @Schema(description = "Carro alugado.")
