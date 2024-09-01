@@ -147,8 +147,8 @@ Desenvolvedores que participaram da resolução dos exercícios:
 
 - **Aldemir Carlos**   [GitHub](https://github.com/aldemaas)          [LinkedIn](https://www.linkedin.com/in/aldemir-carlos/)            [E-mail](mailto:aldemirc22@gmail.com)
 - **Gabriel de Abreu** [GitHub](https://github.com/AzvedoGabriel)     [LinkedIn](https://www.linkedin.com/in/azevedo-gabriel-ssa/)       [E-mail](mailto:contato.gabrielazevedo0@gmail.com)
-- **Kauê Alexandre**   [GitHub](https://github.com/bugkaue)           [LinkedIn](https://www.linkedin.com/in/bugkaue/)                   [E-mail](mailto:seu-melhor-email@hotmail.com)
-- **Pedro Messias**    [GitHub](https://github.com/PedroMessiasxD)    [LinkedIn](https://www.linkedin.com/in/pedromessiasxd/)            [E-mail](mailto:seu-melhor-email@hotmail.com)
+- **Kauê Alexandre**   [GitHub](https://github.com/bugkaue)           [LinkedIn](https://www.linkedin.com/in/bugkaue/)                   [E-mail](mailto:alexkauezinho@gmail.com)
+- **Pedro Messias**    [GitHub](https://github.com/PedroMessiasxD)    [LinkedIn](https://www.linkedin.com/in/pedromessiasxd/)            [E-mail](mailto:pemlucena@gmail.com)
 - **Pedro Rocha**      [GitHub](https://github.com/Pedro-E-S-R)       [LinkedIn](https://www.linkedin.com/in/pedro-e-s-r/)               [E-mail](mailto:pedroemanoel323@gmail.com)
 - **Suerdo Flaubert**  [GitHub](https://github.com/Suerdo)            [LinkedIn](https://www.linkedin.com/in/suerdo-flaubert-78b3a4194/) [E-mail](mailto:suerdocampos@gmail.com)
 - **Vinícius Andrade** [GitHub](https://github.com/viniciusdsandrade) [LinkedIn](https://www.linkedin.com/in/viniciusdsandrade/)         [E-mail](mailto:vinicius_andrade2010@hotmail.com)
