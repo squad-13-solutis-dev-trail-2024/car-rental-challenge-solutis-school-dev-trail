@@ -2,7 +2,6 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

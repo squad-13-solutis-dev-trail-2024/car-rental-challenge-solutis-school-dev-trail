@@ -72,6 +72,7 @@ public class Aluguel {
     @Schema(description = "Data em que o aluguel foi cancelado.")
     private LocalDate dataCancelamento;
 
+    @Getter
     @Transient
     private Map<String, Object> camposAdicionais = new HashMap<>();
 
@@ -140,10 +141,6 @@ public class Aluguel {
 
     public void adicionarCampo(String nome, Object valor) {
         camposAdicionais.put(nome, valor);
-    }
-
-    public Object obterCampo(String nome) {
-        return camposAdicionais.get(nome);
     }
 
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {

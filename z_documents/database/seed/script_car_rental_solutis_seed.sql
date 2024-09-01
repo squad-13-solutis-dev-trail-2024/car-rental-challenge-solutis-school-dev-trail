@@ -121,7 +121,6 @@ INSERT INTO tb_apolice_seguro (protecao_terceiro, protecao_causas_naturais, prot
 # INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (580.00, TRUE, FALSE, FALSE);
 # INSERT INTO tb_apolice_seguro (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo) VALUES (240.00, FALSE, TRUE, FALSE);
 
--- Inserindo dados na tabela tb_fabricante (inserções individuais na mesma linha)
 INSERT INTO tb_fabricante (nome) VALUES ('Toyota');
 INSERT INTO tb_fabricante (nome) VALUES ('Honda');
 INSERT INTO tb_fabricante (nome) VALUES ('Hyundai');

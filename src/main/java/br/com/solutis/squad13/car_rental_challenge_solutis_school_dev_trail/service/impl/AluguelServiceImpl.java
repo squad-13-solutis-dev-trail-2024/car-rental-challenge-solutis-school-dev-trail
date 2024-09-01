@@ -35,8 +35,8 @@ import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_tra
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.*;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.CONFIRMADO;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.PENDENTE;
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras.gerarCodigoDeBarras;
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey.generatePixKey;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.BoletoBarras.gerarCodigoDeBarras;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.PixKey.generatePixKey;
 import static java.time.LocalDate.now;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;

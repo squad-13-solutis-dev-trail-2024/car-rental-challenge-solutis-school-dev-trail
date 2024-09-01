@@ -5,17 +5,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 @Schema(description = "Repositório JPA para a entidade Carro.")
-public interface CarroRepository extends JpaRepository<Carro, Long> {
+public interface CarroRepository extends JpaRepository<Carro, Long>, JpaSpecificationExecutor<Carro> {
 
     boolean existsByPlaca(String placa);
 
     boolean existsByChassi(String chassi);
-
-    boolean existsByIdAndDisponivelTrue(Long id);
 
     Page<Carro> findAllByDisponivelTrue(Pageable pageable);
 
