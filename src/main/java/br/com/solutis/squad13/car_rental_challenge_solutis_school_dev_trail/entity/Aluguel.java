@@ -72,6 +72,23 @@ public class Aluguel {
     @Schema(description = "Data em que o aluguel foi cancelado.")
     private LocalDate dataCancelamento;
 
+    @Column(name = "campo_pix")
+    private String campoPix;
+
+    @Column(name = "campo_boleto")
+    private String campoBoleto;
+
+    @Column(name = "numero_cartao")
+    private String numeroCartao;
+
+    @Column(name = "validade_cartao")
+    private String validadeCartao;
+
+    @Column(name = "cvv")
+    private String cvv;
+
+    @Column(name = "pagamento_dinheiro")
+    private String pagamentoDinheiro;
     @Transient
     private Map<String, Object> camposAdicionais = new HashMap<>();
 

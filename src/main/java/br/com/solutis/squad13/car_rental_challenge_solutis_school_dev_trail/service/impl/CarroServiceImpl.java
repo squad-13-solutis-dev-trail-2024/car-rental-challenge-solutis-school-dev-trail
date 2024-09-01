@@ -64,7 +64,6 @@ public class CarroServiceImpl implements CarroService {
         log.info("Carro encontrado para atualização: {}", carro);
 
         validarCamposDuplicadosNoDtoAtualizacao(dadosAtualizarCarro, carro); // Verifica se há campos para atualização que não permitem duplicação
-
         carro.atualizar(dadosAtualizarCarro);
         carroRepository.save(carro);
         log.info("Carro atualizado com sucesso: {}", carro);

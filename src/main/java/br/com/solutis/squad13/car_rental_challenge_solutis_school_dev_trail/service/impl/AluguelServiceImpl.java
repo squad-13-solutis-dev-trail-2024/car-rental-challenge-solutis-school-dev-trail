@@ -10,6 +10,8 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.ApoliceSeguroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
@@ -35,8 +37,6 @@ import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_tra
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.*;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.CONFIRMADO;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.PENDENTE;
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras.gerarCodigoDeBarras;
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey.generatePixKey;
 import static java.time.LocalDate.now;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -201,7 +201,7 @@ public class AluguelServiceImpl implements AluguelService {
         bloquearCarroParaAluguel(aluguel);
 
         // Lógica de pagamento
-        processarPagamento(aluguel, dadosPagamento);
+        processarPagamento(aluguel.getId(), dadosPagamento);
         log.debug("Pagamento processado com sucesso. ID do aluguel: {}", idAluguel);
 
         TipoPagamento tipoPagamento = dadosPagamento.tipoPagamento();
@@ -302,62 +302,33 @@ public class AluguelServiceImpl implements AluguelService {
         return alugueis.map(DadosListagemAluguel::new);
     }
 
-    private void processarPagamento(Aluguel aluguel, DadosPagamento tipoPagamento) {
+    private void processarPagamento(long aluguel, DadosPagamento tipoPagamento) {
         TipoPagamento modalidadePagamento = tipoPagamento.tipoPagamento();
-        log.info("Processando pagamento para o aluguel: {} com a modalidade: {}", aluguel.getId(), modalidadePagamento);
-        Optional<Aluguel> aluguelTipoPagamento = aluguelRepository.findById(aluguel.getId());
-        Aluguel aluguelEncontrado = aluguelTipoPagamento.get();
+
+        Optional<Aluguel> aluguelTipoPagamento = aluguelRepository.findById(aluguel);
+        Aluguel aluguelEncontrado = aluguelTipoPagamento.orElseThrow(() -> new RuntimeException("Aluguel não encontrado com ID: " + aluguel));
+
         switch (modalidadePagamento) {
-            case PIX -> {
-                // Processar pagamento por PIX
-                log.info("Processando pagamento por PIX para o aluguel: {}", aluguel.getId());
-                String pix = generatePixKey();
-                aluguelEncontrado.adicionarCampo("pix", pix);
-                aluguelRepository.save(aluguelEncontrado);
+            case PIX -> aluguelEncontrado.setCampoPix(PixKey.generatePixKey());
+
+            case BOLETO -> aluguelEncontrado.setCampoBoleto(BoletoBarras.gerarCodigoDeBarras());
+
+            case CARTAO_CREDITO, CARTAO_DEBITO -> {
+                aluguelEncontrado.setNumeroCartao(tipoPagamento.numeroCartao());
+                aluguelEncontrado.setValidadeCartao(tipoPagamento.validadeCartao());
+                aluguelEncontrado.setCvv(tipoPagamento.cvv());
             }
 
-            case BOLETO -> {
-                // Processar pagamento por Boleto
-                log.info("Processando pagamento por Boleto para o aluguel: {}", aluguel.getId());
-                String boleto = gerarCodigoDeBarras();
-                aluguelEncontrado.adicionarCampo("boleto", boleto);
-                aluguelRepository.save(aluguelEncontrado);
-            }
-
-            case CARTAO_CREDITO -> {
-                // Processar pagamento por Cartão de Crédito
-                log.info("Processando pagamento por Cartão de Crédito para o aluguel: {}", aluguel.getId());
-
-                aluguelEncontrado.adicionarCampo("numeroCartao", tipoPagamento.numeroCartao());
-                aluguelEncontrado.adicionarCampo("validadeCatao", tipoPagamento.validadeCartao());
-                aluguelEncontrado.adicionarCampo("cvv", tipoPagamento.cvv());
-                aluguelRepository.save(aluguelEncontrado);
-            }
-
-            case CARTAO_DEBITO -> {
-                // Processar pagamento por Cartão de Débito
-                log.info("Processando pagamento por Cartão de Débito para o aluguel: {}", aluguel.getId());
-
-                aluguelEncontrado.adicionarCampo("numeroCartao", tipoPagamento.numeroCartao());
-                aluguelEncontrado.adicionarCampo("validadeCatao", tipoPagamento.validadeCartao());
-                aluguelEncontrado.adicionarCampo("cvv", tipoPagamento.cvv());
-                aluguelRepository.save(aluguelEncontrado);
-            }
-
-            case DINHEIRO -> {
-                // Processar pagamento em Dinheiro
-                log.info("Processando pagamento em Dinheiro para o aluguel: {}", aluguel.getId());
-                aluguelEncontrado.adicionarCampo("Dinheiro", "Pagamento no local de recolhimento");
-                aluguelRepository.save(aluguelEncontrado);
-            }
+            case DINHEIRO -> aluguelEncontrado.setPagamentoDinheiro("Pagamento no local de recolhimento");
 
             default -> {
                 log.warn("Tipo de pagamento inválido: {}", tipoPagamento);
                 throw new ValidationException("Tipo de pagamento inválido.");
             }
         }
-    }
 
+        aluguelRepository.save(aluguelEncontrado);
+    }
     private void bloquearCarroParaAluguel(Aluguel aluguel) {
         Carro carro = aluguel.getCarro();
         log.debug("Verificando disponibilidade do carro para bloqueio. ID do carro: {}", carro.getId());

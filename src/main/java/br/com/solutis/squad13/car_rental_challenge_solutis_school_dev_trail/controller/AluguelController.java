@@ -90,7 +90,7 @@ public class AluguelController {
     })
     public ResponseEntity<DadosListagemAluguel> confirmarAluguel(
             @PathVariable Long id,
-            @RequestParam @Valid DadosPagamento tipoPagamento) {
+            @RequestBody  @Valid DadosPagamento tipoPagamento) {
         var aluguel = aluguelService.confirmarAluguel(id, tipoPagamento);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
