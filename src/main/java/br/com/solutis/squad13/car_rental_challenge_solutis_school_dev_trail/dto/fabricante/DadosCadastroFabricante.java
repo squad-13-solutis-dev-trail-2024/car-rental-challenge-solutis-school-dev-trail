@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 public record DadosCadastroFabricante(
 
         @NotBlank(message = "O nome do fabricante é obrigatório.")
-        @Schema(description = "Nome do fabricante do carro.", example = "Toyota")
+        @Schema(description = "Nome do fabricante do carro.")
         String nome
 ) {
 }

@@ -11,19 +11,23 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
+
 @Schema(description = "Dados mínimos para alugar um veículo.")
 public record DadosCadastroAluguel(
 
         @NotNull(message = "A data de retirada é obrigatória.")
         @FutureOrPresent(message = "A data de retirada deve ser hoje ou uma data futura.")
-        @Schema(description = "Data de retirada do veículo.", example = "01/09/2024")
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data de retirada do veículo.")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         LocalDate dataRetirada,
 
         @NotNull(message = "A data de devolução prevista é obrigatória.")
         @Future(message = "A data de devolução prevista deve ser uma data futura.")
-        @Schema(description = "Data de devolução prevista do veículo.", example = "10/09/2024")
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data de devolução prevista do veículo.")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         LocalDate dataDevolucaoPrevista,
 
         @NotNull(message = "Os dados da apólice de seguro são obrigatórios.")
@@ -32,21 +36,21 @@ public record DadosCadastroAluguel(
 
         @NotBlank(message = "O email do motorista é obrigatório.")
         @Email(message = "Email inválido.")
-        @Schema(description = "Endereço de email do motorista.", example = "joao.silva@example.com")
+        @Schema(description = "Endereço de email do motorista.")
         String emailMotorista,
 
         @NotNull(message = "O ID do carro é obrigatório.")
-        @Schema(description = "ID do carro a ser alugado.", example = "1")
+        @Schema(description = "ID do carro a ser alugado.")
         Long idCarro,
 
         @CreationTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = READ_ONLY)
         LocalDateTime dataCreated,
 
         @UpdateTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
         LocalDateTime lastUpdated
 ) {
 }

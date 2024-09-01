@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
@@ -46,7 +47,7 @@ public class Motorista extends Pessoa {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "motorista", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "motorista", fetch = LAZY)
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de aluguéis realizados pelo motorista.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um motorista pode não ter aluguéis associados
@@ -58,7 +59,7 @@ public class Motorista extends Pessoa {
         this.setEmail(dadosCadastroMotorista.email());
         this.setSexo(dadosCadastroMotorista.sexo());
         this.setLastUpdated(now());
-        this.setAtivo(true);
+        this.ativar();
         this.numeroCNH = dadosCadastroMotorista.numeroCNH();
     }
 

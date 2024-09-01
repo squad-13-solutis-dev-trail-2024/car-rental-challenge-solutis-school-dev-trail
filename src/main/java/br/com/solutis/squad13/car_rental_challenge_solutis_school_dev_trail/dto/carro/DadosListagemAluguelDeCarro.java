@@ -10,28 +10,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+
 @Schema(description = "Dados resumidos de um aluguel para a listagem de carros.")
 public record DadosListagemAluguelDeCarro(
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data do pedido do aluguel.", example = "01/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data do pedido do aluguel.")
         LocalDate dataPedido,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data de entrega do carro.", example = "11/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data de entrega do carro.")
         LocalDate dataEntrega,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data prevista para devolução do carro.", example = "16/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data prevista para devolução do carro.")
         LocalDate dataDevolucaoPrevista,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
-        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
+        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).")
         BigDecimal valor,
 
         @Schema(description = "Dados resumidos da apólice de seguro associada ao aluguel.")
         DadosListagemApoliceSeguro apolice
-){
+) {
 
     public DadosListagemAluguelDeCarro(Aluguel aluguel) {
         this(

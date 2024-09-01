@@ -8,9 +8,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 
 @Schema(description = "Dados para atualizar um motorista existente.")
 public record DadosAtualizacaoMotorista(
@@ -25,7 +30,7 @@ public record DadosAtualizacaoMotorista(
         String nome,
 
         @NotNull(message = "A data de nascimento é obrigatória")
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Adulto(message = "Você não é maior de idade")
         @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
@@ -50,6 +55,11 @@ public record DadosAtualizacaoMotorista(
 
         @NotNull(message = "O sexo é obrigatório")
         @Schema(description = "Sexo do motorista.")
-        Sexo sexo
+        Sexo sexo,
+
+        @UpdateTimestamp
+        @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
+        LocalDateTime lastUpdated
 ) {
 }

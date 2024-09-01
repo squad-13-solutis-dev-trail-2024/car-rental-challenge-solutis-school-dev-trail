@@ -6,28 +6,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+
 @Schema(description = "Dados resumidos de um motorista para listagem.")
 public record DadosListagemMotorista(
 
-        @Schema(description = "Nome completo do motorista.", example = "João Silva")
+        @Schema(description = "Nome completo do motorista.")
         String nome,
 
-        @Schema(description = "Endereço de email do motorista.", example = "joao.silva@example.com")
+        @Schema(description = "Endereço de email do motorista.")
         String email,
 
-        @JsonFormat(pattern = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "CPF do motorista, formatado com pontos e hífen.", example = "123.456.789-00")
+        @JsonFormat(pattern = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "CPF do motorista, formatado com pontos e hífen.")
         String cpf,
 
-        @JsonFormat(pattern = "\\d{11}", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Número da CNH do motorista, sem formatação.", example = "12345678901")
+        @JsonFormat(pattern = "\\d{11}", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Número da CNH do motorista, sem formatação.")
         String numeroCNH,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data de nascimento do motorista.", example = "10/05/1990")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 
-        @Schema(description = "Indica se o motorista está ativo (true) ou inativo (false).", example = "true")
+        @Schema(description = "Indica se o motorista está ativo (true) ou inativo (false).")
         boolean ativo
 ) {
 

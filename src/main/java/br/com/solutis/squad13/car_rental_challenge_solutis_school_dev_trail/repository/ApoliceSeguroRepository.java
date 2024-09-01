@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+@Repository("ApoliceSeguroRepository")
+@Schema(description = "Repositório JPA para a entidade ApoliceSeguro.")
 public interface ApoliceSeguroRepository extends JpaRepository<ApoliceSeguro, Long> {
 
     ApoliceSeguro findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
