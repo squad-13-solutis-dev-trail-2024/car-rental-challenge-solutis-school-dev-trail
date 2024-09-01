@@ -80,5 +80,77 @@ public enum DescricaoAcessorio {
     CARREGADOR_WIRELESS,
 
     @Schema(description = "Assistente de Frenagem de Emergência.")
-    ASSISTENTE_FRENAGEM_EMERGENCIA
+    ASSISTENTE_FRENAGEM_EMERGENCIA,
+
+    @Schema(description = "Controle de Cruzeiro Adaptativo.")
+    CONTROLE_CRUZEIRO_ADAPTATIVO,
+
+    @Schema(description = "Alerta de Ponto Cego.")
+    ALERTA_PONTO_CEGO,
+
+    @Schema(description = "Alerta de Mudança de Faixa.")
+    ALERTA_MUDANCA_FAIXA,
+
+    @Schema(description = "Piloto Automático.")
+    PILOT_AUTOMATICO,
+
+    @Schema(description = "Faróis de LED.")
+    FAROIS_LED,
+
+    @Schema(description = "Faróis de Xenon.")
+    FAROIS_XENON,
+
+    @Schema(description = "Teto Panorâmico.")
+    TETO_PANORAMICO,
+
+    @Schema(description = "Rack de Teto.")
+    RACK_TETO,
+
+    @Schema(description = "Engate de Reboque.")
+    ENGATE_REBOQUE,
+
+    @Schema(description = "Sensor de Chuva.")
+    SENSOR_CHUVA,
+
+    @Schema(description = "Sensor Crepuscular.")
+    SENSOR_CREPUSCULAR,
+
+    @Schema(description = "Limpador de Farol.")
+    LIMPADOR_FAROL,
+
+    @Schema(description = "Vidros Elétricos.")
+    VIDROS_ELETRICOS,
+
+    @Schema(description = "Travas Elétricas.")
+    TRAVAS_ELETRICAS,
+
+    @Schema(description = "Direção Hidráulica/Elétrica.")
+    DIRECAO_ASSISTIDA,
+
+    @Schema(description = "Ar-condicionado Digital.")
+    AR_CONDICIONADO_DIGITAL,
+
+    @Schema(description = "Computador de Bordo.")
+    COMPUTADOR_BORDO,
+
+    @Schema(description = "Painel de Instrumentos Digital.")
+    PAINEL_INSTRUMENTOS_DIGITAL,
+
+    @Schema(description = "Kit Multimídia.")
+    KIT_MULTIMIDIA,
+
+    @Schema(description = "DVD Player.")
+    DVD_PLAYER,
+
+    @Schema(description = "Entrada USB.")
+    ENTRADA_USB,
+
+    @Schema(description = "Conexão Wi-Fi.")
+    CONEXAO_WIFI,
+
+    @Schema(description = "Sistema Start-Stop.")
+    SISTEMA_START_STOP,
+
+    @Schema(description = "Reconhecimento de Voz.")
+    RECONHECIMENTO_VOZ
 }

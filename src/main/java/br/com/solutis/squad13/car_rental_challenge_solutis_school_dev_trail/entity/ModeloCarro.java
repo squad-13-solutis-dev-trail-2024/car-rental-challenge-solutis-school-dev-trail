@@ -1,8 +1,12 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.fabricante.DadosCadastroFabricante;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -61,6 +65,16 @@ public class ModeloCarro {
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de carros específicos deste modelo.")
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
+
+    public ModeloCarro(
+            @NotBlank(message = "A descrição do modelo é obrigatória.") String descricao,
+            @NotNull(message = "A categoria do modelo é obrigatória.") Categoria categoria,
+            @Valid @NotNull(message = "Os dados do fabricante são obrigatórios.") DadosCadastroFabricante fabricante)
+    {
+        this.descricao = descricao;
+        this.categoria = categoria;
+        this.fabricante = new Fabricante(fabricante.nome());
+    }
 
     @Override
     public String toString() {

@@ -2,6 +2,8 @@ DROP DATABASE IF EXISTS db_car_rental_solutis;
 CREATE DATABASE IF NOT EXISTS db_car_rental_solutis;
 USE db_car_rental_solutis;
 
+SELECT * FROM tb_modelo_carro;
+
 DROP FUNCTION IF EXISTS calcular_valor_total_inicial;
 DROP FUNCTION IF EXISTS calcular_valor_total_final;
 DROP TRIGGER IF EXISTS calcular_valor_inicial_before_insert;

@@ -2,6 +2,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -47,6 +48,10 @@ public class Fabricante {
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de modelos de carros produzidos pelo fabricante.")
     private List<ModeloCarro> modelos = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de modelo para existir
+
+    public Fabricante(@NotBlank(message = "O nome do fabricante é obrigatório.") String nome) {
+        this.nome = nome;
+    }
 
     @Override
     public String toString() {

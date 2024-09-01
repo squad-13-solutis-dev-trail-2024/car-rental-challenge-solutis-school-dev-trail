@@ -21,9 +21,10 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
     CommandLineRunner initDatabase(JdbcTemplate jdbcTemplate) {
         return args -> {
             // Verifica se o arquivo de flag existe
-            if (!new File("src/main/resources/.data_initialized").exists()) {
+            File flagFile = new File("src/main/resources/.data_initialized");
+            if (!flagFile.exists()) {
                 try {
-                    String filePath = "C:\\Users\\Pichau\\Desktop\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
+                    String filePath = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
                     String sqlScript = new String(Files.readAllBytes(Paths.get(filePath)));
 
                     String[] sqlCommands = sqlScript.split(";");
@@ -35,9 +36,12 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
                     }
 
                     // Cria o arquivo de flag após a execução bem-sucedida
-                    new File("src/main/resources/.data_initialized").createNewFile();
-
-                    System.out.println("Script SQL executado e banco de dados inicializado.");
+                    boolean fileCreated = flagFile.createNewFile();
+                    if (fileCreated) {
+                        System.out.println("Arquivo de flag criado: banco de dados inicializado.");
+                    } else {
+                        System.out.println("Arquivo de flag já existia.");
+                    }
                 } catch (Exception e) {
                     System.err.println("Erro ao executar o script SQL: " + e.getMessage());
                 }
