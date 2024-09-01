@@ -20,7 +20,7 @@ public record DadosAtualizarCarro(
         String nome,
 
         @NotBlank(message = "A placa é obrigatória")
-        @Pattern(regexp = "[A-Z]{3}-\\d{4}", message = "A placa deve seguir o formato ABC-1234")
+        @Pattern(regexp = "[A-Z]{3}-\\d{4}", message = "A placa deve seguir o formato ABC-1234 ")
         @Schema(description = "Placa do carro.", example = "ABC-1234")
         String placa,
 
