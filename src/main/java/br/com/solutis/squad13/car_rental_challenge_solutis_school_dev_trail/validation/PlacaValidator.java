@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public @Schema(description = "Validador que verifica se a placa informada é válida.")
-class PlacaValidator implements ConstraintValidator<Placa, String> {
+@Schema(description = "Validador que verifica se a placa informada é válida.")
+public class PlacaValidator implements ConstraintValidator<Placa, String> {
+
+    public PlacaValidator() {}
 
     @Override
     public void initialize(Placa constraintAnnotation) {

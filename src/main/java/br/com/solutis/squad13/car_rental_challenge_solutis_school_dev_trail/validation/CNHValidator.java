@@ -8,11 +8,11 @@ import jakarta.validation.ConstraintValidatorContext;
 @Schema(description = "Validador que verifica a validade de um número de CNH.")
 public class CNHValidator implements ConstraintValidator<CNH, String> {
 
-    public CNHValidator() {
-    }
+    public CNHValidator() {}
 
     @Override
     public void initialize(CNH constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override

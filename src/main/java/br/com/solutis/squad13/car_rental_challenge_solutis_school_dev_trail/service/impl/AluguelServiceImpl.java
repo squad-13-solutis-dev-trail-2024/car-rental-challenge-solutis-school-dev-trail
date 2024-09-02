@@ -10,8 +10,8 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.BoletoBarras;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.PixKey;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.ApoliceSeguroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
@@ -41,65 +41,7 @@ import static java.time.LocalDate.now;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 
-/*
-    História de Usuário:
-
-    Escolha de Veículo para Aluguel
-    Como um cliente cadastrado na locadora de automóveis,
-    Eu quero poder escolher um veículo disponível para alugar,
-    Para reservar o veículo que atenda às minhas necessidades de locomoção.
-
-    Critérios de Aceitação:
-        - Na página inicial deve haver uma seção "Seleção de Veículos" ou similar.
-        - Os veículos disponíveis para aluguel devem ser apresentados em uma lista ou grade, exibindo informações como fabricante, modelo, categoria, acessórios e preço por dia.
-        - Cada veículo deve ter uma imagem representativa para auxiliar na identificação.
-        - O cliente deve ser capaz de aplicar filtros, como categoria de veículo (carro, SUV, caminhonete) ou acessórios (ar-condicionado, sistema de navegação, etc.).
-        - Ao clicar em um veículo, o cliente deve ser direcionado para uma página de detalhes do veículo.
-        - Na página de detalhes, o cliente deve ver informações mais detalhadas sobre o veículo, incluindo especificações técnicas e descrição.
-        - O cliente deve ter a opção de selecionar o período de aluguel, especificando datas de início e término.
-        - Após selecionar o período, o cliente deve ser capaz de adicionar o veículo ao seu carrinho de aluguel.
-        - O carrinho de aluguel deve exibir um resumo dos veículos selecionados, suas datas de aluguel e o custo total estimado.
-        - O cliente deve ter a opção de revisar o carrinho, fazer ajustes e confirmar a reserva.
-        - Uma vez confirmada a reserva, o cliente deve receber uma confirmação na tela com os detalhes da reserva.
-
-    Notas adicionais:
-        Esta história de usuário trata do processo de escolha de um veículo para aluguel por parte
-        de um cliente cadastrado. Os critérios de aceitação descrevem os passos e funcionalidades
-        necessárias para que o cliente possa navegar pelos veículos disponíveis, selecionar um
-        veículo, escolher as datas de aluguel e confirmar sua reserva. Essa funcionalidade é
-        essencial para permitir que os clientes escolham e reservem veículos de acordo com suas
-        preferências e necessidades.
-
-    ------------------------------------------------------------------------------------------------------
-
-    História de Usuário: Efetivação do Aluguel de Veículo
-    Como um cliente cadastrado que selecionou um veículo para alugar,
-    Eu quero poder efetivar o aluguel do veículo selecionado,
-    Para confirmar minha reserva e iniciar o processo de aluguel.
-
-    Critérios de Aceitação:
-        - Após revisar o carrinho de aluguel, devo ter a opção de confirmar a reserva e efetivar o aluguel.
-        - Ao confirmar a reserva, devo ser redirecionado para uma página de resumo da reserva, exibindo todos os detalhes do aluguel.
-        - A página de resumo deve conter informações sobre o veículo selecionado, datas de aluguel, custo total estimado e termos de aluguel.
-        - Devo ser solicitado a revisar e concordar com os termos e condições do aluguel antes de prosseguir.
-        - Após concordar com os termos, devo ter a opção de escolher um metodo de pagamento.
-        - O sistema deve permitir a inserção das informações do cartão de crédito ou outro metodo de pagamento aceito. (simulado)
-        - Deve haver uma opção para confirmar o pagamento e finalizar o processo de aluguel.
-        - Após a confirmação do pagamento, devo receber na tela uma confirmação contendo todos os detalhes do aluguel, informações de contato e a fatura.
-        - O sistema deve marcar o veículo como "reservado" e bloquear as datas de aluguel no calendário.
-        - O cliente deve poder acessar seus aluguéis confirmados e detalhes futuros através da sua conta.
-
-    Notas adicionais:
-        Essa história de usuário aborda a etapa final do processo de aluguel, onde o cliente
-        confirmou a reserva do veículo selecionado e efetiva o aluguel ao concordar com os termos,
-        inserir informações de pagamento e confirmar o pagamento. Os critérios de aceitação
-        detalham as ações que o cliente deve ser capaz de realizar, bem como os resultados
-        esperados, como o recebimento de um e-mail de confirmação e o bloqueio das datas de
-        aluguel. A efetivação do aluguel é um passo crucial para garantir que os clientes obtenham
-        acesso ao veículo escolhido para as datas desejadas.
- */
-
-@Service
+@Service("AluguelService")
 @Schema(description = "Serviço que implementa as operações de aluguel")
 public class AluguelServiceImpl implements AluguelService {
 
@@ -112,7 +54,8 @@ public class AluguelServiceImpl implements AluguelService {
 
     public AluguelServiceImpl(AluguelRepository aluguelRepository,
                               MotoristaRepository motoristaRepository,
-                              CarroRepository carroRepository, ApoliceSeguroRepository apoliceSeguroRepository) {
+                              CarroRepository carroRepository,
+                              ApoliceSeguroRepository apoliceSeguroRepository) {
         this.aluguelRepository = aluguelRepository;
         this.motoristaRepository = motoristaRepository;
         this.carroRepository = carroRepository;
@@ -302,33 +245,68 @@ public class AluguelServiceImpl implements AluguelService {
         return alugueis.map(DadosListagemAluguel::new);
     }
 
+    @Override
+    @Transactional
+    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
+        log.info("Iniciando a troca de carro para o aluguel com ID: {}", idAluguel);
+        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
+        log.info("Aluguel encontrado: {}", aluguel);
+        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
+        log.info("Carro atual do aluguel: {}", carroErrado);
+        if (aluguel.getStatusPagamento() == PENDENTE) {
+            log.info("Status do pagamento do aluguel é PENDENTE, prosseguindo com a troca.");
+            carroErrado.disponibilizarAluguel();
+            Carro carro = buscarCarroPorId(idCarro);
+            log.info("Novo carro selecionado para o aluguel: {}", carro);
+            if (!carro.isDisponivel()) throw new ValidationException("Carro esta indisponivel");
+
+            BigDecimal valorTotalInicialAluguel = calcularValorTotalInicialAluguelAtt(aluguel, carro, aluguel.getApoliceSeguro().getValorFranquia());
+
+            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+            aluguel.setValorTotalInicial(valorTotalInicialAluguel.add(apolice));
+            aluguel.setValorTotalFinal(null);
+
+            carro.bloquearAluguel();
+            carroRepository.save(carro);
+
+            aluguel.adicionarCarro(carro);
+            aluguelRepository.save(aluguel);
+
+            log.info("Troca de carro concluída com sucesso para o aluguel com ID: {}", idAluguel);
+            return aluguel;
+        } else {
+            log.warn("Troca de carro não permitida para o aluguel com ID: {}, status do pagamento diferente de PENDENTE.", idAluguel);
+            throw new ValidationException("Troca permitida somente quando o status estiver pendente");
+        }
+    }
+
     private void processarPagamento(long aluguel, DadosPagamento tipoPagamento) {
+        log.info("Iniciando o processamento do pagamento para o aluguel com ID: {}", aluguel);
         TipoPagamento modalidadePagamento = tipoPagamento.tipoPagamento();
 
         Optional<Aluguel> aluguelTipoPagamento = aluguelRepository.findById(aluguel);
         Aluguel aluguelEncontrado = aluguelTipoPagamento.orElseThrow(() -> new RuntimeException("Aluguel não encontrado com ID: " + aluguel));
+        log.info("Aluguel encontrado para processamento do pagamento: {}", aluguelEncontrado);
 
         switch (modalidadePagamento) {
             case PIX -> aluguelEncontrado.setCampoPix(PixKey.generatePixKey());
-
             case BOLETO -> aluguelEncontrado.setCampoBoleto(BoletoBarras.gerarCodigoDeBarras());
-
             case CARTAO_CREDITO, CARTAO_DEBITO -> {
                 aluguelEncontrado.setNumeroCartao(tipoPagamento.numeroCartao());
                 aluguelEncontrado.setValidadeCartao(tipoPagamento.validadeCartao());
                 aluguelEncontrado.setCvv(tipoPagamento.cvv());
             }
-
             case DINHEIRO -> aluguelEncontrado.setPagamentoDinheiro("Pagamento no local de recolhimento");
-
             default -> {
                 log.warn("Tipo de pagamento inválido: {}", tipoPagamento);
                 throw new ValidationException("Tipo de pagamento inválido.");
             }
         }
 
+        log.info("Processamento do pagamento concluído com sucesso para o aluguel com ID: {}", aluguel);
         aluguelRepository.save(aluguelEncontrado);
     }
+
     private void bloquearCarroParaAluguel(Aluguel aluguel) {
         Carro carro = aluguel.getCarro();
         log.debug("Verificando disponibilidade do carro para bloqueio. ID do carro: {}", carro.getId());
@@ -375,28 +353,34 @@ public class AluguelServiceImpl implements AluguelService {
     private Aluguel buscarAluguelPeloId(Long idAluguel) {
         log.debug("Buscando aluguel pelo ID: {}", idAluguel);
         return aluguelRepository.findById(idAluguel)
-                .orElseThrow(() -> {
-                    log.warn("Aluguel não encontrado com o ID: {}", idAluguel);
-                    return new EntityNotFoundException("Aluguel não encontrado com o ID: " + idAluguel);
-                });
+                .orElseThrow(
+                        () -> {
+                            log.warn("Aluguel não encontrado com o ID: {}", idAluguel);
+                            return new EntityNotFoundException("Aluguel não encontrado com o ID: " + idAluguel);
+                        }
+                );
     }
 
     private Motorista buscarMotoristaPorEmail(String email) {
         log.debug("Buscando motorista pelo e-mail: {}", email);
         return motoristaRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Motorista não encontrado com o e-mail: {}", email);
-                    return new EntityNotFoundException("Motorista não encontrado com o e-mail: " + email);
-                });
+                .orElseThrow(
+                        () -> {
+                            log.warn("Motorista não encontrado com o e-mail: {}", email);
+                            return new EntityNotFoundException("Motorista não encontrado com o e-mail: " + email);
+                        }
+                );
     }
 
     private Carro buscarCarroPorId(Long idCarro) {
         log.debug("Buscando carro pelo ID: {}", idCarro);
         return carroRepository.findById(idCarro)
-                .orElseThrow(() -> {
-                    log.warn("Carro não encontrado com o ID: {}", idCarro);
-                    return new EntityNotFoundException("Carro não encontrado com o ID: " + idCarro);
-                });
+                .orElseThrow(
+                        () -> {
+                            log.warn("Carro não encontrado com o ID: {}", idCarro);
+                            return new EntityNotFoundException("Carro não encontrado com o ID: " + idCarro);
+                        }
+                );
     }
 
     private void validarDisponibilidadeDoCarro(Carro carro) {
@@ -433,71 +417,24 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-
-    @Override
-    @Transactional
-    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
-
-
-        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
-        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
-        if(aluguel.getStatusPagamento() == PENDENTE){
-            carroErrado.disponibilizarAluguel();
-            Carro carro = buscarCarroPorId(idCarro);
-            if(!carro.isDisponivel()){
-                throw new RuntimeException("Carro esta indisponivel");
-            }
-            BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
-
-            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
-            aluguel.setValorTotalInicial(b.add(apolice));
-            aluguel.setValorTotalFinal(null);
-            carro.bloquearAluguel();
-            carroRepository.save(carro);
-            aluguel.setCarro(carro);
-            aluguelRepository.save(aluguel);
-
-            return aluguel;
-        } else{
-            throw new RuntimeException("Troca permitida somente quando o status estiver pendente");
-        }
-    }
-
     private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro, BigDecimal a) {
         log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
-        long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.getDataRetirada(), dadosCadastroAluguel.getDataDevolucaoPrevista());
+        long diasParciaisDeAluguel = DAYS.between(
+                dadosCadastroAluguel.getDataRetirada(),
+                dadosCadastroAluguel.getDataDevolucaoPrevista()
+        );
         BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
 
         BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
-        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(a);;
-        return valorTotalParcialInicial;
+        return valorTotalParcialAluguel.add(a);
     }
-    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
 
+    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
         boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
         boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
         boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
-        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
 
-        return  valorApoliceSeguro;
-    }
-    private BigDecimal calcularValorTotal(LocalDate dataRetirada, LocalDate dataDevolucao, Carro carro, ApoliceSeguro apoliceSeguro) {
-        log.debug("Calculando valor total para o aluguel. ID do carro: {}", carro.getId());
-        long diasAluguel = DAYS.between(dataRetirada, dataDevolucao);
-        BigDecimal valorDiario = carro.getValorDiaria();
-
-        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(
-                apoliceSeguro.getProtecaoTerceiro(),
-                apoliceSeguro.getProtecaoCausasNaturais(),
-                apoliceSeguro.getProtecaoRoubo()
-        );
-
-        BigDecimal valorTotalAluguel = valorDiario.multiply(BigDecimal.valueOf(diasAluguel));
-        BigDecimal valorTotal = valorTotalAluguel.add(valorApoliceSeguro);
-
-        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasAluguel, valorTotalAluguel);
-        log.debug("Valor total calculado: {}", valorTotal);
-        return valorTotal;
+        return calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
     }
 
     private BigDecimal calcularValorTotalInicial(@Valid DadosCadastroAluguel dadosCadastroAluguel, Carro carro) {
@@ -552,12 +489,13 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-
-    private Aluguel criarAluguel(Carro carro,
-                                 Motorista motorista,
-                                 ApoliceSeguro apoliceSeguro,
-                                 DadosCadastroAluguel dadosCadastroAluguel,
-                                 BigDecimal valorTotalInicial) {
+    private Aluguel criarAluguel(
+            Carro carro,
+            Motorista motorista,
+            ApoliceSeguro apoliceSeguro,
+            DadosCadastroAluguel dadosCadastroAluguel,
+            BigDecimal valorTotalInicial
+    ) {
         log.debug("Criando novo aluguel. ID do carro: {}, ID do motorista: {}", carro.getId(), motorista.getId());
         Aluguel aluguel = new Aluguel();
         aluguel.adicionarCarro(carro);

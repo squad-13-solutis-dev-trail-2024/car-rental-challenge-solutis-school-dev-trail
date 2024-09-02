@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -44,7 +45,7 @@ public class Fabricante {
      * </p>
      */
     @OneToMany(mappedBy = "fabricante", cascade = ALL, orphanRemoval = true, fetch = EAGER)
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Schema(description = "Lista de modelos de carros produzidos pelo fabricante.")
     private List<ModeloCarro> modelos = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de modelo para existir
 

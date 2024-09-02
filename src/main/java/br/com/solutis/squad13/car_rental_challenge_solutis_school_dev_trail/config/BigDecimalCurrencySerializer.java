@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import static java.text.NumberFormat.getCurrencyInstance;
  * @see NumberFormat
  * @see Locale
  */
+@Configuration("BigDecimalCurrencySerializer")
 @Schema(description = "Serializador personalizado para formatar valores BigDecimal como moeda brasileira (R$).")
 public class BigDecimalCurrencySerializer extends JsonSerializer<BigDecimal> {
 

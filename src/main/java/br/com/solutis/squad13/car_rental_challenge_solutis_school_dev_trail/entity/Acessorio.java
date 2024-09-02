@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -66,7 +67,7 @@ public class Acessorio {
      * </p>
      */
     @ManyToMany(mappedBy = "acessorios", fetch = LAZY)
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Schema(description = "Conjunto de carros que possuem este acessório.")
     private Set<Carro> carros = new HashSet<>(); // Inicializado, pois um acessório não precisa estar associado a nenhum carro
 

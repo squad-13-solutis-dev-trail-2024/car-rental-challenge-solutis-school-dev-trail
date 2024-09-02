@@ -26,6 +26,7 @@ public record DadosListagemCarro(
         @Schema(description = "Valor da diária do aluguel do carro.")
         BigDecimal valorDiaria,
 
+        @Schema(description = "Indica se o carro está disponível para aluguel.")
         boolean disponivel,
 
         @Schema(description = "Lista de nomes dos acessórios do carro.")

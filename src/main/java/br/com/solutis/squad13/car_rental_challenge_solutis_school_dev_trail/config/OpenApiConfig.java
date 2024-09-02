@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.config;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration("OpenApiConfig")
+@Schema(description = "Configuração global do OpenAPI para a aplicação.")
 public class OpenApiConfig {
 
     @Value("${api.version}")

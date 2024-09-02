@@ -7,30 +7,14 @@ import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.br.CPF;
 
-@ValidarDadosPagamento
+@ValidarDadosPagamento(message = "Dados de pagamento inválidos.")
 public record DadosPagamento(
-
         @NotNull(message = "O tipo de pagamento é obrigatório.")
         TipoPagamento tipoPagamento,
-
-
-
-
         String numeroCartao,
-
-
-
         String validadeCartao,
-
-
-         // Exemplo para 3 ou 4 dígitos
         String cvv,
-
-
         String nomeTitular,
-
-
-
         String cpfTitular
 ) {
 }

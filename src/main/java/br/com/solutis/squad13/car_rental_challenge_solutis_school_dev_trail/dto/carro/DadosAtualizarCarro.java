@@ -3,10 +3,15 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Acessorio;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ModeloCarro;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 
 @Schema(description = "Dados para atualizar um carro existente.")
 public record DadosAtualizarCarro(
@@ -45,6 +50,11 @@ public record DadosAtualizarCarro(
 
         @NotNull(message = "O modelo do carro é obrigatório")
         @Schema(description = "Modelo do carro.")
-        ModeloCarro modelo
+        ModeloCarro modelo,
+
+        @UpdateTimestamp
+        @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
+        LocalDateTime lastUpdated
 ) {
 }

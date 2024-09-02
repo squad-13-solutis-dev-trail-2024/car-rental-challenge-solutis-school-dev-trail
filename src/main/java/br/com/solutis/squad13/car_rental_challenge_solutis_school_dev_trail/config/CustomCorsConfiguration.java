@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @see UrlBasedCorsConfigurationSource
  * @see CorsFilter
  */
-@Configuration
+@Configuration("CustomCorsConfiguration")
 @Schema(description = "Configuração global do CORS para a aplicação.")
 public class CustomCorsConfiguration {
 
