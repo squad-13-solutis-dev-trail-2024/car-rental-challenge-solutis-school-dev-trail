@@ -1,8 +1,13 @@
-DROP DATABASE IF EXISTS db_car_rental_solutis;
-CREATE DATABASE IF NOT EXISTS db_car_rental_solutis;
+# DROP DATABASE IF EXISTS db_car_rental_solutis;
+# CREATE DATABASE IF NOT EXISTS db_car_rental_solutis;
 USE db_car_rental_solutis;
 
+-- Faça uam querie que selecione um motorista ativo(que não está alugando nada)
+
+
+
 SELECT * FROM tb_motorista;
+SELECT * FROM tb_carro;
 
 DROP FUNCTION IF EXISTS calcular_valor_total_inicial;
 DROP FUNCTION IF EXISTS calcular_valor_total_final;

@@ -21,6 +21,7 @@ import java.util.Objects;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -151,6 +152,21 @@ public class Aluguel {
     @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro;
 
+
+    /**
+     * Carrinho de aluguel associado a este aluguel.
+     * <p>
+     * Representa o lado "um" no relacionamento um-para-um com a entidade {@link CarrinhoAluguel}.
+     * Cada {@link Aluguel} está associado a um único {@link CarrinhoAluguel}.
+     * </p>
+     *
+     * @see CarrinhoAluguel
+     */
+    @OneToOne(fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    @JoinColumn(name = "carrinho_aluguel_id", nullable = false, unique = true)
+    @Schema(description = "Carrinho de aluguel associado ao aluguel.")
+    private CarrinhoAluguel carrinhoAluguel;
+
     @CreationTimestamp
     @Setter(NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
@@ -161,6 +177,10 @@ public class Aluguel {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
+
+    public void adicionarCarrinhoAluguel(CarrinhoAluguel carrinhoAluguel) {
+        this.carrinhoAluguel = carrinhoAluguel;
+    }
 
     public void adicionarCampo(String nome, Object valor) {
         camposAdicionais.put(nome, valor);

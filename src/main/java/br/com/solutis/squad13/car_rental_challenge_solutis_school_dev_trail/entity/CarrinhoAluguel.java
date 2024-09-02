@@ -6,9 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.HashSet;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static java.time.LocalDateTime.now;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -17,12 +17,12 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
+@Entity(name = "CarrinhoAluguel")
 @Table(name = "tb_carrinho_alguel", schema = "db_car_rental_solutis")
 public class CarrinhoAluguel {
 
@@ -36,9 +36,22 @@ public class CarrinhoAluguel {
     private Motorista motorista;
 
     @ManyToMany
-    @JoinTable(name = "tb_carrinho_aluguel_veiculo",joinColumns = @JoinColumn(name = "carrinho_id"), inverseJoinColumns = @JoinColumn(name = "veiculo_id"))
+    @JoinTable(name = "tb_carrinho_aluguel_veiculo", joinColumns = @JoinColumn(name = "carrinho_id"), inverseJoinColumns = @JoinColumn(name = "veiculo_id"))
     @Schema(description = "Lista de veículos associados ao carrinho de aluguel")
-    private List<Carro> veiculos = new ArrayList<>();
+    private Set<Carro> veiculos = new HashSet<>();
+
+    /**
+     * Aluguel associado a este carrinho.
+     * <p>
+     * Representa o lado "um" no relacionamento um-para-um com a entidade {@link Aluguel}.
+     * Cada {@link CarrinhoAluguel} está associado a um único {@link Aluguel}.
+     * </p>
+     *
+     * @see Aluguel
+     */
+    @OneToOne(mappedBy = "carrinhoAluguel")
+    @Schema(description = "Aluguel associado ao carrinho.")
+    private Aluguel aluguel;
 
     @CreationTimestamp
     @Setter(NONE)
@@ -72,5 +85,52 @@ public class CarrinhoAluguel {
         } else {
             throw new IllegalArgumentException("O veículo não está no carrinho.");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CarrinhoAluguel{" +
+                "dataCreated=" + dataCreated +
+                ", id=" + id +
+                ", lastUpdated=" + lastUpdated +
+                ", motorista=" + motorista +
+                ", veiculos=" + veiculos +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+
+        CarrinhoAluguel that = (CarrinhoAluguel) o;
+
+        if (!id.equals(that.id)) return false;
+        if (!motorista.equals(that.motorista)) return false;
+        if (veiculos.size() != that.veiculos.size()) return false;
+
+        for (Carro carro : veiculos) {
+            if (!that.veiculos.contains(carro)) {
+                return false; // Se um carro não estiver presente no outro Set, são diferentes
+            }
+        }
+
+        return true; // Se todos os carros estiverem presentes em ambos os Sets, são iguais
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int hash = id.hashCode();
+
+        hash *= prime + motorista.hashCode();
+        hash *= prime + veiculos.size();
+        hash *= veiculos.stream().mapToInt(carro -> prime + carro.hashCode()).reduce(1, (a, b) -> a * b);
+
+        if (hash < 0) hash *= -1;
+
+        return hash;
     }
 }

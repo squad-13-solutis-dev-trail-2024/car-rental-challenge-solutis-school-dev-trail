@@ -5,8 +5,11 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.CarrinhoAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.CarrinhoAluguelService;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -34,9 +37,12 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 public class AluguelController {
 
     private final AluguelService aluguelService;
+    private final CarrinhoAluguelService carrinhoAluguelService;
 
-    public AluguelController(AluguelService aluguelService) {
+    public AluguelController(AluguelService aluguelService,
+                             CarrinhoAluguelService carrinhoAluguelService) {
         this.aluguelService = aluguelService;
+        this.carrinhoAluguelService = carrinhoAluguelService;
     }
 
     @Transactional
@@ -50,6 +56,12 @@ public class AluguelController {
             @RequestBody @Valid DadosCadastroAluguel dadosAlugarCarro,
             UriComponentsBuilder uriComponentsBuilder
     ) {
+        Long motoristaId = dadosAlugarCarro.motoristaId(); // Obtém o ID do motorista do DTO
+        List<Long> carrosIds = dadosAlugarCarro.carrosIds(); // Obtém os IDs dos carros do DTO
+
+        // Adiciona os carros ao carrinho do motorista
+        carrosIds.forEach(carroId -> carrinhoAluguelService.adicionarCarroAoCarrinho(motoristaId, carroId));
+
         var aluguel = aluguelService.reservarCarro(dadosAlugarCarro);
         var uri = uriComponentsBuilder.path("/api/v1/aluguel/{id}").buildAndExpand(aluguel.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemAluguel(aluguel));
@@ -95,7 +107,7 @@ public class AluguelController {
     })
     public ResponseEntity<DadosListagemAluguel> confirmarAluguel(
             @PathVariable Long id,
-            @RequestBody  @Valid DadosPagamento tipoPagamento) {
+            @RequestBody @Valid DadosPagamento tipoPagamento) {
         var aluguel = aluguelService.confirmarAluguel(id, tipoPagamento);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
@@ -151,18 +163,81 @@ public class AluguelController {
         return ResponseEntity.ok(alugueis);
     }
 
-    @PatchMapping("/trocar-carro/{idAluguel}")
-    @Operation(summary = "Confirmar troca Carro")
+    @PatchMapping("/trocar-carro/{idAluguel}/carro/{carroId}")
+    @Operation(summary = "Trocar Carro do aluguel")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Aluguel confirmado com sucesso."),
+            @ApiResponse(responseCode = "200", description = "Carro trocado com sucesso."),
             @ApiResponse(responseCode = "400", description = "Aluguel não pode ser confirmado."),
             @ApiResponse(responseCode = "404", description = "Aluguel não encontrado.")
     })
     public ResponseEntity<DadosListagemAluguel> trocarCarro(
             @PathVariable Long idAluguel,
-            @RequestParam Long idCarro) {
-        var aluguel = aluguelService.trocarCarro(idAluguel,idCarro);
+            @PathVariable Long carroId) {
+        var aluguel = aluguelService.trocarCarro(idAluguel, carroId);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
+    }
+
+    @GetMapping("/carrinho/{id}")
+    @Operation(summary = "Buscar um carrinho de aluguel pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrinho de aluguel encontrado."),
+            @ApiResponse(responseCode = "404", description = "Carrinho de aluguel não encontrado.")
+    })
+    public ResponseEntity<CarrinhoAluguel> buscarCarrinhoPorId(@PathVariable Long id) {
+        CarrinhoAluguel carrinhoAluguel = carrinhoAluguelService.buscarPorId(id);
+        return ResponseEntity.ok(carrinhoAluguel);
+    }
+
+    @GetMapping("/carrinho/motorista/{motoristaId}")
+    @Operation(summary = "Buscar um carrinho de aluguel pelo ID do motorista")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrinho de aluguel encontrado."),
+            @ApiResponse(responseCode = "404", description = "Carrinho de aluguel não encontrado para o motorista.")
+    })
+    public ResponseEntity<CarrinhoAluguel> buscarCarrinhoPorMotoristaId(@PathVariable Long motoristaId) {
+        CarrinhoAluguel carrinhoAluguel = carrinhoAluguelService.buscarPorMotoristaId(motoristaId);
+        return ResponseEntity.ok(carrinhoAluguel);
+    }
+
+    @PostMapping("/carrinho/motorista/{motoristaId}/carro/{carroId}")
+    @Transactional
+    @Operation(summary = "Adicionar um carro ao carrinho de aluguel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carro adicionado ao carrinho com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Motorista ou carro não encontrado.")
+    })
+    public ResponseEntity<CarrinhoAluguel> adicionarCarroAoCarrinho(
+            @PathVariable Long motoristaId,
+            @PathVariable Long carroId
+    ) {
+        CarrinhoAluguel carrinhoAluguel = carrinhoAluguelService.adicionarCarroAoCarrinho(motoristaId, carroId);
+        return ResponseEntity.ok(carrinhoAluguel);
+    }
+
+    @DeleteMapping("/carrinho/motorista/{motoristaId}/carro/{carroId}")
+    @Transactional
+    @Operation(summary = "Remover um carro do carrinho de aluguel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Carro removido do carrinho com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Motorista, carro ou carrinho de aluguel não encontrado.")
+    })
+    public ResponseEntity<Void> removerCarroDoCarrinho(
+            @PathVariable Long motoristaId,
+            @PathVariable Long carroId
+    ) {
+        carrinhoAluguelService.removerCarroDoCarrinho(motoristaId, carroId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/carrinho/motorista/{motoristaId}/carros")
+    @Operation(summary = "Listar os carros no carrinho de aluguel de um motorista")
+    @ApiResponse(responseCode = "200", description = "Lista de carros no carrinho.")
+    public ResponseEntity<Page<Carro>> listarCarrosNoCarrinho(
+            @PathVariable Long motoristaId,
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        Page<Carro> carros = carrinhoAluguelService.listarCarrosNoCarrinho(motoristaId, pageable);
+        return ResponseEntity.ok(carros);
     }
 
     @PatchMapping("/finalizar/{id}")

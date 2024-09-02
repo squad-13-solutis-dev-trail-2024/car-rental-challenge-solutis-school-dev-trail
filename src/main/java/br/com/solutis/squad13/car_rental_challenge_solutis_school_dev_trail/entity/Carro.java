@@ -13,9 +13,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
@@ -158,6 +156,20 @@ public class Carro {
     @Setter(NONE)
     @Schema(description = "Lista de aluguéis associados a este carro.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
+
+    /**
+     * Lista de carrinhos de aluguel que contêm este carro.
+     * <p>
+     * Representa o lado "muitos" no relacionamento muitos-para-muitos com a entidade {@link CarrinhoAluguel}.
+     * Um {@link Carro} pode estar presente em vários {@link CarrinhoAluguel}es.
+     * </p>
+     *
+     * @see CarrinhoAluguel
+     */
+    @ManyToMany(mappedBy = "veiculos", fetch = LAZY)
+    @Setter(NONE)
+    @Schema(description = "Lista de carrinhos de aluguel que contêm este carro.")
+    private Set<CarrinhoAluguel> carrinhosAluguel = new HashSet<>();
 
     @CreationTimestamp
     @Setter(NONE)

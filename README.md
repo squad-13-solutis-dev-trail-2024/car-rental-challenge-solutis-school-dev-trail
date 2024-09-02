@@ -2,34 +2,43 @@
 
 ## 🚗 Overview
 
-O **Car Rental Challenge** é uma aplicação backend robusta e eficiente, desenvolvida para simular um sistema completo de locadora de veículos, abrangendo desde o cadastro do cliente até a efetivação do aluguel. Criada como parte do desafio da Solutis School Dev Trail 2024, esta aplicação oferece uma experiência completa para o usuário, permitindo:
+O **Car Rental Challenge** é uma aplicação backend robusta e eficiente, desenvolvida para simular um sistema completo de
+locadora de veículos, abrangendo desde o cadastro do cliente até a efetivação do aluguel. Criada como parte do desafio
+da Solutis School Dev Trail 2024, esta aplicação oferece uma experiência completa para o usuário, permitindo:
 
 **Cadastro de Clientes:**
 
-- Clientes em potencial podem se cadastrar facilmente, fornecendo informações básicas como nome, data de nascimento, CPF e número da CNH.
+- Clientes em potencial podem se cadastrar facilmente, fornecendo informações básicas como nome, data de nascimento, CPF
+  e número da CNH.
 - O sistema garante a validade do endereço de e-mail para evitar registros duplicados.
 - Após o cadastro, o cliente é redirecionado para a página inicial, onde pode acessar os serviços da locadora.
 
 **Escolha de Veículo para Aluguel:**
 
-- Clientes cadastrados podem navegar por uma lista completa de veículos disponíveis, com informações detalhadas como fabricante, modelo, categoria, acessórios e preço por dia.
-- Filtros intuitivos permitem que o cliente encontre o veículo ideal com base em suas necessidades, como categoria e acessórios específicos.
+- Clientes cadastrados podem navegar por uma lista completa de veículos disponíveis, com informações detalhadas como
+  fabricante, modelo, categoria, acessórios e preço por dia.
+- Filtros intuitivos permitem que o cliente encontre o veículo ideal com base em suas necessidades, como categoria e
+  acessórios específicos.
 - Uma página de detalhes do veículo fornece informações completas, incluindo especificações técnicas e descrição.
 - O cliente pode selecionar o período de aluguel e adicionar o veículo ao seu carrinho.
-- O carrinho de aluguel exibe um resumo dos veículos selecionados, datas de aluguel e custo total estimado, permitindo revisões e ajustes antes da confirmação da reserva.
+- O carrinho de aluguel exibe um resumo dos veículos selecionados, datas de aluguel e custo total estimado, permitindo
+  revisões e ajustes antes da confirmação da reserva.
 
 **Efetivação do Aluguel:**
 
 - Após revisar o carrinho, o cliente pode confirmar a reserva e efetivar o aluguel.
-- Uma página de resumo da reserva exibe todos os detalhes do aluguel, incluindo informações do veículo, datas, custo total e termos de aluguel.
+- Uma página de resumo da reserva exibe todos os detalhes do aluguel, incluindo informações do veículo, datas, custo
+  total e termos de aluguel.
 - O cliente deve revisar e concordar com os termos e condições antes de prosseguir.
 - O sistema permite a escolha do método de pagamento e a inserção das informações de pagamento (simulado).
-- Após a confirmação do pagamento, o cliente recebe uma confirmação na tela com todos os detalhes do aluguel, informações de contato e a fatura.
+- Após a confirmação do pagamento, o cliente recebe uma confirmação na tela com todos os detalhes do aluguel,
+  informações de contato e a fatura.
 - O sistema marca o veículo como "reservado" e bloqueia as datas de aluguel no calendário.
 - O cliente pode acessar seus aluguéis confirmados e detalhes futuros através de sua conta.
 
-
-Em resumo, o **Car Rental Challenge** oferece uma solução completa para o gerenciamento de uma locadora de veículos, proporcionando uma experiência intuitiva e eficiente para os clientes, desde o cadastro até a efetivação do aluguel, com funcionalidades essenciais como pesquisa de veículos, gestão de reservas e acompanhamento de aluguéis.
+Em resumo, o **Car Rental Challenge** oferece uma solução completa para o gerenciamento de uma locadora de veículos,
+proporcionando uma experiência intuitiva e eficiente para os clientes, desde o cadastro até a efetivação do aluguel, com
+funcionalidades essenciais como pesquisa de veículos, gestão de reservas e acompanhamento de aluguéis.
 
 ## Tecnologias Utilizadas
 
@@ -42,6 +51,7 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
 - **Documentação com Swagger e Javadoc**
 - **Intellij IDEA Ultimate 2024.2.1**
 - **GitHub Copilot 1.5.20.6554**
+- **Postman 9.0.5**
 
 Essa combinação de tecnologias proporciona uma base sólida para o desenvolvimento de uma aplicação robusta, escalável e
 bem documentada.
@@ -162,11 +172,19 @@ Contribuições são bem-vindas! Por favor, siga as diretrizes abaixo para contr
 
 ## ✍️ Desenvolvedores:
 
-- **Aldemir Carlos**   [GitHub](https://github.com/aldemaas)          [LinkedIn](https://www.linkedin.com/in/aldemir-carlos/)            [E-mail](mailto:aldemirc22@gmail.com)
-- **Gabriel de Abreu** [GitHub](https://github.com/AzvedoGabriel)     [LinkedIn](https://www.linkedin.com/in/azevedo-gabriel-ssa/)       [E-mail](mailto:contato.gabrielazevedo0@gmail.com)
-- **Kauê Alexandre**   [GitHub](https://github.com/bugkaue)           [LinkedIn](https://www.linkedin.com/in/bugkaue/)                   [E-mail](mailto:alexkauezinho@gmail.com)
-- **Pedro Messias**    [GitHub](https://github.com/PedroMessiasxD)    [LinkedIn](https://www.linkedin.com/in/pedromessiasxd/)            [E-mail](mailto:pemlucena@gmail.com)
-- **Pedro Rocha**      [GitHub](https://github.com/Pedro-E-S-R)       [LinkedIn](https://www.linkedin.com/in/pedro-e-s-r/)               [E-mail](mailto:pedroemanoel323@gmail.com)
-- **Suerdo Flaubert**  [GitHub](https://github.com/Suerdo)            [LinkedIn](https://www.linkedin.com/in/suerdo-flaubert-78b3a4194/) [E-mail](mailto:suerdocampos@gmail.com)
-- **Vinícius Andrade** [GitHub](https://github.com/viniciusdsandrade) [LinkedIn](https://www.linkedin.com/in/viniciusdsandrade/)         [E-mail](mailto:vinicius_andrade2010@hotmail.com)
+- **Aldemir Carlos
+  **   [GitHub](https://github.com/aldemaas)          [LinkedIn](https://www.linkedin.com/in/aldemir-carlos/)            [E-mail](mailto:aldemirc22@gmail.com)
+- **Gabriel de Abreu
+  ** [GitHub](https://github.com/AzvedoGabriel)     [LinkedIn](https://www.linkedin.com/in/azevedo-gabriel-ssa/)       [E-mail](mailto:contato.gabrielazevedo0@gmail.com)
+- **Kauê Alexandre
+  **   [GitHub](https://github.com/bugkaue)           [LinkedIn](https://www.linkedin.com/in/bugkaue/)                   [E-mail](mailto:alexkauezinho@gmail.com)
+- **Pedro Messias
+  **    [GitHub](https://github.com/PedroMessiasxD)    [LinkedIn](https://www.linkedin.com/in/pedromessiasxd/)            [E-mail](mailto:pemlucena@gmail.com)
+- **Pedro Rocha
+  **      [GitHub](https://github.com/Pedro-E-S-R)       [LinkedIn](https://www.linkedin.com/in/pedro-e-s-r/)               [E-mail](mailto:pedroemanoel323@gmail.com)
+- **Suerdo Flaubert
+  **  [GitHub](https://github.com/Suerdo)            [LinkedIn](https://www.linkedin.com/in/suerdo-flaubert-78b3a4194/) [E-mail](mailto:suerdocampos@gmail.com)
+- **Vinícius Andrade
+  ** [GitHub](https://github.com/viniciusdsandrade) [LinkedIn](https://www.linkedin.com/in/viniciusdsandrade/)         [E-mail](mailto:vinicius_andrade2010@hotmail.com)
+
 ---

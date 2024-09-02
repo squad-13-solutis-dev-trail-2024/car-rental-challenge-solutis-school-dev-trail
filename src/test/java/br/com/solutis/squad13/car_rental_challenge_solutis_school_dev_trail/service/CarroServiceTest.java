@@ -154,6 +154,7 @@ public class CarroServiceTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
         when(carroRepository.findById(dadosAtualizar.id())).thenReturn(Optional.of(carroExistente));
@@ -233,6 +234,7 @@ public class CarroServiceTest {
                 modeloCarro,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -246,6 +248,7 @@ public class CarroServiceTest {
                 BigDecimal.valueOf(200.00),
                 acessorios,
                 modeloCarro,
+                null,
                 null,
                 null,
                 null

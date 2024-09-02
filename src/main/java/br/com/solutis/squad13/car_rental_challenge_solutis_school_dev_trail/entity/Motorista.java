@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
@@ -52,6 +53,20 @@ public class Motorista extends Pessoa {
     @Setter(NONE)
     @Schema(description = "Lista de aluguéis realizados pelo motorista.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um motorista pode não ter aluguéis associados
+
+    /**
+     * Lista de carrinhos de aluguel associados a este motorista.
+     * <p>
+     * Representa o lado "um" no relacionamento um-para-muitos com a entidade {@link CarrinhoAluguel}.
+     * Um {@link Motorista} pode ter vários {@link CarrinhoAluguel}es.
+     * </p>
+     *
+     * @see CarrinhoAluguel
+     */
+    @OneToMany(mappedBy = "motorista", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    @Setter(NONE)
+    @Schema(description = "Lista de carrinhos de aluguel associados ao motorista.")
+    private List<CarrinhoAluguel> carrinhosAluguel = new ArrayList<>();
 
     public Motorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         this.setNome(dadosCadastroMotorista.nome());
