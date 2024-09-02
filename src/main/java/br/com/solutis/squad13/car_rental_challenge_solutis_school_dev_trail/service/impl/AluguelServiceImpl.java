@@ -463,50 +463,41 @@ public class AluguelServiceImpl implements AluguelService {
 
         Aluguel aluguel = buscarAluguelPeloId(idAluguel);
         Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
-        carroErrado.disponibilizarAluguel();
-        Carro carro = buscarCarroPorId(idCarro);
+        if(aluguel.getStatusPagamento() == PENDENTE){
+            carroErrado.disponibilizarAluguel();
+            Carro carro = buscarCarroPorId(idCarro);
+            BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
+            aluguel.setValorTotalInicial(b);
+            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+            aluguel.setValorTotalFinal(b.add(apolice));
+            carro.bloquearAluguel();
+            carroRepository.save(carro);
+            aluguel.setCarro(carro);
+            aluguelRepository.save(aluguel);
 
-
-        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
-                aluguel.getApoliceSeguro().getProtecaoTerceiro(),
-                aluguel.getApoliceSeguro().getProtecaoCausasNaturais(),
-                aluguel.getApoliceSeguro().getProtecaoRoubo()
-        );
-
-        log.info("Apólice de seguro criada: {}", apoliceSeguro);
-
-        log.debug("Calculando valorTotalParcial total inicial do aluguel");
-        BigDecimal valorTotalInicial = calcularValorTotalInicialAluguelAtt(aluguel, carro);
-        log.info("Valor total inicial calculado: {}", valorTotalInicial);
-        apoliceSeguroRepository.save(apoliceSeguro);
-
-        log.debug("Bloqueando carro para o aluguel");
-        carro.bloquearAluguel();
-        carroRepository.save(carro);
-        log.info("Carro bloqueado e salvo: {}", carro);
-        aluguel.setCarro(carro);
-        log.debug("Salvando informações de aluguel no banco de dados");
-        Aluguel aluguelSalvo = aluguelRepository.save(aluguel);
-        log.info("Aluguel realizado com sucesso: {}", aluguelSalvo);
-        carroRepository.save(carroErrado);
-        return aluguelSalvo;
+            return aluguel;
+        } else{
+            throw new RuntimeException("Troca permitida somente quando o status estiver pendente");
+        }
     }
 
-    private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro) {
+    private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro, BigDecimal a) {
         log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
+        long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.getDataRetirada(), dadosCadastroAluguel.getDataDevolucaoPrevista());
+        BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
 
-        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
-                dadosCadastroAluguel.getApoliceSeguro().getProtecaoTerceiro(),
-                dadosCadastroAluguel.getApoliceSeguro().getProtecaoCausasNaturais(),
-                dadosCadastroAluguel.getApoliceSeguro().getProtecaoRoubo()
-        );
+        BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
+        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(a);;
+        return valorTotalParcialInicial;
+    }
+    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
 
-        return calcularValorTotal(
-                dadosCadastroAluguel.getDataRetirada(),
-                dadosCadastroAluguel.getDataDevolucaoPrevista(),
-                carro,
-                apoliceSeguro
-        );
+        boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
+        boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
+        boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
+
+        return  valorApoliceSeguro;
     }
     private BigDecimal calcularValorTotal(LocalDate dataRetirada, LocalDate dataDevolucao, Carro carro, ApoliceSeguro apoliceSeguro) {
         log.debug("Calculando valor total para o aluguel. ID do carro: {}", carro.getId());
