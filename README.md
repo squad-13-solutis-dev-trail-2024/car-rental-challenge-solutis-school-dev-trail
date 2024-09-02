@@ -150,7 +150,7 @@ car-rental-challenge
 5. **Acesse a documentação da API**:
     - A documentação estará disponível em: `http://localhost:8080/swagger-ui.html`
 
-## Contribuindo
+## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Por favor, siga as diretrizes abaixo para contribuir:
 
