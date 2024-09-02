@@ -2,6 +2,7 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.config.BigDecimalCurrencySerializer;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.acessorios.DadosListagemAcessorios;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.CarrinhoAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static java.util.stream.Collectors.toList;
@@ -73,10 +75,12 @@ public record DadosDetalhamentoCarro(
                         .map(DadosListagemAcessorios::new)
                         .map(DadosListagemAcessorios::nome)
                         .collect(toList()),
-                carro.getAlugueis()
-                        .stream()
-                        .map(DadosListagemAluguelDeCarro::new)
+                carro.getCarrinhosAluguel().stream()
+                        .map(CarrinhoAluguel::getAluguel) // Obtém o aluguel de cada carrinho
+                        .filter(Objects::nonNull) // Filtra aluguéis não nulos (opcional)
+                        .map(DadosListagemAluguelDeCarro::new) // Mapeia para DadosListagemAluguelDeCarro
                         .collect(toList())
         );
     }
 }
+

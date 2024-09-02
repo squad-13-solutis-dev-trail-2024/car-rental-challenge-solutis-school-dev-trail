@@ -73,8 +73,8 @@ public class AluguelServiceImpl implements AluguelService {
         return aluguel;
     }
 
-    @Override
     @Transactional
+    @Override
     public Aluguel reservarCarro(@Valid DadosCadastroAluguel dadosCadastroAluguel) {
         log.info("Iniciando processo de aluguel para o motorista: {}", dadosCadastroAluguel.emailMotorista());
 
@@ -88,10 +88,8 @@ public class AluguelServiceImpl implements AluguelService {
 
         log.debug("Validando disponibilidade dos carros: {}", dadosCadastroAluguel.carrosIds());
 
-        // Cria uma lista para armazenar os carros
         List<Carro> carrosParaAluguel = new ArrayList<>();
 
-        // Verifica a disponibilidade de cada carro e adiciona à lista
         for (Long carroId : dadosCadastroAluguel.carrosIds()) {
             Carro carro = buscarCarroPorId(carroId);
             validarDisponibilidadeDoCarro(carro);
@@ -103,14 +101,30 @@ public class AluguelServiceImpl implements AluguelService {
         validarDatasDeAluguel(dadosCadastroAluguel.dataRetirada(), dadosCadastroAluguel.dataDevolucaoPrevista());
         log.info("Datas de aluguel validadas com sucesso");
 
-        // Cria o carrinho de aluguel
-        CarrinhoAluguel carrinhoAluguel = new CarrinhoAluguel();
-        carrinhoAluguel.setMotorista(motorista);
-        carrinhoAluguelRepository.save(carrinhoAluguel); // Salva o carrinho vazio inicialmente
+        // Verifica se o motorista já possui um carrinho
+        Optional<CarrinhoAluguel> carrinhoExistente = carrinhoAluguelRepository.findByMotoristaId(motorista.getId());
 
-        // Adiciona os carros ao carrinho
-        carrosParaAluguel.forEach(carrinhoAluguel::adicionarCarro);
-        carrinhoAluguelRepository.save(carrinhoAluguel); // Salva o carrinho com os carros adicionados
+        CarrinhoAluguel carrinhoAluguel = carrinhoExistente.orElse(new CarrinhoAluguel());
+        carrinhoAluguel.setMotorista(motorista);
+
+        // Limpa o carrinho se já existir
+        if (carrinhoExistente.isPresent()) {
+            carrinhoAluguel.getVeiculos().clear();
+            log.info("Carrinho de aluguel do motorista com ID {} foi limpo.", motorista.getId());
+        }
+
+        // Adiciona os carros ao carrinho (cria um novo se não existir)
+        for (Carro carro : carrosParaAluguel) {
+            if (!carrinhoAluguel.getVeiculos().contains(carro)) {
+                carrinhoAluguel.adicionarCarro(carro);
+                log.info("Carro adicionado ao carrinho: {}", carro.getId());
+            } else {
+                log.warn("O carro já está no carrinho: {}", carro.getId());
+                throw new ValidationException("O veículo já está no carrinho.");
+            }
+        }
+
+        carrinhoAluguelRepository.save(carrinhoAluguel);
 
         ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
                 dadosCadastroAluguel.apoliceSeguro().getProtecaoTerceiro(),
@@ -121,17 +135,15 @@ public class AluguelServiceImpl implements AluguelService {
         log.info("Apólice de seguro criada: {}", apoliceSeguro);
 
         log.debug("Calculando valor total inicial do aluguel");
-        BigDecimal valorTotalInicial = calcularValorTotalInicial(dadosCadastroAluguel, carrosParaAluguel); // Usa a lista de carros
+        BigDecimal valorTotalInicial = calcularValorTotalInicial(dadosCadastroAluguel, carrosParaAluguel);
         log.info("Valor total inicial calculado: {}", valorTotalInicial);
 
         log.debug("Criando objeto Aluguel");
-        Aluguel aluguel = criarAluguel(carrosParaAluguel, motorista, apoliceSeguro, dadosCadastroAluguel, valorTotalInicial); // Usa a lista de carros
+        Aluguel aluguel = criarAluguel(carrosParaAluguel, motorista, apoliceSeguro, dadosCadastroAluguel, valorTotalInicial);
         log.info("Objeto Aluguel criado: {}", aluguel);
 
-        // Associa o carrinho ao aluguel
         aluguel.adicionarCarrinhoAluguel(carrinhoAluguel);
 
-        // Bloqueia os carros para o aluguel
         for (Carro carro : carrosParaAluguel) {
             log.debug("Bloqueando carro para o aluguel");
             carro.bloquearAluguel();
@@ -145,6 +157,7 @@ public class AluguelServiceImpl implements AluguelService {
 
         return aluguelSalvo;
     }
+
 
     @Override
     @Transactional
@@ -165,7 +178,7 @@ public class AluguelServiceImpl implements AluguelService {
         // Obtém os carros do carrinho do aluguel
         List<Carro> carros = aluguel.getCarrinhoAluguel().getVeiculos().stream().toList();
 
-        log.debug("Bloqueando carro para o aluguel. ID do carro: {}", aluguel.getCarro().getId());
+        log.debug("Bloqueando carro para o aluguel. ID do carro: {}", aluguel.getCarrinhoAluguel().getVeiculos().stream().toList());
         // Bloqueia os carros para o aluguel
         carros.forEach(this::bloquearCarrosParaAluguel);
 
@@ -223,7 +236,7 @@ public class AluguelServiceImpl implements AluguelService {
             log.warn("Cliente deverá pagar a diferença. Diferença: {}", diferenca);
         }
 
-        Long idCarro = aluguel.getCarro().getId();
+        Long idCarro = aluguel.getCarrinhoAluguel().getVeiculos().stream().findFirst().get().getId();
 
         log.debug("Liberando carro(s) para novos aluguéis. ID do carro: {}", idCarro);
         carros.forEach(this::liberarCarrosParaAluguel);
@@ -259,7 +272,7 @@ public class AluguelServiceImpl implements AluguelService {
         aluguel.setDataPagamento(null);
         aluguel.setDataCancelamento(now());
 
-        log.debug("Liberando carro para novos aluguéis, se necessário. ID do carro: {}", aluguel.getCarro().getId());
+        log.debug("Liberando carro para novos aluguéis, se necessário. ID do carro: {}", aluguel.getCarrinhoAluguel().getId());
         // Libera os carros para novos aluguéis, se necessário
         carros.forEach(this::liberarCarrosParaAluguel);
 
@@ -360,38 +373,62 @@ public class AluguelServiceImpl implements AluguelService {
 
     @Override
     @Transactional
-    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
+    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarroNovo) {
         log.info("Iniciando a troca de carro para o aluguel com ID: {}", idAluguel);
         Aluguel aluguel = buscarAluguelPeloId(idAluguel);
         log.info("Aluguel encontrado: {}", aluguel);
-        Carro carroErrado = buscarCarroPorId(carroRepository.findCarroIdByAluguelId(idAluguel));
-        log.info("Carro atual do aluguel: {}", carroErrado);
-        if (aluguel.getStatusPagamento() == PENDENTE) {
-            log.info("Status do pagamento do aluguel é PENDENTE, prosseguindo com a troca.");
-            carroErrado.disponibilizarAluguel();
-            Carro carro = buscarCarroPorId(carroRepository.findCarroIdByAluguelId(idAluguel));
-            log.info("Novo carro selecionado para o aluguel: {}", carro);
-            if (!carro.isDisponivel()) throw new ValidationException("Carro esta indisponivel");
 
-            BigDecimal valorTotalInicialAluguel = calcularValorTotalInicialAluguelAtt(aluguel, carro, aluguel.getApoliceSeguro().getValorFranquia());
-
-            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
-            aluguel.setValorTotalInicial(valorTotalInicialAluguel.add(apolice));
-            aluguel.setValorTotalFinal(null);
-
-            carro.bloquearAluguel();
-            carroRepository.save(carro);
-
-            aluguel.adicionarCarro(carro);
-            aluguelRepository.save(aluguel);
-
-            log.info("Troca de carro concluída com sucesso para o aluguel com ID: {}", idAluguel);
-            return aluguel;
-        } else {
+        if (aluguel.getStatusPagamento() != PENDENTE) {
             log.warn("Troca de carro não permitida para o aluguel com ID: {}, status do pagamento diferente de PENDENTE.", idAluguel);
             throw new ValidationException("Troca permitida somente quando o status estiver pendente");
         }
+
+        CarrinhoAluguel carrinhoAluguel = aluguel.getCarrinhoAluguel();
+
+        // Valida se o novo carro já está no carrinho
+        if (carrinhoAluguel.getVeiculos().stream().anyMatch(carro -> carro.getId().equals(idCarroNovo))) {
+            log.warn("O carro com ID {} já está no carrinho do aluguel com ID {}.", idCarroNovo, idAluguel);
+            throw new ValidationException("O carro já está no carrinho do aluguel.");
+        }
+
+        // Encontra o carro a ser removido (primeiro carro do carrinho)
+        Carro carroParaRemover = carrinhoAluguel.getVeiculos().iterator().next();
+        log.info("Carro a ser removido do aluguel: {}", carroParaRemover);
+
+        // Remove o carro do carrinho
+        carrinhoAluguel.retirarCarro(carroParaRemover);
+
+        // Disponibiliza o carro removido
+        carroParaRemover.disponibilizarAluguel();
+        carroRepository.save(carroParaRemover);
+
+        // Busca o novo carro a ser adicionado
+        Carro carroNovo = buscarCarroPorId(idCarroNovo);
+        log.info("Novo carro a ser adicionado ao aluguel: {}", carroNovo);
+
+        // Valida a disponibilidade do novo carro
+        if (!carroNovo.isDisponivel()) throw new ValidationException("Carro esta indisponivel");
+
+
+        // Adiciona o novo carro ao carrinho
+        carrinhoAluguel.adicionarCarro(carroNovo);
+        carrinhoAluguelRepository.save(carrinhoAluguel);
+
+        // Bloqueia o novo carro
+        carroNovo.bloquearAluguel();
+        carroRepository.save(carroNovo);
+
+        // Recalcula o valor total inicial do aluguel
+        BigDecimal valorTotalInicialAluguel = calcularValorTotalInicial(aluguel, carrinhoAluguel.getVeiculos().stream().toList());
+        BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+        aluguel.setValorTotalInicial(valorTotalInicialAluguel.add(apolice));
+        aluguel.setValorTotalFinal(null);
+        aluguelRepository.save(aluguel);
+
+        log.info("Troca de carro concluída com sucesso para o aluguel com ID: {}", idAluguel);
+        return aluguel;
     }
+
 
     private void processarPagamento(long aluguel, DadosPagamento tipoPagamento) {
         log.info("Iniciando o processamento do pagamento para o aluguel com ID: {}", aluguel);
@@ -524,17 +561,6 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-    private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro, BigDecimal a) {
-        log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
-        long diasParciaisDeAluguel = DAYS.between(
-                dadosCadastroAluguel.getDataRetirada(),
-                dadosCadastroAluguel.getDataDevolucaoPrevista()
-        );
-        BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
-
-        BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
-        return valorTotalParcialAluguel.add(a);
-    }
 
     private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
         boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
@@ -543,6 +569,19 @@ public class AluguelServiceImpl implements AluguelService {
 
         return calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
     }
+
+    private BigDecimal calcularValorTotalInicial(Aluguel aluguel, List<Carro> listaDeCarros) {
+        BigDecimal valorTotalInicial = BigDecimal.ZERO;
+
+        for (Carro carro : listaDeCarros) {
+            valorTotalInicial = valorTotalInicial.add(carro.getValorDiaria());
+        }
+
+        BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+
+        return valorTotalInicial.add(apolice);
+    }
+
 
     private BigDecimal calcularValorTotalInicial(@Valid DadosCadastroAluguel dadosCadastroAluguel, List<Carro> carros) {
         log.debug("Calculando valor total inicial para o aluguel. IDs dos carros: {}",

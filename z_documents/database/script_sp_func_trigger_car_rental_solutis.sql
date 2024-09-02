@@ -6,6 +6,11 @@ USE db_car_rental_solutis;
 
 
 
+-- Procure um motorista com email (faça um join na tabela pessoa)
+SELECT * FROM tb_motorista m
+JOIN tb_pessoa p ON m.pessoa_id = p.id
+WHERE p.email = 'vinicius_andrade2010@hotmail.com';
+
 SELECT * FROM tb_motorista;
 SELECT * FROM tb_carro;
 

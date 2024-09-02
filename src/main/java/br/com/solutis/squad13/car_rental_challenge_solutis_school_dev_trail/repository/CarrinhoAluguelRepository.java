@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface CarrinhoAluguelRepository extends JpaRepository<CarrinhoAluguel, Long> {
 
     Optional<CarrinhoAluguel> findByMotoristaId(Long motoristaId);
+
 }

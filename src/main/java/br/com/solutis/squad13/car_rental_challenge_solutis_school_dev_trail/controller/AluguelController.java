@@ -8,6 +8,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.CarrinhoAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Carro;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarrinhoAluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.CarrinhoAluguelService;
 import jakarta.validation.Valid;
@@ -27,6 +28,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 
@@ -56,13 +59,7 @@ public class AluguelController {
             @RequestBody @Valid DadosCadastroAluguel dadosAlugarCarro,
             UriComponentsBuilder uriComponentsBuilder
     ) {
-        Long motoristaId = dadosAlugarCarro.motoristaId(); // Obtém o ID do motorista do DTO
-        List<Long> carrosIds = dadosAlugarCarro.carrosIds(); // Obtém os IDs dos carros do DTO
-
-        // Adiciona os carros ao carrinho do motorista
-        carrosIds.forEach(carroId -> carrinhoAluguelService.adicionarCarroAoCarrinho(motoristaId, carroId));
-
-        var aluguel = aluguelService.reservarCarro(dadosAlugarCarro);
+        Aluguel aluguel = aluguelService.reservarCarro(dadosAlugarCarro);
         var uri = uriComponentsBuilder.path("/api/v1/aluguel/{id}").buildAndExpand(aluguel.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemAluguel(aluguel));
     }

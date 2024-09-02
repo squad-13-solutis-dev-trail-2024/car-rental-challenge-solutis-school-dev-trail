@@ -151,11 +151,10 @@ public class CarroServiceTest {
                 true,
                 BigDecimal.valueOf(200.00),
                 acessorios,
+                modelo,
                 null,
-                null,
-                null,
-                null,
-                null
+                now(),
+                now()
         );
         when(carroRepository.findById(dadosAtualizar.id())).thenReturn(Optional.of(carroExistente));
         when(carroRepository.existsByPlaca(dadosAtualizar.placa())).thenReturn(false);
@@ -233,9 +232,8 @@ public class CarroServiceTest {
                 acessorios,
                 modeloCarro,
                 null,
-                null,
-                null,
-                null
+                now(),
+                now()
         );
 
         Carro carro2 = new Carro(
@@ -249,9 +247,8 @@ public class CarroServiceTest {
                 acessorios,
                 modeloCarro,
                 null,
-                null,
-                null,
-                null
+                now(),
+                now()
         );
 
         List<Carro> carros = asList(carro1, carro2);

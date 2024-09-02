@@ -52,7 +52,7 @@ public record DadosListagemAluguel(
                 aluguel.getDataDevolucaoPrevista(),
                 aluguel.getValorTotalInicial(),
                 aluguel.getValorTotalFinal(),
-                new DadosListagemCarro(aluguel.getCarro()),
+                new DadosListagemCarro(aluguel.getCarrinhoAluguel().getVeiculos().toString()),
                 new DadosListagemApoliceSeguro(aluguel.getApoliceSeguro())
         );
     }

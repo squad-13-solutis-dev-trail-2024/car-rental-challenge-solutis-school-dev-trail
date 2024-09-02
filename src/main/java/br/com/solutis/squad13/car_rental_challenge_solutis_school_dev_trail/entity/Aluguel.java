@@ -14,9 +14,7 @@ import org.hibernate.proxy.HibernateProxy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -119,22 +117,6 @@ public class Aluguel {
     @Schema(description = "Motorista que realizou o aluguel.")
     private Motorista motorista;
 
-    /**
-     * Carro associado a este aluguel.
-     * <p>
-     * Representa o lado "muitos" no relacionamento um-para-muitos com a entidade {@link Carro}.
-     * Cada {@link Aluguel} está obrigatoriamente associado a um único {@link Carro}.
-     * O atributo `carro_id` na tabela `tb_aluguel` atua como chave estrangeira, referenciando
-     * a tabela `tb_carro`.
-     * </p>
-     *
-     * @see Carro
-     */
-    @JsonIgnore
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "carro_id", nullable = false)
-    @Schema(description = "Carro alugado.")
-    private Carro carro;
 
     /**
      * Apólice de seguro associada ao aluguel.
@@ -191,7 +173,7 @@ public class Aluguel {
     }
 
     public void adicionarCarro(Carro carro) {
-        this.carro = carro;
+        this.getCarrinhoAluguel().adicionarCarro(carro);
     }
 
     public void adicionarMotorista(Motorista motorista) {
@@ -207,7 +189,10 @@ public class Aluguel {
     @Schema(description = "Calcula o valorTotalParcial total do aluguel (com base na data de devolução e no valorTotalParcial da apólice de seguro).")
     private BigDecimal calcularValorTotal(LocalDate dataDevolucao) {
         long quantidadeDias = DAYS.between(dataRetirada, dataDevolucao);
-        BigDecimal valorDiarias = carro.getValorDiaria().multiply(valueOf(quantidadeDias));
+        BigDecimal valorDiarias = getCarrinhoAluguel().getVeiculos().stream()
+                .map(Carro::getValorDiaria)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .multiply(valueOf(quantidadeDias));
         return valorDiarias.add(calcularValorFranquia());
     }
 
@@ -221,7 +206,36 @@ public class Aluguel {
 
     @Override
     public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataRetirada + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valorTotalParcial=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
+        StringBuilder sb = new StringBuilder("Aluguel{id=");
+        sb.append(id)
+                .append(", dataPedido=")
+                .append(dataPedido)
+                .append(", dataRetirada=")
+                .append(dataRetirada)
+                .append(", dataDevolucaoPrevista=")
+                .append(dataDevolucaoPrevista)
+                .append(", valorTotalParcial=")
+                .append(valorTotalFinal)
+                .append(", motorista=")
+                .append(motorista)
+                .append(", apoliceSeguro=")
+                .append(apoliceSeguro);
+
+        // Adiciona a lista de carros do carrinho, se houver
+        if (carrinhoAluguel != null && !carrinhoAluguel.getVeiculos().isEmpty()) {
+            sb.append(", carros=[");
+            for (Carro carro : carrinhoAluguel.getVeiculos()) {
+                sb.append(carro.toString()).append(", ");
+            }
+            // Remove a última vírgula e espaço
+            sb.delete(sb.length() - 2, sb.length());
+            sb.append("]");
+        } else {
+            sb.append(", carros=[]"); // Indica lista vazia
+        }
+
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override

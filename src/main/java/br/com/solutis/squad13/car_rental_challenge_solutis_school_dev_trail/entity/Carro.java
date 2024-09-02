@@ -17,7 +17,6 @@ import java.util.*;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.NONE;
@@ -133,31 +132,6 @@ public class Carro {
     private ModeloCarro modelo;
 
     /**
-     * Lista de aluguéis associados a este carro.
-     * <p>
-     * Representa o lado "um" no relacionamento um-para-muitos com a entidade {@link Aluguel}.
-     * Um {@link Carro} pode estar associado a zero ou mais {@link Aluguel}es.
-     * </p>
-     *
-     * <p>
-     * A anotação `cascade = CascadeType.ALL` indica que as operações de persistência
-     * (como salvar, atualizar e remover) realizadas em um {@link Carro} serão
-     * automaticamente propagadas para os seus {@link Aluguel}es associados.
-     * </p>
-     *
-     * <p>
-     * A anotação `orphanRemoval = true` indica que se um {@link Aluguel} for removido
-     * da lista `alugueis`, ele também será removido do banco de dados.
-     * </p>
-     *
-     * @see Aluguel
-     */
-    @OneToMany(mappedBy = "carro", cascade = ALL, orphanRemoval = true)
-    @Setter(NONE)
-    @Schema(description = "Lista de aluguéis associados a este carro.")
-    private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
-
-    /**
      * Lista de carrinhos de aluguel que contêm este carro.
      * <p>
      * Representa o lado "muitos" no relacionamento muitos-para-muitos com a entidade {@link CarrinhoAluguel}.
@@ -230,26 +204,23 @@ public class Carro {
         this.acessorios.removeAll(acessorios);
     }
 
-    public void adicionarAluguel(Aluguel aluguel) {
-        this.alugueis.add(aluguel);
-    }
-
-    public void removerAluguel(Aluguel aluguel) {
-        this.alugueis.remove(aluguel);
-    }
-
-    public void adicionarAlugueis(List<Aluguel> alugueis) {
-        this.alugueis.addAll(alugueis);
-    }
-
-    public void removerAlugueis(List<Aluguel> alugueis) {
-        this.alugueis.removeAll(alugueis);
-    }
 
     @Override
     public String toString() {
-        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + disponivel + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modelo + ", alugueis=" + alugueis + '}';
+        return "Carro{" +
+                "id=" + id +
+                ", placa='" + placa + '\'' +
+                ", chassi='" + chassi + '\'' +
+                ", cor='" + cor + '\'' +
+                ", disponivel=" + disponivel +
+                ", valorDiaria=" + valorDiaria +
+                ", acessorios=" + (acessorios != null ? acessorios.toString() : "Nenhum acessório") +
+                ", modelo=" + modelo +
+                ", dataCreated=" + dataCreated +
+                ", lastUpdated=" + lastUpdated +
+                '}';
     }
+
 
     @Override
     public final boolean equals(Object o) {

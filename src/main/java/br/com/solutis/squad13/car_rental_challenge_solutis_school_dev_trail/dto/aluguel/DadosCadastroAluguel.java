@@ -3,10 +3,13 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
@@ -38,6 +41,11 @@ public record DadosCadastroAluguel(
 
         @NotEmpty(message = "A lista de carros é obrigatória.")
         @Schema(description = "Lista de IDs dos carros a serem alugados.")
-        List<Long> carrosIds
+        Set<Long> carrosIds
 ) {
+    public DadosCadastroAluguel {
+        Set<Long> uniqueCarIds = new HashSet<>(carrosIds);
+        if (uniqueCarIds.size() != carrosIds.size())
+            throw new ValidationException("A lista de carros não pode conter IDs duplicados.");
+    }
 }
