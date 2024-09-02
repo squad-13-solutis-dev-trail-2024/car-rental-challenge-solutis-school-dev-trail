@@ -467,9 +467,10 @@ public class AluguelServiceImpl implements AluguelService {
             carroErrado.disponibilizarAluguel();
             Carro carro = buscarCarroPorId(idCarro);
             BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
-            aluguel.setValorTotalInicial(b);
+
             BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
-            aluguel.setValorTotalFinal(b.add(apolice));
+            aluguel.setValorTotalInicial(b.add(apolice));
+            aluguel.setValorTotalFinal(null);
             carro.bloquearAluguel();
             carroRepository.save(carro);
             aluguel.setCarro(carro);
