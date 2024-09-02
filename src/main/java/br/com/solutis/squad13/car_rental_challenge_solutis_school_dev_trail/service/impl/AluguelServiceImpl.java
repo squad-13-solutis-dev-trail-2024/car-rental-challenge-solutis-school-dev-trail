@@ -466,6 +466,9 @@ public class AluguelServiceImpl implements AluguelService {
         if(aluguel.getStatusPagamento() == PENDENTE){
             carroErrado.disponibilizarAluguel();
             Carro carro = buscarCarroPorId(idCarro);
+            if(!carro.isDisponivel()){
+                throw new RuntimeException("Carro esta indisponivel");
+            }
             BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
 
             BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
