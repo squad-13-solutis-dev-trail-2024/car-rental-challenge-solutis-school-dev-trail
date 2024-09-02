@@ -55,9 +55,9 @@ public class CarroController {
             @ApiResponse(responseCode = "200", description = "Carro encontrado."),
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
-    public ResponseEntity<DadosListagemCarro> detalhar(@PathVariable Long id) {
+    public ResponseEntity<DadosDetalhamentoCarro> detalhar(@PathVariable Long id) {
         var carro = carroService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosListagemCarro(carro));
+        return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
     }
 
     @GetMapping

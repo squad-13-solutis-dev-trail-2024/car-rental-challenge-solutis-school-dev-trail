@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -24,7 +28,7 @@ import java.util.Objects;
 public class ModeloCarro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Schema(description = "Descrição do modelo de carro.", example = "Corolla")
@@ -44,7 +48,7 @@ public class ModeloCarro {
     @Schema(description = "Fabricante do modelo de carro.")
     private Fabricante fabricante;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(nullable = false)
     @Schema(description = "Categoria do modelo de carro.", example = "SEDAN_COMPACTO")
     private Categoria categoria;
@@ -61,20 +65,10 @@ public class ModeloCarro {
      * sejam removidos do banco de dados.
      * </p>
      */
-    @OneToMany(mappedBy = "modelo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "modelo", cascade = ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de carros específicos deste modelo.")
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
-
-    public ModeloCarro(
-            @NotBlank(message = "A descrição do modelo é obrigatória.") String descricao,
-            @NotNull(message = "A categoria do modelo é obrigatória.") Categoria categoria,
-            @Valid @NotNull(message = "Os dados do fabricante são obrigatórios.") DadosCadastroFabricante fabricante)
-    {
-        this.descricao = descricao;
-        this.categoria = categoria;
-        this.fabricante = new Fabricante(fabricante.nome());
-    }
 
     @Override
     public String toString() {

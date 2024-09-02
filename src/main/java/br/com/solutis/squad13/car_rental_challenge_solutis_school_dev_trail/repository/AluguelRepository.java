@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
-@Repository
+@Repository("AluguelRepository")
 @Schema(description = "Repositório JPA para a entidade Aluguel.")
 public interface AluguelRepository extends JpaRepository<Aluguel, Long> {
 }

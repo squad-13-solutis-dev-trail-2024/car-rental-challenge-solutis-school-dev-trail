@@ -22,7 +22,7 @@ import java.util.List;
 import static java.lang.String.join;
 import static org.slf4j.LoggerFactory.getLogger;
 
-@Service
+@Service("motoristaService")
 @Schema(description = "Serviço que implementa as operações relacionadas a motoristas.")
 public class MotoristaServiceImpl implements MotoristaService {
 

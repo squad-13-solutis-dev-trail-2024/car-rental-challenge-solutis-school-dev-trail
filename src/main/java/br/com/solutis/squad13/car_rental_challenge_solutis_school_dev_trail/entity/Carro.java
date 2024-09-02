@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
@@ -37,7 +41,7 @@ import static java.util.Optional.ofNullable;
 public class Carro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -123,7 +127,7 @@ public class Carro {
      *
      * @see ModeloCarro
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "modelo_carro_id", nullable = false)
     @Schema(description = "Modelo do carro.")
     private ModeloCarro modelo;
@@ -148,7 +152,7 @@ public class Carro {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "carro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "carro", cascade = ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Schema(description = "Lista de aluguéis associados a este carro.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
@@ -156,7 +160,7 @@ public class Carro {
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
-    @Schema(description = "Data e hora de criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Data e hora de criação do registro.", accessMode = READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp

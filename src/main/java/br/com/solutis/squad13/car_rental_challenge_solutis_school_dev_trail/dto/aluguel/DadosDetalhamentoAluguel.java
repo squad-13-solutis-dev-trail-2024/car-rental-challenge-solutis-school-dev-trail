@@ -12,32 +12,34 @@ import jakarta.persistence.Column;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+
 @Schema(description = "Dados detalhados de um aluguel.")
 public record DadosDetalhamentoAluguel(
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data do pedido do aluguel.", example = "01/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data do pedido do aluguel.")
         LocalDate dataPedido,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data de entrega do carro.", example = "11/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data de entrega do carro.")
         LocalDate dataEntrega,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data prevista para devolução do carro.", example = "16/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data prevista para devolução do carro.")
         LocalDate dataDevolucaoPrevista,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Schema(description = "Data efetiva de devolução do carro.", example = "18/08/2024")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @Schema(description = "Data efetiva de devolução do carro.")
         LocalDate dataDevolucaoEfetiva,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
-        @Schema(description = "Valor total inicial do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.200,00")
+        @Schema(description = "Valor total inicial do aluguel, formatado como moeda brasileira (R$).")
         @Column(name = "valor_total_inicial", precision = 10, scale = 2)
         BigDecimal valorTotalInicial,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
-        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
+        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).")
         BigDecimal valorTotalFinal,
 
         @Schema(description = "Dados resumidos do carro alugado.")

@@ -12,26 +12,26 @@ import java.util.stream.Collectors;
 @Schema(description = "Dados detalhados de um carro, incluindo histórico de aluguéis.")
 public record DadosDetalhamentoCarro(
 
-        @Schema(description = "ID do carro.", example = "1")
+        @Schema(description = "ID do carro.")
         Long id,
 
-        @Schema(description = "Nome do modelo do carro.", example = "Corolla")
+        @Schema(description = "Nome do modelo do carro.")
         String nome,
 
-        @Schema(description = "Placa do carro.", example = "ABC-1234")
+        @Schema(description = "Placa do carro.")
         String placa,
 
-        @Schema(description = "Chassi do carro.", example = "1HGBH41JXMN109186")
+        @Schema(description = "Chassi do carro.")
         String chassi,
 
-        @Schema(description = "Cor do carro.", example = "Preto")
+        @Schema(description = "Cor do carro.")
         String cor,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
-        @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
+        @Schema(description = "Valor da diária do aluguel do carro.")
         BigDecimal valorDiaria,
 
-        @Schema(description = "Nome do modelo do carro.", example = "Sedan Compacto")
+        @Schema(description = "Nome do modelo do carro.")
         String modeloCarro,
 
         @Schema(description = "Lista de aluguéis realizados com este carro.")

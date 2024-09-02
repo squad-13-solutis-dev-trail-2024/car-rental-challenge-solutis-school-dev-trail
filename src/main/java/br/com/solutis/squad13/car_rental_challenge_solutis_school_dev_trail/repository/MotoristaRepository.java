@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+@Repository("MotoristaRepository")
 @Schema(description = "Repositório JPA para a entidade Motorista.")
 public interface MotoristaRepository extends JpaRepository<Motorista, Long> {
 

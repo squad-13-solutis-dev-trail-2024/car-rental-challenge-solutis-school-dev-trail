@@ -14,6 +14,10 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
+
 @Schema(description = "Dados necessários para cadastrar um novo motorista.")
 public record DadosCadastroMotorista(
 
@@ -23,7 +27,7 @@ public record DadosCadastroMotorista(
         String nome,
 
         @NotNull(message = "Data de nascimento é obrigatória")
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING, locale = "pt-BR", timezone = "Brazil/East")
+        @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Schema(description = "Data de nascimento do motorista.")
         @Adulto(message = "Você não é maior de idade")
         LocalDate dataNascimento,
@@ -52,12 +56,12 @@ public record DadosCadastroMotorista(
 
         @CreationTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = READ_ONLY)
         LocalDateTime dataCreated,
 
         @UpdateTimestamp
         @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = Schema.AccessMode.READ_ONLY)
+        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
         LocalDateTime lastUpdated
 ) {
 }

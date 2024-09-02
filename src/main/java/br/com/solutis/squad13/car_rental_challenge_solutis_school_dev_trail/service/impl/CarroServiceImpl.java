@@ -8,6 +8,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.CarroService;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.spec.CarroSpecs;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl.CarroSpecs.temAcessorios;
+import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.spec.CarroSpecs.temAcessorios;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-@Service
+@Service("CarroService")
 @Schema(description = "Serviço que implementa as operações relacionadas a carros.")
 public class CarroServiceImpl implements CarroService {
 
@@ -70,7 +71,6 @@ public class CarroServiceImpl implements CarroService {
         log.info("Carro encontrado para atualização: {}", carro);
 
         validarCamposDuplicadosNoDtoAtualizacao(dadosAtualizarCarro, carro); // Verifica se há campos para atualização que não permitem duplicação
-
         carro.atualizar(dadosAtualizarCarro);
         carroRepository.save(carro);
         log.info("Carro atualizado com sucesso: {}", carro);
@@ -172,9 +172,7 @@ public class CarroServiceImpl implements CarroService {
         spec = addSpecificationIfNotNull(spec, fabricanteNome, CarroSpecs::fabricanteNomeContains);
         spec = addSpecificationIfNotNull(spec, categoriaNome, CarroSpecs::categoriaNomeEquals);
 
-        if (acessoriosNomes != null && !acessoriosNomes.isEmpty()) {
-            spec = spec.and(temAcessorios(acessoriosNomes));
-        }
+        if (acessoriosNomes != null && !acessoriosNomes.isEmpty()) spec = spec.and(temAcessorios(acessoriosNomes));
 
         Page<DadosDetalhamentoCarro> resultados = carroRepository.findAll(spec, paginacao).map(DadosDetalhamentoCarro::new);
         log.info("Pesquisa de carros concluída. Número de resultados encontrados: {}", resultados.getTotalElements());
@@ -229,8 +227,9 @@ public class CarroServiceImpl implements CarroService {
     private Carro existeCarroPeloId(Long id) {
         return carroRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Carro não encontrado: {}", id);
-                    return new EntityNotFoundException("Carro não encontrado");
-                });
+                            log.warn("Carro não encontrado: {}", id);
+                            return new EntityNotFoundException("Carro não encontrado");
+                        }
+                );
     }
 }
