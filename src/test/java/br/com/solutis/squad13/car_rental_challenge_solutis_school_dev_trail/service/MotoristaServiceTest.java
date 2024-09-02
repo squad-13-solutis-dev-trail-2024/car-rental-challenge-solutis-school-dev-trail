@@ -20,15 +20,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Sexo.MASCULINO;
-import static jakarta.validation.Validation.buildDefaultValidatorFactory;
 import static java.time.LocalDateTime.now;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,8 +44,10 @@ public class MotoristaServiceTest {
     public void setup() {
         motoristaRepository = mock(MotoristaRepository.class);
         motoristaService = new MotoristaServiceImpl(motoristaRepository);
-        ValidatorFactory factory = buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            validator = factory.getValidator();
+        }
     }
 
     @Test
@@ -58,9 +59,9 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "07493612633",
-                Sexo.MASCULINO,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                MASCULINO,
+                now(),
+                now()
         );
 
         // Validação dos dados para verificar se existe alguma violação
@@ -106,7 +107,7 @@ public class MotoristaServiceTest {
                 "447.841.608-76", // CPF válido
                 "vinicius_andrade2010@hotmail.com",
                 "00987864941", // CNH com 11 dígitos, mas inválida
-                Sexo.MASCULINO,
+                MASCULINO,
                 now(),
                 now()
         );
@@ -177,7 +178,7 @@ public class MotoristaServiceTest {
     public void givenInvalidId_whenBuscarPorId_thenThrowsEntityNotFoundException() {
         // given - pré-condição ou setup
         Long id = 1L;
-        when(motoristaRepository.findById(id)).thenReturn(Optional.empty());
+        when(motoristaRepository.findById(id)).thenReturn(empty());
 
         // when - ação ou comportamento a ser testado
         EntityNotFoundException thrown = Assertions.assertThrows(
@@ -202,11 +203,12 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "123456789",
-                MASCULINO
+                MASCULINO,
+                now()
         );
 
         Motorista motoristaExistente = criarMotoristaEsperado();
-        motoristaExistente.setAtivo(true);  // Certifique-se de que 'ativo' não seja nulo
+        motoristaExistente.ativar();
 
         when(motoristaRepository.findById(dadosAtualizacao.id())).thenReturn(Optional.of(motoristaExistente));
         when(motoristaRepository.save(motoristaExistente)).thenReturn(motoristaExistente);
@@ -235,10 +237,11 @@ public class MotoristaServiceTest {
                 "447.841.608-76",
                 "vinicius_andrade2010@hotmail.com",
                 "123456789",
-                MASCULINO
+                MASCULINO,
+                now()
         );
 
-        when(motoristaRepository.findById(dadosAtualizacao.id())).thenReturn(Optional.empty());
+        when(motoristaRepository.findById(dadosAtualizacao.id())).thenReturn(empty());
 
         // when
         EntityNotFoundException thrown = Assertions.assertThrows(
@@ -274,7 +277,7 @@ public class MotoristaServiceTest {
     public void givenInvalidId_whenDeletarMotorista_thenThrowsEntityNotFoundException() {
         // given
         Long id = 99L;
-        when(motoristaRepository.findById(id)).thenReturn(Optional.empty()); // Retorne um Optional vazio para simular motorista inexistente
+        when(motoristaRepository.findById(id)).thenReturn(empty()); // Retorne um Optional vazio para simular motorista inexistente
 
         // when / then
         Assertions.assertThrows(
@@ -292,7 +295,7 @@ public class MotoristaServiceTest {
         // given
         Pageable pageable = PageRequest.of(0, 10);
         Motorista motorista = criarMotoristaEsperado();
-        motorista.setAtivo(true);  // Garante que 'ativo' seja true
+        motorista.ativar();
         List<Motorista> motoristas = List.of(motorista);
         Page<Motorista> pagedMotoristas = new PageImpl<>(motoristas, pageable, motoristas.size());
 
@@ -316,7 +319,8 @@ public class MotoristaServiceTest {
         motorista.setEmail("vinicius_andrade2010@hotmail.com");
         motorista.setNumeroCNH("07493612633");
         motorista.setSexo(MASCULINO);
-        motorista.setAtivo(true);
+        motorista.ativar();
+
         motorista.adicionarListaAlugueis(new ArrayList<>());
         return motorista;
     }

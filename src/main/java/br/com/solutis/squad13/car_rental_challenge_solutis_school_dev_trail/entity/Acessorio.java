@@ -10,6 +10,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,10 +30,10 @@ import java.util.Set;
 public class Acessorio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(nullable = false)
     @Schema(description = "Descrição do tipo de acessório.")
     private DescricaoAcessorio descricao;
@@ -61,7 +65,7 @@ public class Acessorio {
      * que possuem um acessório não é relevante.
      * </p>
      */
-    @ManyToMany(mappedBy = "acessorios")
+    @ManyToMany(mappedBy = "acessorios", fetch = LAZY)
     @Setter(AccessLevel.NONE)
     @Schema(description = "Conjunto de carros que possuem este acessório.")
     private Set<Carro> carros = new HashSet<>(); // Inicializado, pois um acessório não precisa estar associado a nenhum carro

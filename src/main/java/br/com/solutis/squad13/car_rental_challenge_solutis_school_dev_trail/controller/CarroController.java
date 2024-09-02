@@ -18,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/carro")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -52,9 +55,9 @@ public class CarroController {
             @ApiResponse(responseCode = "200", description = "Carro encontrado."),
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
-    public ResponseEntity<DadosListagemCarro> detalhar(@PathVariable Long id) {
+    public ResponseEntity<DadosDetalhamentoCarro> detalhar(@PathVariable Long id) {
         var carro = carroService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosListagemCarro(carro));
+        return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
     }
 
     @GetMapping
@@ -74,6 +77,41 @@ public class CarroController {
     public ResponseEntity<DadosDetalhamentoCarro> detalharCompleto(@PathVariable Long id) {
         var carro = carroService.buscarPorId(id);
         return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
+    }
+
+    @GetMapping("/pesquisar")
+    @Operation(summary = "Pesquisar carros por critérios", description = "Retorna uma lista paginada de carros que correspondem aos critérios de pesquisa.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros encontrados.")
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> pesquisarCarros(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String placa,
+            @RequestParam(required = false) String chassi,
+            @RequestParam(required = false) String cor,
+            @RequestParam(required = false) Boolean disponivel,
+            @RequestParam(required = false) BigDecimal valorDiariaMin,
+            @RequestParam(required = false) BigDecimal valorDiariaMax,
+            @RequestParam(required = false) String modeloDescricao,
+            @RequestParam(required = false) String fabricanteNome,
+            @RequestParam(required = false) String categoriaNome,
+            @RequestParam(required = false) List<String> acessoriosNomes,
+            @PageableDefault(size = 5) Pageable paginacao
+    ) {
+        Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarros(
+                nome,
+                placa,
+                chassi,
+                cor,
+                disponivel,
+                valorDiariaMin,
+                valorDiariaMax,
+                modeloDescricao,
+                fabricanteNome,
+                categoriaNome,
+                acessoriosNomes,
+                paginacao
+        );
+
+        return ResponseEntity.ok(carros);
     }
 
     @GetMapping("/disponiveis")

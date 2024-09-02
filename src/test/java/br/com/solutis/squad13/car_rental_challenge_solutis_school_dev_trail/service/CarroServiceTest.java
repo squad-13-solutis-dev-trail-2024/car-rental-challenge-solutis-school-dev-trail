@@ -138,7 +138,8 @@ public class CarroServiceTest {
                 "Branco",
                 BigDecimal.valueOf(200.00),
                 acessorios,
-                modelo
+                modelo,
+                now()
         );
 
         Carro carroExistente = new Carro(

@@ -27,7 +27,7 @@ public record DadosListagemApoliceSeguro(
 ) {
     public DadosListagemApoliceSeguro(ApoliceSeguro apoliceSeguro) {
         this(
-                calcularValorTotalApoliceSeguro( // Chama o metodo para calcular o valorTotalParcial total
+                calcularValorTotalApoliceSeguro(
                         apoliceSeguro.getProtecaoTerceiro(),
                         apoliceSeguro.getProtecaoCausasNaturais(),
                         apoliceSeguro.getProtecaoRoubo()

@@ -2,7 +2,6 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.ent
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.math.BigDecimal.ZERO;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +31,7 @@ public class ApoliceSeguro {
     private static final BigDecimal VALOR_PROTECAO_ROUBO = new BigDecimal("300.00");
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
@@ -36,15 +39,15 @@ public class ApoliceSeguro {
     private BigDecimal valorFranquia;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    @Schema(description = "Indica se a apólice cobre danos a terceiros.", example = "true")
+    @Schema(description = "Indica se a apólice cobre danos a terceiros.")
     private Boolean protecaoTerceiro;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    @Schema(description = "Indica se a apólice cobre danos por causas naturais.", example = "false")
+    @Schema(description = "Indica se a apólice cobre danos por causas naturais.")
     private Boolean protecaoCausasNaturais;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    @Schema(description = "Indica se a apólice cobre roubo do veículo.", example = "true")
+    @Schema(description = "Indica se a apólice cobre roubo do veículo.")
     private Boolean protecaoRoubo;
 
     /**
@@ -57,15 +60,16 @@ public class ApoliceSeguro {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "apoliceSeguro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "apoliceSeguro", cascade = ALL, orphanRemoval = true)
     @Schema(description = "Aluguéis associados a esta apólice de seguro.")
     private List<Aluguel> alugueis = new ArrayList<>();
 
     public static BigDecimal calcularValorTotalApoliceSeguro(
             Boolean protecaoTerceiro,
             Boolean protecaoCausasNaturais,
-            Boolean protecaoRoubo) {
-        BigDecimal valorTotal = BigDecimal.ZERO;
+            Boolean protecaoRoubo
+    ) {
+        BigDecimal valorTotal = ZERO;
 
         if (protecaoTerceiro) valorTotal = valorTotal.add(VALOR_PROTECAO_TERCEIRO);
         if (protecaoCausasNaturais) valorTotal = valorTotal.add(VALOR_PROTECAO_CAUSAS_NATURAIS);
@@ -75,7 +79,7 @@ public class ApoliceSeguro {
     }
 
     public String toString() {
-        return "ApoliceSeguro{id=" + id + ", valorFranquia=" + valorFranquia + ", protecaoTerceiro=" + protecaoTerceiro + ", protecaoCausasNaturais=" + protecaoCausasNaturais + ", protecaoRoubo=" + protecaoRoubo + ", aluguel=" + alugueis+ '}';
+        return "ApoliceSeguro{id=" + id + ", valorFranquia=" + valorFranquia + ", protecaoTerceiro=" + protecaoTerceiro + ", protecaoCausasNaturais=" + protecaoCausasNaturais + ", protecaoRoubo=" + protecaoRoubo + ", aluguel=" + alugueis + '}';
     }
 
     @Override
