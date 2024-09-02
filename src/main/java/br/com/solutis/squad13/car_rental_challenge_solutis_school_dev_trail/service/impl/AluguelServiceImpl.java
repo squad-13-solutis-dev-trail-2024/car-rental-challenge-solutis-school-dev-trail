@@ -1,5 +1,6 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.impl;
 
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosDetalhamentoAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
@@ -17,6 +18,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repo
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.MotoristaRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.spec.AluguelSpecs;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,6 +27,7 @@ import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.*;
@@ -40,6 +44,7 @@ import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_tra
 import static java.time.LocalDate.now;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service("AluguelService")
 @Schema(description = "Serviço que implementa as operações de aluguel")
@@ -243,6 +248,88 @@ public class AluguelServiceImpl implements AluguelService {
         Page<Aluguel> alugueis = aluguelRepository.findAll(paginacao);
         log.info("Alugueis listados com sucesso: {}", alugueis);
         return alugueis.map(DadosListagemAluguel::new);
+    }
+
+    @Override
+    public Page<DadosDetalhamentoAluguel> pesquisarAlugueis(
+            LocalDate dataPedido,
+            LocalDate dataRetirada,
+            LocalDate dataDevolucaoPrevista,
+            LocalDate dataDevolucaoEfetiva,
+            BigDecimal valorTotalInicialMin,
+            BigDecimal valorTotalInicialMax,
+            BigDecimal valorTotalFinalMin,
+            BigDecimal valorTotalFinalMax,
+            StatusAluguel status,
+            String motoristaNome,
+            String motoristaCpf,
+            String motoristaCnh,
+            String carroNome,
+            String carroPlaca,
+            String carroCor,
+            String modeloDescricaoCarro,
+            String fabricanteNomeCarro,
+            String categoriaNomeCarro,
+            List<String> acessoriosNomesCarro,
+            Pageable paginacao
+    ) {
+        log.info("Iniciando pesquisa de aluguéis com os seguintes critérios:");
+        log.info("Data do pedido: {}", dataPedido);
+        log.info("Data de retirada: {}", dataRetirada);
+        log.info("Data de devolução prevista: {}", dataDevolucaoPrevista);
+        log.info("Data de devolução efetiva: {}", dataDevolucaoEfetiva);
+        log.info("Valor total inicial mínimo: {}", valorTotalInicialMin);
+        log.info("Valor total inicial máximo: {}", valorTotalInicialMax);
+        log.info("Valor total final mínimo: {}", valorTotalFinalMin);
+        log.info("Valor total final máximo: {}", valorTotalFinalMax);
+        log.info("Status: {}", status);
+        log.info("Nome do motorista: {}", motoristaNome);
+        log.info("CPF do motorista: {}", motoristaCpf);
+        log.info("CNH do motorista: {}", motoristaCnh);
+        log.info("Nome do carro: {}", carroNome);
+        log.info("Placa do carro: {}", carroPlaca);
+        log.info("Cor do carro: {}", carroCor);
+        log.info("Descrição do modelo do carro: {}", modeloDescricaoCarro);
+        log.info("Nome do fabricante do carro: {}", fabricanteNomeCarro);
+        log.info("Nome da categoria do carro: {}", categoriaNomeCarro);
+        log.info("Nomes dos acessórios do carro: {}", acessoriosNomesCarro);
+
+        Specification<Aluguel> spec = where(null);
+
+        spec = addSpecificationIfNotNull(spec, dataPedido, AluguelSpecs::dataPedidoEquals);
+        spec = addSpecificationIfNotNull(spec, dataRetirada, AluguelSpecs::dataRetiradaEquals);
+        spec = addSpecificationIfNotNull(spec, dataDevolucaoPrevista, AluguelSpecs::dataDevolucaoPrevistaEquals);
+        spec = addSpecificationIfNotNull(spec, dataDevolucaoEfetiva, AluguelSpecs::dataDevolucaoEfetivaEquals);
+        spec = addSpecificationIfNotNull(spec, valorTotalInicialMin, AluguelSpecs::valorTotalInicialGreaterThanOrEqual);
+        spec = addSpecificationIfNotNull(spec, valorTotalInicialMax, AluguelSpecs::valorTotalInicialLessThanOrEqual);
+        spec = addSpecificationIfNotNull(spec, valorTotalFinalMin, AluguelSpecs::valorTotalFinalGreaterThanOrEqual);
+        spec = addSpecificationIfNotNull(spec, valorTotalFinalMax, AluguelSpecs::valorTotalFinalLessThanOrEqual);
+        spec = addSpecificationIfNotNull(spec, status, AluguelSpecs::statusEquals);
+        spec = addSpecificationIfNotNull(spec, motoristaNome, AluguelSpecs::motoristaNomeContains);
+        spec = addSpecificationIfNotNull(spec, motoristaCpf, AluguelSpecs::motoristaCpfEquals);
+        spec = addSpecificationIfNotNull(spec, motoristaCnh, AluguelSpecs::motoristaCnhEquals);
+        spec = addSpecificationIfNotNull(spec, carroNome, AluguelSpecs::carroNomeContains);
+        spec = addSpecificationIfNotNull(spec, carroPlaca, AluguelSpecs::carroPlacaEquals);
+        spec = addSpecificationIfNotNull(spec, carroCor, AluguelSpecs::carroCorEquals);
+        spec = addSpecificationIfNotNull(spec, modeloDescricaoCarro, AluguelSpecs::modeloDescricaoCarroContains);
+        spec = addSpecificationIfNotNull(spec, fabricanteNomeCarro, AluguelSpecs::fabricanteNomeCarroContains);
+        spec = addSpecificationIfNotNull(spec, categoriaNomeCarro, AluguelSpecs::categoriaNomeCarroEquals);
+
+        if (acessoriosNomesCarro != null && !acessoriosNomesCarro.isEmpty()) {
+            spec = spec.and(AluguelSpecs.carroTemAcessorios(acessoriosNomesCarro));
+        }
+
+        Page<DadosDetalhamentoAluguel> resultados = aluguelRepository.findAll(spec, paginacao).map(DadosDetalhamentoAluguel::new);
+        log.info("Pesquisa de aluguéis concluída. Número de resultados encontrados: {}", resultados.getTotalElements());
+        return resultados;
+    }
+
+    private <T, E> Specification<E> addSpecificationIfNotNull(
+            Specification<E> spec,
+            T value,
+            Function<T, Specification<E>> specBuilder
+    ) {
+        return value != null ? spec.and(specBuilder.apply(value)) : spec;
     }
 
     @Override

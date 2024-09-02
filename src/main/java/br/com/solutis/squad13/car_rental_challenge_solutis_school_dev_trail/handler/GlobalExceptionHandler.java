@@ -32,7 +32,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  * @see RestControllerAdvice
  * @see ExceptionHandler
  */
-@RestControllerAdvice
+@RestControllerAdvice("br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.controller")
 @Schema(description = "Classe responsável por tratar exceções globalmente na aplicação.")
 public class GlobalExceptionHandler {
 

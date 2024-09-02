@@ -160,9 +160,7 @@ Contribuições são bem-vindas! Por favor, siga as diretrizes abaixo para contr
 4. Envie suas mudanças para a branch (`git push origin feature/minha-feature`).
 5. Abra um Pull Request.
 
-## ✍️ Autores:
-
-Desenvolvedores que participaram da resolução dos exercícios:
+## ✍️ Desenvolvedores:
 
 - **Aldemir Carlos**   [GitHub](https://github.com/aldemaas)          [LinkedIn](https://www.linkedin.com/in/aldemir-carlos/)            [E-mail](mailto:aldemirc22@gmail.com)
 - **Gabriel de Abreu** [GitHub](https://github.com/AzvedoGabriel)     [LinkedIn](https://www.linkedin.com/in/azevedo-gabriel-ssa/)       [E-mail](mailto:contato.gabrielazevedo0@gmail.com)

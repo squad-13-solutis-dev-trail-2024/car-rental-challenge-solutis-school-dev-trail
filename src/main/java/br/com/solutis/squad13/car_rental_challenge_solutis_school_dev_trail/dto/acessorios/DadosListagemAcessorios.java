@@ -2,7 +2,6 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Acessorio;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.context.annotation.Bean;
 
 import static java.lang.String.valueOf;
 

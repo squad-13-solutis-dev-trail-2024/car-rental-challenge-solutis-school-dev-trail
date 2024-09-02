@@ -18,9 +18,8 @@ public class DadosPagamentoValidator implements ConstraintValidator<ValidarDados
 
     @Override
     public boolean isValid(DadosPagamento dadosPagamento, ConstraintValidatorContext context) {
-        if (dadosPagamento.tipoPagamento() == null) {
-            return true; // Tipo de pagamento pode ser null, a validação do tipo é feita separadamente
-        }
+        // Tipo de pagamento pode ser null, a validação do tipo é feita separadamente
+        if (dadosPagamento.tipoPagamento() == null) return true;
 
         boolean isValid = true;
 

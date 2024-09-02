@@ -42,6 +42,7 @@ public class MotoristaServiceImpl implements MotoristaService {
         log.info("Campos únicos validados com sucesso");
 
         Motorista motorista = new Motorista(dadosCadastroMotorista);
+        motorista.ativar();
         motoristaRepository.save(motorista);
 
         log.info("Motorista cadastrado com sucesso: {}", motorista);

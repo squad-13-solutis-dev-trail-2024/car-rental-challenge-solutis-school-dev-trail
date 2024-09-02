@@ -1,12 +1,15 @@
 Hibernate: 
     create table tb_acessorio (
         id bigint not null auto_increment,
-        descricao enum ('AIRBAGS','ALARM','AQUECIMENTO_BANCOS','AR_CONDICIONADO','ASSISTENTE_FRENAGEM_EMERGENCIA','ASSISTENTE_PARTIDA_RAMPA','BANCOS_COURO','BLUETOOTH','CADEIRA_INFANTIL','CAMERA_RE','CARREGADOR_WIRELESS','CHAVE_CARTAO','CONTROLE_ESTABILIDADE','FAROL_DE_MILHA','FREIOS_ABS','GPS','NAVEGACAO_INTEGRADA','PARA_BRISA_DESEMBACADOR','PORTA_MALAS_AUTOMATICO','RETROVISORES_ELETRICOS','RODAS_LIGA_LEVE','SENSOR_ESTACIONAMENTO','SOM_PREMIUM','SUSPENSAO_ESPORTIVA','TETO_SOLAR','VOLANTE_MULTIFUNCIONAL') not null,
+        descricao enum ('AIRBAGS','ALARM','ALERTA_MUDANCA_FAIXA','ALERTA_PONTO_CEGO','AQUECIMENTO_BANCOS','AR_CONDICIONADO','AR_CONDICIONADO_DIGITAL','ASSISTENTE_FRENAGEM_EMERGENCIA','ASSISTENTE_PARTIDA_RAMPA','BANCOS_COURO','BLUETOOTH','CADEIRA_INFANTIL','CAMERA_RE','CARREGADOR_WIRELESS','CHAVE_CARTAO','COMPUTADOR_BORDO','CONEXAO_WIFI','CONTROLE_CRUZEIRO_ADAPTATIVO','CONTROLE_ESTABILIDADE','DIRECAO_ASSISTIDA','DVD_PLAYER','ENGATE_REBOQUE','ENTRADA_USB','FAROIS_LED','FAROIS_XENON','FAROL_DE_MILHA','FREIOS_ABS','GPS','KIT_MULTIMIDIA','LIMPADOR_FAROL','NAVEGACAO_INTEGRADA','PAINEL_INSTRUMENTOS_DIGITAL','PARA_BRISA_DESEMBACADOR','PILOT_AUTOMATICO','PORTA_MALAS_AUTOMATICO','RACK_TETO','RECONHECIMENTO_VOZ','RETROVISORES_ELETRICOS','RODAS_LIGA_LEVE','SENSOR_CHUVA','SENSOR_CREPUSCULAR','SENSOR_ESTACIONAMENTO','SISTEMA_START_STOP','SOM_PREMIUM','SUSPENSAO_ESPORTIVA','TETO_PANORAMICO','TETO_SOLAR','TRAVAS_ELETRICAS','VIDROS_ELETRICOS','VOLANTE_MULTIFUNCIONAL') not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_aluguel (
         id bigint not null auto_increment,
+        campo_boleto varchar(255),
+        campo_pix varchar(255),
+        cvv varchar(255),
         data_cancelamento date,
         data_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
         data_devolucao_efetiva date,
@@ -15,9 +18,12 @@ Hibernate:
         data_pedido date not null,
         data_retirada date not null,
         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+        numero_cartao varchar(255),
+        pagamento_dinheiro varchar(255),
         status_aluguel enum ('CANCELADO','EM_ANDAMENTO','FINALIZADO','INCOMPLETO'),
         status_pagamento enum ('CANCELADO','CONFIRMADO','PENDENTE'),
         tipo_pagamento enum ('BOLETO','CARTAO_CREDITO','CARTAO_DEBITO','DINHEIRO','PIX'),
+        validade_cartao varchar(255),
         valor_total_final decimal(10,2),
         valor_total_inicial decimal(10,2),
         apolice_seguro_id bigint not null,
@@ -25,16 +31,16 @@ Hibernate:
         motorista_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_apolice_seguro (
         id bigint not null auto_increment,
         protecao_causas_naturais BOOLEAN DEFAULT FALSE not null,
         protecao_roubo BOOLEAN DEFAULT FALSE not null,
         protecao_terceiro BOOLEAN DEFAULT FALSE not null,
-        valor_franquia decimal(10,2) not null,
+        valor_franquia DECIMAL(10,2) DEFAULT 0.00,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_carro (
         id bigint not null auto_increment,
         chassi varchar(255) not null,
@@ -48,19 +54,19 @@ Hibernate:
         modelo_carro_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_fabricante (
         id bigint not null auto_increment,
         nome varchar(255) not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_funcionario (
         matricula varchar(255) not null,
         pessoa_id bigint not null,
         primary key (pessoa_id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_modelo_carro (
         id bigint not null auto_increment,
         categoria enum ('ESPORTIVO','HATCH_COMPACTO','HATCH_MEDIO','MINIVAN','SEDAN_COMPACTO','SEDAN_GRANDE','SEDAN_MEDIO','UTILITARIO_COMERCIAL') not null,
@@ -68,13 +74,13 @@ Hibernate:
         fabricante_id bigint not null,
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_motorista (
         numerocnh varchar(255) not null,
         pessoa_id bigint not null,
         primary key (pessoa_id)
     ) engine=InnoDB
-Hibernate: 
+Hibernate:
     create table tb_pessoa (
         id bigint not null auto_increment,
         ativo BOOLEAN DEFAULT TRUE not null,
@@ -87,18 +93,12 @@ Hibernate:
         sexo enum ('FEMININO','MASCULINO'),
         primary key (id)
     ) engine=InnoDB
-Hibernate: 
-    alter table tb_acessorio 
+Hibernate:
+    alter table tb_acessorio
        drop index uk_acessorio_descricao
-Hibernate: 
-    alter table tb_acessorio 
+Hibernate:
+    alter table tb_acessorio
        add constraint uk_acessorio_descricao unique (descricao)
-Hibernate: 
-    alter table tb_aluguel 
-       drop index UK4tkn76dohfy2re8237cr8dmcb
-Hibernate: 
-    alter table tb_aluguel 
-       add constraint UK4tkn76dohfy2re8237cr8dmcb unique (apolice_seguro_id)
 Hibernate: 
     alter table tb_carro 
        drop index uk_carro_placa

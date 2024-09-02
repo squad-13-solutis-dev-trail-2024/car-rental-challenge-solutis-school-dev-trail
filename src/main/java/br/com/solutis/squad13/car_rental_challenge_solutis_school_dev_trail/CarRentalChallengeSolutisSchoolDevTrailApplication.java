@@ -18,6 +18,9 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
         run(CarRentalChallengeSolutisSchoolDevTrailApplication.class, args);
     }
 
+    private static final String vini_path_desktop = "C:\\Users\\Pichau\\Desktop\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
+    private static final String vini_path_notebook = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
+
     @Bean
     CommandLineRunner initDatabase(JdbcTemplate jdbcTemplate) {
         return args -> {
@@ -25,15 +28,13 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
             File flagFile = new File("src/main/resources/.data_initialized");
             if (!flagFile.exists()) {
                 try {
-                    String filePath = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
-                    String sqlScript = new String(readAllBytes(get(filePath)));
+                    String sqlScript = new String(readAllBytes(get(vini_path_desktop)));
 
                     String[] sqlCommands = sqlScript.split(";");
 
                     for (String command : sqlCommands) {
-                        if (!command.trim().isEmpty()) {
+                        if (!command.trim().isEmpty())
                             jdbcTemplate.execute(command);
-                        }
                     }
 
                     // Cria o arquivo de flag após a execução bem-sucedida

@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.Period;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static java.util.stream.Collectors.toList;
 
 @Schema(description = "Dados detalhados de um motorista, incluindo histórico de aluguéis e timestamps.")
 public record DadosDetalhamentoMotorista(
@@ -18,7 +18,7 @@ public record DadosDetalhamentoMotorista(
         @Schema(description = "ID do motorista.")
         Long id,
 
-        @Schema(description = "Nome completo do motorista." )
+        @Schema(description = "Nome completo do motorista.")
         String nome,
 
         @Schema(description = "Endereço de email do motorista.")
@@ -36,23 +36,27 @@ public record DadosDetalhamentoMotorista(
         @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 
+        @Schema(description = "Idade do motorista em anos, meses e dias.")
+        String idade,
+
         @Schema(description = "Sexo do motorista.", example = "MASCULINO")
         String sexo,
 
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Schema(description = "Data e hora de criação do registro do motorista.")
-        LocalDateTime dataCreated,
+        LocalDateTime dataCadastro,
 
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Schema(description = "Data e hora da última atualização do registro do motorista.")
-        LocalDateTime lastUpdated,
+        LocalDateTime dataUltimaAtualizacao,
 
         @Schema(description = "Indica se o motorista está ativo (true) ou inativo (false).")
         boolean ativo,
 
-        @Schema(description = "Lista de aluguéis realizados pelo motorista.")
-        List<DadosListagemAluguel> alugueis
-){
+        @Schema(description = "Mensagem ou lista de aluguéis realizados pelo motorista.")
+        Object alugueis
+
+) {
     public DadosDetalhamentoMotorista(Motorista motorista) {
         this(
                 motorista.getId(),
@@ -61,14 +65,24 @@ public record DadosDetalhamentoMotorista(
                 motorista.getCpf(),
                 motorista.getNumeroCNH(),
                 motorista.getDataNascimento(),
+                calculateIdade(motorista.getDataNascimento(), LocalDate.now()),
                 motorista.getSexo().name(),
                 motorista.getDataCreated(),
                 motorista.getLastUpdated(),
                 motorista.getAtivo(),
-                motorista.getAlugueis()
-                        .stream()
-                        .map(DadosListagemAluguel::new)
-                        .collect(Collectors.toList())
+                motorista.getAlugueis().isEmpty() ?
+                        "O usuário não possui locações" :
+                        motorista.getAlugueis().stream()
+                                .map(DadosListagemAluguel::new)
+                                .collect(toList())
         );
+    }
+
+    private static String calculateIdade(LocalDate dataNascimento, LocalDate dataAtual) {
+        Period periodo = Period.between(dataNascimento, dataAtual);
+        return String.format("%d anos, %d meses e %d dias",
+                periodo.getYears(),
+                periodo.getMonths(),
+                periodo.getDays());
     }
 }
