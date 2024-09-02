@@ -29,8 +29,12 @@ public record DadosListagemAluguel(
         LocalDate dataDevolucaoPrevista,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
-        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).")
-        BigDecimal valorTotalParcial,
+
+        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
+        BigDecimal valorTotalPrevisto,
+        @JsonSerialize(using = BigDecimalCurrencySerializer.class)
+        @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
+        BigDecimal valorTotalPago,
 
         @Schema(description = "Dados resumidos do carro alugado.")
         DadosListagemCarro carro,
@@ -45,6 +49,7 @@ public record DadosListagemAluguel(
                 aluguel.getDataRetirada(),
                 aluguel.getDataDevolucaoPrevista(),
                 aluguel.getValorTotalInicial(),
+                aluguel.getValorTotalFinal(),
                 new DadosListagemCarro(aluguel.getCarro()),
                 new DadosListagemApoliceSeguro(aluguel.getApoliceSeguro())
         );

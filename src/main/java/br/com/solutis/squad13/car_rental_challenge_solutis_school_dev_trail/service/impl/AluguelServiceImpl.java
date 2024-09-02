@@ -10,6 +10,8 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.ApoliceSeguroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
@@ -34,6 +36,8 @@ import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_tra
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel.*;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.CONFIRMADO;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento.PENDENTE;
+
+
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.BoletoBarras.gerarCodigoDeBarras;
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.PixKey.generatePixKey;
 import static java.time.LocalDate.now;
@@ -201,7 +205,7 @@ public class AluguelServiceImpl implements AluguelService {
         bloquearCarroParaAluguel(aluguel);
 
         // Lógica de pagamento
-        processarPagamento(aluguel, dadosPagamento);
+        processarPagamento(aluguel.getId(), dadosPagamento);
         log.debug("Pagamento processado com sucesso. ID do aluguel: {}", idAluguel);
 
         TipoPagamento tipoPagamento = dadosPagamento.tipoPagamento();
@@ -302,8 +306,9 @@ public class AluguelServiceImpl implements AluguelService {
         return alugueis.map(DadosListagemAluguel::new);
     }
 
-    private void processarPagamento(Aluguel aluguel, DadosPagamento tipoPagamento) {
+    private void processarPagamento(long aluguel, DadosPagamento tipoPagamento) {
         TipoPagamento modalidadePagamento = tipoPagamento.tipoPagamento();
+
         log.info("Processando pagamento para o aluguel: {} com a modalidade: {}", aluguel.getId(), modalidadePagamento);
 
         aluguelRepository.findById(aluguel.getId()).ifPresentOrElse(
@@ -345,7 +350,8 @@ public class AluguelServiceImpl implements AluguelService {
                 }
         );
     }
-
+        aluguelRepository.save(aluguelEncontrado);
+    }
     private void bloquearCarroParaAluguel(Aluguel aluguel) {
         Carro carro = aluguel.getCarro();
         log.debug("Verificando disponibilidade do carro para bloqueio. ID do carro: {}", carro.getId());
@@ -485,6 +491,71 @@ public class AluguelServiceImpl implements AluguelService {
                 apoliceSeguro
         );
     }
+    @Override
+    @Transactional
+    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
+
+
+        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
+        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
+        if(aluguel.getStatusPagamento() == PENDENTE){
+            carroErrado.disponibilizarAluguel();
+            Carro carro = buscarCarroPorId(idCarro);
+            if(!carro.isDisponivel()){
+                throw new RuntimeException("Carro esta indisponivel");
+            }
+            BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
+
+            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+            aluguel.setValorTotalInicial(b.add(apolice));
+            aluguel.setValorTotalFinal(null);
+            carro.bloquearAluguel();
+            carroRepository.save(carro);
+            aluguel.setCarro(carro);
+            aluguelRepository.save(aluguel);
+
+            return aluguel;
+        } else{
+            throw new RuntimeException("Troca permitida somente quando o status estiver pendente");
+        }
+    }
+
+    private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro, BigDecimal a) {
+        log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
+        long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.getDataRetirada(), dadosCadastroAluguel.getDataDevolucaoPrevista());
+        BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
+
+        BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
+        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(a);;
+        return valorTotalParcialInicial;
+    }
+    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
+
+        boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
+        boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
+        boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
+
+        return  valorApoliceSeguro;
+    }
+    private BigDecimal calcularValorTotal(LocalDate dataRetirada, LocalDate dataDevolucao, Carro carro, ApoliceSeguro apoliceSeguro) {
+        log.debug("Calculando valor total para o aluguel. ID do carro: {}", carro.getId());
+        long diasAluguel = DAYS.between(dataRetirada, dataDevolucao);
+        BigDecimal valorDiario = carro.getValorDiaria();
+
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(
+                apoliceSeguro.getProtecaoTerceiro(),
+                apoliceSeguro.getProtecaoCausasNaturais(),
+                apoliceSeguro.getProtecaoRoubo()
+        );
+
+        BigDecimal valorTotalAluguel = valorDiario.multiply(BigDecimal.valueOf(diasAluguel));
+        BigDecimal valorTotal = valorTotalAluguel.add(valorApoliceSeguro);
+
+        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasAluguel, valorTotalAluguel);
+        log.debug("Valor total calculado: {}", valorTotal);
+        return valorTotal;
+    }
 
     private BigDecimal calcularValorTotalFinalAluguel(Aluguel aluguel, LocalDate dataDevolucaoEfetiva) {
         log.debug("Calculando valor total final para o aluguel. ID do aluguel: {}", aluguel.getId());
@@ -503,6 +574,7 @@ public class AluguelServiceImpl implements AluguelService {
             throw new ValidationException("Data de devolução inválida: anterior à data de entrega.");
         }
     }
+
 
     private Aluguel criarAluguel(Carro carro,
                                  Motorista motorista,

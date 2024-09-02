@@ -24,7 +24,7 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
             File flagFile = new File("src/main/resources/.data_initialized");
             if (!flagFile.exists()) {
                 try {
-                    String filePath = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
+                    String filePath = "D:\\Solutis exercicios\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
                     String sqlScript = new String(Files.readAllBytes(Paths.get(filePath)));
 
                     String[] sqlCommands = sqlScript.split(";");
