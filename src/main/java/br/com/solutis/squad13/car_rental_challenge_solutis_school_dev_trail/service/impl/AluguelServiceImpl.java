@@ -433,29 +433,7 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-    private BigDecimal calcularValorTotalInicial(@Valid DadosCadastroAluguel dadosCadastroAluguel, Carro carro) {
-        log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
-        long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.dataRetirada(), dadosCadastroAluguel.dataDevolucaoPrevista());
-        BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
 
-        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
-                dadosCadastroAluguel.apoliceSeguro().getProtecaoTerceiro(),
-                dadosCadastroAluguel.apoliceSeguro().getProtecaoCausasNaturais(),
-                dadosCadastroAluguel.apoliceSeguro().getProtecaoRoubo()
-        );
-
-        boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
-        boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
-        boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
-
-        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
-
-        BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
-        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(valorApoliceSeguro);
-        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasParciaisDeAluguel, valorTotalParcialAluguel);
-        log.debug("Valor total inicial calculado: {}", valorTotalParcialInicial);
-        return valorTotalParcialInicial;
-    }
     @Override
     @Transactional
     public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
@@ -522,12 +500,46 @@ public class AluguelServiceImpl implements AluguelService {
         return valorTotal;
     }
 
+    private BigDecimal calcularValorTotalInicial(@Valid DadosCadastroAluguel dadosCadastroAluguel, Carro carro) {
+        log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
+        long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.dataRetirada(), dadosCadastroAluguel.dataDevolucaoPrevista());
+        BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
+
+        ApoliceSeguro apoliceSeguro = apoliceSeguroRepository.findByProtecaoCausasNaturaisAndProtecaoTerceiroAndProtecaoRoubo(
+                dadosCadastroAluguel.apoliceSeguro().getProtecaoTerceiro(),
+                dadosCadastroAluguel.apoliceSeguro().getProtecaoCausasNaturais(),
+                dadosCadastroAluguel.apoliceSeguro().getProtecaoRoubo()
+        );
+
+        boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
+        boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
+        boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
+
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
+
+        BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
+        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(valorApoliceSeguro);
+        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasParciaisDeAluguel, valorTotalParcialAluguel);
+        log.debug("Valor total inicial calculado: {}", valorTotalParcialInicial);
+        return valorTotalParcialInicial;
+    }
+
     private BigDecimal calcularValorTotalFinal(Aluguel aluguel, LocalDate dataDevolucaoEfetiva) {
         log.debug("Calculando valorTotalParcial total final para o aluguel. ID do aluguel: {}", aluguel.getId());
         long diasAluguel = DAYS.between(aluguel.getDataRetirada(), dataDevolucaoEfetiva);
         BigDecimal valorDiario = aluguel.getCarro().getValorDiaria();
-        BigDecimal seguro = aluguel.getApoliceSeguro().getValorFranquia();
-        BigDecimal valorTotalFinal = valorDiario.multiply(BigDecimal.valueOf(diasAluguel)).add(seguro);
+
+        ApoliceSeguro apoliceSeguro = aluguel.getApoliceSeguro();
+        boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
+        boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
+        boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
+
+        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
+
+        BigDecimal valorTotalAluguel = valorDiario.multiply(BigDecimal.valueOf(diasAluguel));
+        BigDecimal valorTotalFinal = valorTotalAluguel.add(valorApoliceSeguro);
+
+        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasAluguel, valorTotalAluguel);
         log.debug("Valor total final calculado: {}", valorTotalFinal);
         return valorTotalFinal;
     }
