@@ -5,6 +5,7 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosCadastroAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.Aluguel;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.service.AluguelService;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
@@ -20,7 +21,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 
 @RestController
 @RequestMapping("/api/v1/aluguel")
@@ -95,6 +100,57 @@ public class AluguelController {
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
     }
 
+    @GetMapping("/pesquisar")
+    @Operation(summary = "Pesquisar aluguéis por critérios", description = "Retorna uma lista paginada de aluguéis que correspondem aos critérios de pesquisa.")
+    @ApiResponse(responseCode = "200", description = "Lista de aluguéis encontrados.")
+    public ResponseEntity<Page<DadosDetalhamentoAluguel>> pesquisarAlugueis(
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE) LocalDate dataPedido,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE) LocalDate dataRetirada,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE) LocalDate dataDevolucaoPrevista,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE) LocalDate dataDevolucaoEfetiva,
+            @RequestParam(required = false) BigDecimal valorTotalInicialMin,
+            @RequestParam(required = false) BigDecimal valorTotalInicialMax,
+            @RequestParam(required = false) BigDecimal valorTotalFinalMin,
+            @RequestParam(required = false) BigDecimal valorTotalFinalMax,
+            @RequestParam(required = false) StatusAluguel status,
+            @RequestParam(required = false) String motoristaNome,
+            @RequestParam(required = false) String motoristaCpf,
+            @RequestParam(required = false) String motoristaCnh,
+            @RequestParam(required = false) String carroNome,
+            @RequestParam(required = false) String carroPlaca,
+            @RequestParam(required = false) String carroCor,
+            @RequestParam(required = false) String modeloDescricaoCarro,
+            @RequestParam(required = false) String fabricanteNomeCarro,
+            @RequestParam(required = false) String categoriaNomeCarro,
+            @RequestParam(required = false) List<String> acessoriosNomesCarro,
+            @PageableDefault(size = 5) Pageable paginacao
+    ) {
+        Page<DadosDetalhamentoAluguel> alugueis = aluguelService.pesquisarAlugueis(
+                dataPedido,
+                dataRetirada,
+                dataDevolucaoPrevista,
+                dataDevolucaoEfetiva,
+                valorTotalInicialMin,
+                valorTotalInicialMax,
+                valorTotalFinalMin,
+                valorTotalFinalMax,
+                status,
+                motoristaNome,
+                motoristaCpf,
+                motoristaCnh,
+                carroNome,
+                carroPlaca,
+                carroCor,
+                modeloDescricaoCarro,
+                fabricanteNomeCarro,
+                categoriaNomeCarro,
+                acessoriosNomesCarro,
+                paginacao
+        );
+
+        return ResponseEntity.ok(alugueis);
+    }
+
     @PatchMapping("/trocar-carro/{idAluguel}")
     @Operation(summary = "Confirmar troca Carro")
     @ApiResponses(value = {
@@ -118,7 +174,7 @@ public class AluguelController {
     })
     public ResponseEntity<DadosListagemAluguel> finalizarAluguel(
             @PathVariable Long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataDevolucao
+            @RequestParam @DateTimeFormat(iso = DATE) LocalDate dataDevolucao
     ) {
         var aluguel = aluguelService.finalizarAluguel(id, dataDevolucao);
         return ResponseEntity.ok(new DadosListagemAluguel(aluguel));
