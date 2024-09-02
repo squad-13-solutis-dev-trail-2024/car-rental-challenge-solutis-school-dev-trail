@@ -19,7 +19,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.math.BigDecimal.valueOf;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -75,7 +78,6 @@ public class Aluguel {
     @Schema(description = "Data em que o aluguel foi cancelado.")
     private LocalDate dataCancelamento;
 
-
     @Column(name = "campo_pix")
     private String campoPix;
 
@@ -93,7 +95,7 @@ public class Aluguel {
 
     @Column(name = "pagamento_dinheiro")
     private String pagamentoDinheiro;
-=======
+
     @Getter
     @Transient
     private Map<String, Object> camposAdicionais = new HashMap<>();
@@ -110,7 +112,7 @@ public class Aluguel {
      * @see Motorista
      */
     @JsonIgnore
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
     @Schema(description = "Motorista que realizou o aluguel.")
@@ -143,21 +145,21 @@ public class Aluguel {
      *
      * @see ApoliceSeguro
      */
-    @ManyToOne(fetch = LAZY)
     @JsonIgnore
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro;
 
     @CreationTimestamp
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
-    @Schema(description = "Data e hora da criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Data e hora da criação do registro.", accessMode = READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    @Schema(description = "Data e hora da última atualização do registro.")
+    @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
     public void adicionarCampo(String nome, Object valor) {

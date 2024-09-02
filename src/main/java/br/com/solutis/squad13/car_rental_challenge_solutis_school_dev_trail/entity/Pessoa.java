@@ -14,10 +14,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static jakarta.persistence.InheritanceType.JOINED;
 import static java.time.LocalDateTime.now;
-
+import static lombok.AccessLevel.NONE;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -57,24 +59,24 @@ public abstract class Pessoa {
     @Schema(description = "CPF da pessoa.")
     private String cpf;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Schema(description = "Sexo da pessoa.")
     private Sexo sexo;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     @Schema(description = "Indica se a pessoa está ativa (true) ou inativa (false).")
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     private Boolean ativo;
 
     @CreationTimestamp
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
     @Schema(description = "Data e hora de criação do registro.", accessMode = READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    @Schema(description = "Data e hora da última atualização do registro.")
+    @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
     public void desativar() {

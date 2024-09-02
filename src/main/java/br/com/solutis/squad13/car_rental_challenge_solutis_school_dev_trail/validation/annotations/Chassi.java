@@ -7,9 +7,12 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Retention(RetentionPolicy.RUNTIME)
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Retention(RUNTIME)
+@Target({FIELD, METHOD, PARAMETER})
 @Constraint(validatedBy = ChassiValidator.class)
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Schema(description = "Valida se o chassi informado é válido.")
 public @interface Chassi {
 

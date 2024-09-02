@@ -1,12 +1,9 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity;
 
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.fabricante.DadosCadastroFabricante;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.Categoria;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -66,7 +64,7 @@ public class ModeloCarro {
      * </p>
      */
     @OneToMany(mappedBy = "modelo", cascade = ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Schema(description = "Lista de carros específicos deste modelo.")
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
 

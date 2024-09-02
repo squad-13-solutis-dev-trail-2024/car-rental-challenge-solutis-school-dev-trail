@@ -11,11 +11,11 @@ import java.time.Period;
 @Schema(description = "Validador que verifica se a data de nascimento corresponde a uma pessoa maior de idade.")
 public class AdultoValidator implements ConstraintValidator<Adulto, LocalDate> {
 
-    public AdultoValidator() {
-    }
+    public AdultoValidator() {}
 
     @Override
     public void initialize(Adulto constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override

@@ -3,7 +3,6 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.han
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.exception.DuplicateEntryException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,9 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Classe responsável por tratar exceções de forma global na aplicação, proporcionando
@@ -65,14 +68,14 @@ public class GlobalExceptionHandler {
         List<ValidationErrorDetails> errors = new ArrayList<>();
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
             errors.add(new ValidationErrorDetails(
-                    LocalDateTime.now(),
+                    now(),
                     error.getDefaultMessage(), // Mensagem mais amigável do Bean Validation
                     request.getDescription(false),
                     "METHOD_ARGUMENT_NOT_VALID_ERROR",
                     error.getField() // Nome do campo com erro
             ));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return ResponseEntity.status(BAD_REQUEST).body(errors);
     }
 
     /**
@@ -96,13 +99,13 @@ public class GlobalExceptionHandler {
                                                                               WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
+                now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 "RESOURCE_NOT_FOUND"
         );
 
-        return new ResponseEntity<>(List.of(errorDetails), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(List.of(errorDetails), NOT_FOUND);
     }
 
     /**
@@ -126,13 +129,13 @@ public class GlobalExceptionHandler {
                                                                              WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
+                now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 "INVALID_ARGUMENT"
         );
 
-        return new ResponseEntity<>(List.of(errorDetails), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);
     }
 
     /**
@@ -160,13 +163,13 @@ public class GlobalExceptionHandler {
         // Cria um ErrorDetails para cada mensagem de erro
         for (String mensagem : mensagens) {
             errors.add(new ErrorDetails(
-                    LocalDateTime.now(),
+                    now(),
                     mensagem.trim(), // Remove espaços em branco no início e no final da mensagem
                     webRequest.getDescription(false),
                     "DUPLICATE_ENTRY"
             ));
         }
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
+        return ResponseEntity.status(CONFLICT).body(errors);
     }
 }

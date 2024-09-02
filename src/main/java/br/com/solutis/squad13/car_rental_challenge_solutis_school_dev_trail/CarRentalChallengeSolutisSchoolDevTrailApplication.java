@@ -1,20 +1,21 @@
 package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-@SpringBootApplication
+import static java.nio.file.Files.readAllBytes;
+import static java.nio.file.Paths.get;
+import static org.springframework.boot.SpringApplication.run;
+
+@SpringBootApplication(scanBasePackages = "br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail")
 public class CarRentalChallengeSolutisSchoolDevTrailApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CarRentalChallengeSolutisSchoolDevTrailApplication.class, args);
+        run(CarRentalChallengeSolutisSchoolDevTrailApplication.class, args);
     }
 
     @Bean
@@ -24,8 +25,8 @@ public class CarRentalChallengeSolutisSchoolDevTrailApplication {
             File flagFile = new File("src/main/resources/.data_initialized");
             if (!flagFile.exists()) {
                 try {
-                    String filePath = "D:\\Solutis exercicios\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
-                    String sqlScript = new String(Files.readAllBytes(Paths.get(filePath)));
+                    String filePath = "C:\\Users\\vinic\\OneDrive\\Área de Trabalho\\car-rental-challenge-solutis-school-dev-trail\\z_documents\\database\\seed\\script_car_rental_solutis_seed.sql";
+                    String sqlScript = new String(readAllBytes(get(filePath)));
 
                     String[] sqlCommands = sqlScript.split(";");
 

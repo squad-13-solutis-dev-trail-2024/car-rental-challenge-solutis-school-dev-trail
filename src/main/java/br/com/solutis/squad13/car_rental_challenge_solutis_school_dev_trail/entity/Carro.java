@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.NONE;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
 
@@ -102,7 +104,7 @@ public class Carro {
     @JsonIgnore
     @ManyToMany
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @JoinTable(name = "tb_carro_acessorio", joinColumns = @JoinColumn(name = "id_carro"), inverseJoinColumns = @JoinColumn(name = "id_acessorio"))
     @Schema(description = "Lista de acessórios do carro.")
     private List<Acessorio> acessorios;
@@ -153,19 +155,19 @@ public class Carro {
      * @see Aluguel
      */
     @OneToMany(mappedBy = "carro", cascade = ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Schema(description = "Lista de aluguéis associados a este carro.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
 
     @CreationTimestamp
-    @Setter(AccessLevel.NONE)
+    @Setter(NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
     @Schema(description = "Data e hora de criação do registro.", accessMode = READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    @Schema(description = "Data e hora da última atualização do registro.")
+    @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
     public void disponibilizarAluguel() {

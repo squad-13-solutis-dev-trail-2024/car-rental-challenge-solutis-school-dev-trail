@@ -10,8 +10,8 @@ import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.enti
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.enums.StatusAluguel;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.BoletoBarras;
-import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.gen.PixKey;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.BoletoBarras;
+import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.generator.PixKey;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.AluguelRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.ApoliceSeguroRepository;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.repository.CarroRepository;
@@ -99,7 +99,7 @@ import static org.slf4j.LoggerFactory.getLogger;
         acesso ao veículo escolhido para as datas desejadas.
  */
 
-@Service
+@Service("AluguelService")
 @Schema(description = "Serviço que implementa as operações de aluguel")
 public class AluguelServiceImpl implements AluguelService {
 
@@ -302,6 +302,34 @@ public class AluguelServiceImpl implements AluguelService {
         return alugueis.map(DadosListagemAluguel::new);
     }
 
+    @Override
+    @Transactional
+    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
+        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
+        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
+        if (aluguel.getStatusPagamento() == PENDENTE) {
+            carroErrado.disponibilizarAluguel();
+            Carro carro = buscarCarroPorId(idCarro);
+            if (!carro.isDisponivel()) throw new ValidationException("Carro esta indisponivel");
+
+            BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel, carro, aluguel.getApoliceSeguro().getValorFranquia());
+
+            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
+            aluguel.setValorTotalInicial(b.add(apolice));
+            aluguel.setValorTotalFinal(null);
+
+            carro.bloquearAluguel();
+            carroRepository.save(carro);
+
+            aluguel.adicionarCarro(carro);
+            aluguelRepository.save(aluguel);
+
+            return aluguel;
+        } else {
+            throw new ValidationException("Troca permitida somente quando o status estiver pendente");
+        }
+    }
+
     private void processarPagamento(long aluguel, DadosPagamento tipoPagamento) {
         TipoPagamento modalidadePagamento = tipoPagamento.tipoPagamento();
 
@@ -310,17 +338,13 @@ public class AluguelServiceImpl implements AluguelService {
 
         switch (modalidadePagamento) {
             case PIX -> aluguelEncontrado.setCampoPix(PixKey.generatePixKey());
-
             case BOLETO -> aluguelEncontrado.setCampoBoleto(BoletoBarras.gerarCodigoDeBarras());
-
             case CARTAO_CREDITO, CARTAO_DEBITO -> {
                 aluguelEncontrado.setNumeroCartao(tipoPagamento.numeroCartao());
                 aluguelEncontrado.setValidadeCartao(tipoPagamento.validadeCartao());
                 aluguelEncontrado.setCvv(tipoPagamento.cvv());
             }
-
             case DINHEIRO -> aluguelEncontrado.setPagamentoDinheiro("Pagamento no local de recolhimento");
-
             default -> {
                 log.warn("Tipo de pagamento inválido: {}", tipoPagamento);
                 throw new ValidationException("Tipo de pagamento inválido.");
@@ -329,6 +353,7 @@ public class AluguelServiceImpl implements AluguelService {
 
         aluguelRepository.save(aluguelEncontrado);
     }
+
     private void bloquearCarroParaAluguel(Aluguel aluguel) {
         Carro carro = aluguel.getCarro();
         log.debug("Verificando disponibilidade do carro para bloqueio. ID do carro: {}", carro.getId());
@@ -393,10 +418,12 @@ public class AluguelServiceImpl implements AluguelService {
     private Carro buscarCarroPorId(Long idCarro) {
         log.debug("Buscando carro pelo ID: {}", idCarro);
         return carroRepository.findById(idCarro)
-                .orElseThrow(() -> {
-                    log.warn("Carro não encontrado com o ID: {}", idCarro);
-                    return new EntityNotFoundException("Carro não encontrado com o ID: " + idCarro);
-                });
+                .orElseThrow(
+                        () -> {
+                            log.warn("Carro não encontrado com o ID: {}", idCarro);
+                            return new EntityNotFoundException("Carro não encontrado com o ID: " + idCarro);
+                        }
+                );
     }
 
     private void validarDisponibilidadeDoCarro(Carro carro) {
@@ -433,71 +460,21 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-
-    @Override
-    @Transactional
-    public Aluguel trocarCarro(@Valid Long idAluguel, Long idCarro) {
-
-
-        Aluguel aluguel = buscarAluguelPeloId(idAluguel);
-        Carro carroErrado = buscarCarroPorId(aluguel.getCarro().getId());
-        if(aluguel.getStatusPagamento() == PENDENTE){
-            carroErrado.disponibilizarAluguel();
-            Carro carro = buscarCarroPorId(idCarro);
-            if(!carro.isDisponivel()){
-                throw new RuntimeException("Carro esta indisponivel");
-            }
-            BigDecimal b = calcularValorTotalInicialAluguelAtt(aluguel,carro,aluguel.getApoliceSeguro().getValorFranquia());
-
-            BigDecimal apolice = calcularApolice(aluguel.getApoliceSeguro());
-            aluguel.setValorTotalInicial(b.add(apolice));
-            aluguel.setValorTotalFinal(null);
-            carro.bloquearAluguel();
-            carroRepository.save(carro);
-            aluguel.setCarro(carro);
-            aluguelRepository.save(aluguel);
-
-            return aluguel;
-        } else{
-            throw new RuntimeException("Troca permitida somente quando o status estiver pendente");
-        }
-    }
-
     private BigDecimal calcularValorTotalInicialAluguelAtt(@Valid Aluguel dadosCadastroAluguel, Carro carro, BigDecimal a) {
         log.debug("Calculando valorTotalParcial total inicial para o aluguel. ID do carro: {}", carro.getId());
         long diasParciaisDeAluguel = DAYS.between(dadosCadastroAluguel.getDataRetirada(), dadosCadastroAluguel.getDataDevolucaoPrevista());
         BigDecimal valorDiario = carro.getValorDiaria(); // Valor diário do carro
 
         BigDecimal valorTotalParcialAluguel = valorDiario.multiply(BigDecimal.valueOf(diasParciaisDeAluguel)); // Valor total do aluguel = valorTotalParcial diário * dias de aluguel + valorTotalParcial franquia
-        BigDecimal valorTotalParcialInicial = valorTotalParcialAluguel.add(a);;
-        return valorTotalParcialInicial;
+        return valorTotalParcialAluguel.add(a);
     }
-    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
 
+    private BigDecimal calcularApolice(ApoliceSeguro apoliceSeguro) {
         boolean protecaoTerceiro = apoliceSeguro.getProtecaoTerceiro();
         boolean protecaoCausasNaturais = apoliceSeguro.getProtecaoCausasNaturais();
         boolean protecaoRoubo = apoliceSeguro.getProtecaoRoubo();
-        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
 
-        return  valorApoliceSeguro;
-    }
-    private BigDecimal calcularValorTotal(LocalDate dataRetirada, LocalDate dataDevolucao, Carro carro, ApoliceSeguro apoliceSeguro) {
-        log.debug("Calculando valor total para o aluguel. ID do carro: {}", carro.getId());
-        long diasAluguel = DAYS.between(dataRetirada, dataDevolucao);
-        BigDecimal valorDiario = carro.getValorDiaria();
-
-        BigDecimal valorApoliceSeguro = calcularValorTotalApoliceSeguro(
-                apoliceSeguro.getProtecaoTerceiro(),
-                apoliceSeguro.getProtecaoCausasNaturais(),
-                apoliceSeguro.getProtecaoRoubo()
-        );
-
-        BigDecimal valorTotalAluguel = valorDiario.multiply(BigDecimal.valueOf(diasAluguel));
-        BigDecimal valorTotal = valorTotalAluguel.add(valorApoliceSeguro);
-
-        log.debug("Valor da diária: {}, Dias de aluguel: {}, Valor total do aluguel: {}", valorDiario, diasAluguel, valorTotalAluguel);
-        log.debug("Valor total calculado: {}", valorTotal);
-        return valorTotal;
+        return calcularValorTotalApoliceSeguro(protecaoTerceiro, protecaoCausasNaturais, protecaoRoubo);
     }
 
     private BigDecimal calcularValorTotalInicial(@Valid DadosCadastroAluguel dadosCadastroAluguel, Carro carro) {
@@ -552,12 +529,13 @@ public class AluguelServiceImpl implements AluguelService {
         }
     }
 
-
-    private Aluguel criarAluguel(Carro carro,
-                                 Motorista motorista,
-                                 ApoliceSeguro apoliceSeguro,
-                                 DadosCadastroAluguel dadosCadastroAluguel,
-                                 BigDecimal valorTotalInicial) {
+    private Aluguel criarAluguel(
+            Carro carro,
+            Motorista motorista,
+            ApoliceSeguro apoliceSeguro,
+            DadosCadastroAluguel dadosCadastroAluguel,
+            BigDecimal valorTotalInicial
+    ) {
         log.debug("Criando novo aluguel. ID do carro: {}, ID do motorista: {}", carro.getId(), motorista.getId());
         Aluguel aluguel = new Aluguel();
         aluguel.adicionarCarro(carro);

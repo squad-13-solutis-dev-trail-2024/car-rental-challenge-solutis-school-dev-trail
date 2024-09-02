@@ -2,13 +2,19 @@ package br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.val
 
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.dto.aluguel.DadosPagamento;
 import br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.validation.annotations.ValidarDadosPagamento;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+@Schema(description = "Validador que verifica se os dados de pagamento estão preenchidos corretamente.")
 public class DadosPagamentoValidator implements ConstraintValidator<ValidarDadosPagamento, DadosPagamento> {
 
+    public DadosPagamentoValidator() {}
+
     @Override
-    public void initialize(ValidarDadosPagamento constraintAnnotation) {}
+    public void initialize(ValidarDadosPagamento constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
 
     @Override
     public boolean isValid(DadosPagamento dadosPagamento, ConstraintValidatorContext context) {
