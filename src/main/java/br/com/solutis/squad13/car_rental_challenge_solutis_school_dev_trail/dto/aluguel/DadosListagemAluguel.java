@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static java.math.BigDecimal.ZERO;
+import static java.time.LocalDate.now;
 
 @Schema(description = "Dados resumidos de um aluguel para listagem.")
 public record DadosListagemAluguel(
@@ -52,6 +54,18 @@ public record DadosListagemAluguel(
                 aluguel.getValorTotalFinal(),
                 new DadosListagemCarro(aluguel.getCarro()),
                 new DadosListagemApoliceSeguro(aluguel.getApoliceSeguro())
+        );
+    }
+
+    public DadosListagemAluguel(String oUsuarioNaoPossuiLocacoes) {
+        this(
+                now(),
+                now(),
+                now(),
+                ZERO,
+                ZERO,
+                new DadosListagemCarro(""),
+                new DadosListagemApoliceSeguro("")
         );
     }
 }

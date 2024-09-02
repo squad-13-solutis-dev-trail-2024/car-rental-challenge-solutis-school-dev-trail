@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
+import static java.math.BigDecimal.ZERO;
 
 @Schema(description = "Dados resumidos de uma apólice de seguro para listagem.")
 public record DadosListagemApoliceSeguro(
@@ -35,6 +36,15 @@ public record DadosListagemApoliceSeguro(
                 apoliceSeguro.getProtecaoTerceiro(),
                 apoliceSeguro.getProtecaoCausasNaturais(),
                 apoliceSeguro.getProtecaoRoubo()
+        );
+    }
+
+    public DadosListagemApoliceSeguro(String s) {
+        this(
+                ZERO,
+                false,
+                false,
+                false
         );
     }
 }

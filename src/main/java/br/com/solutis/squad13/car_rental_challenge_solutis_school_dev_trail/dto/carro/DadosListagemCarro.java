@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.math.BigDecimal.ZERO;
+import static java.util.stream.Collectors.toList;
 
 @Schema(description = "Dados resumidos de um carro para listagem.")
 public record DadosListagemCarro(
@@ -43,7 +45,18 @@ public record DadosListagemCarro(
                         .stream()
                         .map(DadosListagemAcessorios::new)
                         .map(DadosListagemAcessorios::nome)
-                        .collect(Collectors.toList())
+                        .collect(toList())
+        );
+    }
+
+    public DadosListagemCarro(String s) {
+        this(
+                "O carro não possui acessórios",
+                "O carro não possui acessórios",
+                "O carro não possui acessórios",
+                ZERO,
+                false,
+                List.of("O carro não possui acessórios")
         );
     }
 }
