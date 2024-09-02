@@ -15,7 +15,7 @@ class PlacaValidator implements ConstraintValidator<Placa, String> {
 
     @Override
     public boolean isValid(String placa, ConstraintValidatorContext constraintValidatorContext) {
-        return true; // Implemente a lógica de validação da placa aqui
+        return true;
         // todo : implementar validação de chassi
     }
 }

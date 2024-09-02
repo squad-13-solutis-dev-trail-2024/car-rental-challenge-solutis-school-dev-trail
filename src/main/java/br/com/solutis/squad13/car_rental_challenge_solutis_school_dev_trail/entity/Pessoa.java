@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.InheritanceType.JOINED;
 import static java.time.LocalDateTime.now;
 
 
@@ -29,12 +32,12 @@ import static java.time.LocalDateTime.now;
                 @UniqueConstraint(name = "uk_pessoa_email", columnNames = "email")
         }
 )
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 @Schema(description = "Entidade abstrata que representa uma pessoa, servindo como base para outras entidades.")
 public abstract class Pessoa {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -60,12 +63,13 @@ public abstract class Pessoa {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     @Schema(description = "Indica se a pessoa está ativa (true) ou inativa (false).")
+    @Setter(AccessLevel.NONE)
     private Boolean ativo;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
-    @Schema(description = "Data e hora de criação do registro.", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Data e hora de criação do registro.", accessMode = READ_ONLY)
     private LocalDateTime dataCreated;
 
     @UpdateTimestamp

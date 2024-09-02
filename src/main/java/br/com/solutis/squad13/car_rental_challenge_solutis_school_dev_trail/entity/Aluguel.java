@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import static br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.math.BigDecimal.valueOf;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @AllArgsConstructor
@@ -31,7 +34,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class Aluguel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -72,6 +75,7 @@ public class Aluguel {
     @Schema(description = "Data em que o aluguel foi cancelado.")
     private LocalDate dataCancelamento;
 
+
     @Column(name = "campo_pix")
     private String campoPix;
 
@@ -89,6 +93,8 @@ public class Aluguel {
 
     @Column(name = "pagamento_dinheiro")
     private String pagamentoDinheiro;
+=======
+    @Getter
     @Transient
     private Map<String, Object> camposAdicionais = new HashMap<>();
 
@@ -105,7 +111,7 @@ public class Aluguel {
      */
     @JsonIgnore
     @Setter(AccessLevel.NONE)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
     @Schema(description = "Motorista que realizou o aluguel.")
     private Motorista motorista;
@@ -122,7 +128,7 @@ public class Aluguel {
      * @see Carro
      */
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
     @Schema(description = "Carro alugado.")
     private Carro carro;
@@ -137,7 +143,7 @@ public class Aluguel {
      *
      * @see ApoliceSeguro
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JsonIgnore
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     @Schema(description = "Apólice de seguro associada ao aluguel.")
@@ -156,10 +162,6 @@ public class Aluguel {
 
     public void adicionarCampo(String nome, Object valor) {
         camposAdicionais.put(nome, valor);
-    }
-
-    public Object obterCampo(String nome) {
-        return camposAdicionais.get(nome);
     }
 
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {
@@ -183,7 +185,7 @@ public class Aluguel {
     @Schema(description = "Calcula o valorTotalParcial total do aluguel (com base na data de devolução e no valorTotalParcial da apólice de seguro).")
     private BigDecimal calcularValorTotal(LocalDate dataDevolucao) {
         long quantidadeDias = DAYS.between(dataRetirada, dataDevolucao);
-        BigDecimal valorDiarias = carro.getValorDiaria().multiply(BigDecimal.valueOf(quantidadeDias));
+        BigDecimal valorDiarias = carro.getValorDiaria().multiply(valueOf(quantidadeDias));
         return valorDiarias.add(calcularValorFranquia());
     }
 
